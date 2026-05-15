@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f6f3ec;
+  --bg-deep: #ebe6db;
+  --ink: #1a1815;
+  --ink-soft: #4a4540;
+  --ink-faint: #8a8278;
+  --rule: #d4cdbf;
+  --accent: #8a2c1e;
+  --accent-soft: #b85c4a;
+  --escalating: #8a2c1e;
+  --mitigating: #4a6d3d;
+  --concentrating: #b08428;
+  --receding: #6d7a8a;
+  --note: #5a4a3a;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-deep: var(--bg-deep);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-rule: var(--rule);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-escalating: var(--escalating);
+  --color-mitigating: var(--mitigating);
+  --color-concentrating: var(--concentrating);
+  --color-receding: var(--receding);
+  --color-note: var(--note);
+  --font-display: var(--next-font-heading);
+  --font-heading: var(--next-font-heading);
+  --font-body: var(--next-font-body);
+  --font-mono: var(--font-jetbrains-mono);
+}
+
+html {
+  background: var(--bg);
+  /* scroll-snap-type is applied via inline style from TuningPanel so it can
+     be tweaked live. Default (when the panel hasn't mounted yet) comes from
+     the inline `style` prop in layout.tsx. */
+}
+
+/* Steps are always snap targets aligned to center. */
+[data-step] {
+  scroll-snap-align: center;
+}
+
+/* scroll-snap-stop is toggled per body attribute by the TuningPanel. */
+body[data-snap-stop="always"] [data-step] {
+  scroll-snap-stop: always;
+}
+body[data-snap-stop="normal"] [data-step] {
+  scroll-snap-stop: normal;
+}
+
+/* Landmarks (Header, Pivot, Closing) only become snap targets when the
+   panel toggle is on — this lets the user A/B the feel. */
+body[data-landmark-snap="on"] [data-snap-landmark="start"] {
+  scroll-snap-align: start;
+}
+body[data-landmark-snap="on"] [data-snap-landmark="center"] {
+  scroll-snap-align: center;
+}
+body[data-landmark-snap="on"] [data-snap-landmark="end"] {
+  scroll-snap-align: end;
+}
+body[data-landmark-snap="on"][data-snap-stop="always"] [data-snap-landmark] {
+  scroll-snap-stop: always;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--next-font-body), system-ui, -apple-system, sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-mono {
+  font-feature-settings: normal;
+}
+
+::selection {
+  background: rgba(138, 44, 30, 0.15);
+  color: var(--ink);
+}
+
+/* Subtle paper grain — extremely faint, no actual texture image to keep the
+   bundle small. Just a tiny radial wash to keep flat regions from looking too
+   plastic on high-DPI screens. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(at 20% 10%, rgba(180, 165, 130, 0.04), transparent 50%),
+    radial-gradient(at 80% 90%, rgba(180, 165, 130, 0.04), transparent 50%);
+}
+
+/* Hairline rules used throughout the piece */
+.rule {
+  border-color: var(--rule);
+}
+
+/* Reduce-motion: disable transitions altogether. Framer Motion respects
+   `useReducedMotion` separately. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
