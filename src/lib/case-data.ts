@@ -203,7 +203,7 @@ export const avCase: CaseStudy = {
     confidenceTier: 1,
     confidenceLabel: "High",
     summary:
-      "Tier 1 — mandatory reporting ensures NHTSA provides a comprehensive dataset for analysis.",
+      "Tier 1 — mandatory reporting ensures NHTSA provides a comprehensive dataset for analysis. The increase is primarily driven by property-damage cases rather than injury cases.",
   },
   exposure: {
     sources: [

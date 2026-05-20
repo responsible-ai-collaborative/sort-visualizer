@@ -3,10 +3,11 @@
 import { QuadrantChart, type DotProps } from "@/components/viz/QuadrantChart";
 import { resolveAct5 } from "@/lib/step-config";
 
-// AV lands in the mitigating quadrant: Ĥ↓, E↑. Upper-left.
+// AV lands in the mitigating quadrant: Ĥ↓, E↑. Bottom-right under the new
+// orientation (x = E trend, y = Ĥ trend).
 const AV_DOT: DotProps = {
-  x: 0.22,
-  y: 0.30,
+  x: 0.78,
+  y: 0.72,
   color: "var(--mitigating)",
   label: "AV",
   caseLabel: "AV · injury/damage",

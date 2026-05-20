@@ -1,7 +1,12 @@
 "use client";
 
+import { useRef } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { gsap } from "gsap";
+import { useGSAP } from "@gsap/react";
 import { quadrantCopy, type Quadrant } from "@/lib/case-data";
+
+gsap.registerPlugin(useGSAP);
 
 const FADE = { duration: 0.45, ease: [0.22, 0.61, 0.36, 1] as const };
 
@@ -13,23 +18,23 @@ const PLOT_H = H - PAD.top - PAD.bottom;
 const midX = PAD.left + PLOT_W / 2;
 const midY = PAD.top + PLOT_H / 2;
 
-// Quadrant layout (Ĥ trend on x, E trend on y):
-//                E ↑
-//   Mitigating | Escalating
-//   Ĥ ↓        | Ĥ ↑
-//   ──────────────────────
-//   Receding   | Concentrating
-//                E ↓
+// Quadrant layout (E trend on x, Ĥ trend on y):
+//                Ĥ ↑
+//   Concentrating | Escalating
+//   E ↓           | E ↑
+//   ────────────────────────────
+//   Receding      | Mitigating
+//                 Ĥ ↓
 const QUADS: {
   key: Quadrant;
   x: number;
   y: number;
   fill: string;
 }[] = [
-  { key: "mitigating", x: PAD.left, y: PAD.top, fill: "var(--mitigating)" },
+  { key: "concentrating", x: PAD.left, y: PAD.top, fill: "var(--concentrating)" },
   { key: "escalating", x: midX, y: PAD.top, fill: "var(--escalating)" },
   { key: "receding", x: PAD.left, y: midY, fill: "var(--receding)" },
-  { key: "concentrating", x: midX, y: midY, fill: "var(--concentrating)" },
+  { key: "mitigating", x: midX, y: midY, fill: "var(--mitigating)" },
 ];
 
 const halfW = PLOT_W / 2;
@@ -56,6 +61,7 @@ export function QuadrantChart({
 }) {
   const reduced = useReducedMotion();
   const tDur = reduced ? 0 : FADE.duration;
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const verdictCopy = activeQuadrant ? quadrantCopy[activeQuadrant] : null;
 
@@ -64,8 +70,41 @@ export function QuadrantChart({
   const ghostX = ghostDot ? PAD.left + ghostDot.x * PLOT_W : 0;
   const ghostY = ghostDot ? PAD.top + ghostDot.y * PLOT_H : 0;
 
+  // GSAP dot landing: overshoot scale-in with a ripple ring + label fade.
+  useGSAP(
+    () => {
+      if (!dot) return;
+      gsap.set(".quad-dot-circle", { transformOrigin: "center center", scale: 0, opacity: 1 });
+      gsap.set(".quad-dot-label", { opacity: 0 });
+      gsap.set(".quad-dot-ripple", { attr: { r: 0 }, opacity: 0.6 });
+
+      const tl = gsap.timeline();
+      tl.to(".quad-dot-circle", {
+        scale: 1,
+        duration: 0.55,
+        ease: "back.out(1.7)",
+      })
+        .to(
+          ".quad-dot-ripple",
+          {
+            attr: { r: 36 },
+            opacity: 0,
+            duration: 0.7,
+            ease: "power2.out",
+          },
+          "<",
+        )
+        .to(
+          ".quad-dot-label",
+          { opacity: 1, duration: 0.3, ease: "power2.out" },
+          "-=0.25",
+        );
+    },
+    { scope: containerRef, dependencies: [dot?.x, dot?.y, dot?.color] },
+  );
+
   return (
-    <div className="w-full max-w-[560px]">
+    <div ref={containerRef} className="w-full max-w-[560px]">
       <svg
         viewBox={`0 0 ${W} ${H}`}
         width="100%"
@@ -79,12 +118,12 @@ export function QuadrantChart({
             : "Trajectory classification quadrant chart — 2 × 2 grid with four trajectory categories."}
         </title>
         <desc id="quad-desc">
-          A two-by-two grid. The vertical axis is the exposure trend (E),
-          decreasing at the bottom and increasing at the top. The horizontal
-          axis is the harm-per-exposure trend (Ĥ), decreasing on the left and
-          increasing on the right. The four quadrants are Mitigating
+          A two-by-two grid. The horizontal axis is the exposure trend (E),
+          decreasing on the left and increasing on the right. The vertical
+          axis is the harm-per-exposure trend (Ĥ), decreasing at the bottom
+          and increasing at the top. The four quadrants are Concentrating
           (top-left), Escalating (top-right), Receding (bottom-left), and
-          Concentrating (bottom-right).
+          Mitigating (bottom-right).
         </desc>
 
         {/* Quadrant highlight (back layer) */}
@@ -170,7 +209,7 @@ export function QuadrantChart({
           letterSpacing="0.16em"
           className="uppercase fill-ink-soft"
         >
-          Ĥ trend →
+          E trend →
         </text>
         <text
           x={PAD.left + 8}
@@ -205,7 +244,7 @@ export function QuadrantChart({
             letterSpacing="0.16em"
             className="uppercase fill-ink-soft"
           >
-            E trend ↑
+            Ĥ trend ↑
           </text>
         </g>
 
@@ -243,37 +282,43 @@ export function QuadrantChart({
           )}
         </AnimatePresence>
 
-        {/* Main dot */}
-        <AnimatePresence>
-          {dot && (
-            <motion.g
-              key="dot"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: tDur, delay: 0.1 }}
+        {/* Main dot — GSAP-driven landing with overshoot + ripple. */}
+        {dot && (
+          <g key={`${dot.x}-${dot.y}-${dot.color}`}>
+            <circle
+              className="quad-dot-ripple"
+              cx={dotX}
+              cy={dotY}
+              r={0}
+              fill="none"
+              stroke={dot.color}
+              strokeWidth={1.5}
+              opacity={0}
+            />
+            <circle
+              className="quad-dot-circle"
+              cx={dotX}
+              cy={dotY}
+              r={11}
+              fill={dot.color}
+              stroke="#fff"
+              strokeWidth={1.5}
+              style={{ transformBox: "fill-box" }}
+            />
+            <text
+              className="quad-dot-label"
+              x={dotX + 16}
+              y={dotY + 4}
+              fontFamily="var(--font-jetbrains-mono)"
+              fontSize="10"
+              fill="var(--ink)"
+              letterSpacing="0.06em"
+              opacity={0}
             >
-              <circle
-                cx={dotX}
-                cy={dotY}
-                r={11}
-                fill={dot.color}
-                stroke="#fff"
-                strokeWidth={1.5}
-              />
-              <text
-                x={dotX + 16}
-                y={dotY + 4}
-                fontFamily="var(--font-jetbrains-mono)"
-                fontSize="10"
-                fill="var(--ink)"
-                letterSpacing="0.06em"
-              >
-                {dot.caseLabel}
-              </text>
-            </motion.g>
-          )}
-        </AnimatePresence>
+              {dot.caseLabel}
+            </text>
+          </g>
+        )}
       </svg>
 
       {/* Verdict caption */}

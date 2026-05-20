@@ -1,400 +1,717 @@
 "use client";
 
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { resolveAct3 } from "@/lib/step-config";
+import { useRef, type ReactNode } from "react";
+import { gsap } from "gsap";
+import { useGSAP } from "@gsap/react";
+import { resolveAct3, type Act3State } from "@/lib/step-config";
 import { chatbotCase } from "@/lib/case-data";
 import { TierBadge } from "@/components/TierBadge";
 
-const FADE = { duration: 0.4, ease: [0.22, 0.61, 0.36, 1] as const };
+gsap.registerPlugin(useGSAP);
+
+// One variable at a time. Steps 3.1–3.3 build the HARM panel, then focus
+// switches at 3.4 and steps 3.4–3.6 build the EXPOSURE panel. Each source
+// gets a full-width card with big legible numbers and clear visual roles
+// (count sparkpair vs ceiling line vs assumption boxes). GSAP drives the
+// card reveals, number count-ups, and bar growth.
 
 export function EstimationPanels({ activeStep }: { activeStep: string | null }) {
   const state = resolveAct3(activeStep);
-  const reduced = useReducedMotion();
-  const tDur = reduced ? 0 : FADE.duration;
-
-  const harmDimmed = state.focus === "exposure";
-
   return (
-    <div className="w-full max-w-[640px] grid grid-cols-2 gap-4 text-[13px]">
-      {/* HARM PANEL */}
-      <motion.section
-        animate={{ opacity: harmDimmed ? 0.4 : 1 }}
-        transition={{ duration: tDur }}
-        aria-label="Harm estimation panel"
-        className="flex flex-col gap-3 p-3 border border-rule bg-[rgba(255,255,255,0.45)]"
-      >
-        <PanelHeading title="Harm" letter="H" />
-
-        <AnimatePresence>
-          {state.harm.aiid && (
-            <SourceCard
-              key="aiid"
-              tag="AIID"
-              name="AI Incident Database"
-              tDur={tDur}
-            >
-              <CountSpark
-                values={chatbotCase.harm.sources[0].values!}
-                color="var(--ink-soft)"
-              />
-              <div className="font-mono text-[9px] uppercase tracking-[0.14em] text-ink-faint">
-                Tier 2 · proxy construction · lower bound
-              </div>
-            </SourceCard>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {state.harm.oecd && (
-            <SourceCard
-              key="oecd"
-              tag="OECD AIM"
-              name="AI Incidents Monitor"
-              tDur={tDur}
-            >
-              <CountSpark
-                values={chatbotCase.harm.sources[1].values!}
-                color="var(--ink-soft)"
-              />
-              <div className="font-mono text-[9px] text-ink-faint">
-                Harm count 9–17 (2024) → ~100k range (2025)
-              </div>
-            </SourceCard>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {state.harm.openai && (
-            <SourceCard
-              key="openai"
-              tag="OpenAI"
-              name="Weekly user report"
-              tDur={tDur}
-            >
-              <CeilingIndicator
-                display={chatbotCase.harm.sources[2].ceiling!.display}
-                note={chatbotCase.harm.sources[2].ceiling!.note}
-              />
-            </SourceCard>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {state.harm.conclusion && (
-            <motion.div
-              key="harm-conclusion"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: tDur }}
-              className="mt-auto pt-3 border-t border-rule flex flex-col gap-2"
-            >
-              <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft">
-                Trend → <span className="text-accent">Increasing · Ĥ ↑</span>
-              </div>
-              <div>
-                <TierBadge tier={2} label="Low" />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.section>
-
-      {/* EXPOSURE PANEL */}
-      <motion.section
-        animate={{ opacity: state.focus === "harm" ? 0.4 : 1 }}
-        transition={{ duration: tDur }}
-        aria-label="Exposure estimation panel"
-        className="flex flex-col gap-3 p-3 border border-rule bg-[rgba(255,255,255,0.45)]"
-      >
-        <PanelHeading title="Exposure" letter="E" />
-
-        <AnimatePresence>
-          {state.exposure.intro && !state.exposure.pew && (
-            <motion.div
-              key="intro"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: tDur }}
-              className="font-body italic text-ink-soft text-[14px] leading-snug py-6"
-            >
-              No direct survey data on emotional-support use exists. Exposure
-              must be approximated from partial proxies.
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {state.exposure.pew && (
-            <SourceCard key="pew" tag="Pew" name="Sidoti & McClain, 2025" tDur={tDur}>
-              <PewMiniViz />
-              <div className="font-mono text-[9px] uppercase tracking-[0.14em] text-ink-faint">
-                Category-adjacent proxy
-              </div>
-            </SourceCard>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {state.exposure.marketShare && (
-            <SourceCard
-              key="market"
-              tag="FATJOE"
-              name="LLM market share"
-              tDur={tDur}
-            >
-              <MarketShareMiniViz />
-            </SourceCard>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {state.exposure.conclusion && (
-            <motion.div
-              key="exp-conclusion"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: tDur }}
-              className="mt-auto pt-3 border-t border-rule flex flex-col gap-2"
-            >
-              <div className="grid grid-cols-2 gap-2">
-                {chatbotCase.exposure.estimates.map((e) => (
-                  <div key={e.year} className="font-mono text-[10px] text-ink-soft">
-                    <div className="text-ink-faint uppercase tracking-[0.14em] text-[9px]">
-                      {e.year}
-                    </div>
-                    <div className="text-[13px] text-accent font-body italic">
-                      {e.display}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft">
-                Trend → <span className="text-accent">Increasing · E ↑</span>
-              </div>
-              <div>
-                <TierBadge tier={2} label="Medium" />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.section>
+    <div className="w-full max-w-[640px]">
+      {state.focus === "harm" ? (
+        <HarmPanel state={state} />
+      ) : (
+        <ExposurePanel state={state} />
+      )}
     </div>
   );
 }
 
-function PanelHeading({ title, letter }: { title: string; letter: string }) {
+// ── Layout primitives ─────────────────────────────────────────────────────
+
+function PanelHeader({
+  letter,
+  title,
+  role,
+  carryover,
+}: {
+  letter: string;
+  title: string;
+  role: string;
+  carryover?: ReactNode;
+}) {
   return (
-    <header className="flex items-center justify-between border-b border-rule pb-2">
-      <h3
-        className="font-display text-[22px] leading-none text-ink"
-      >
-        {title}
-      </h3>
-      <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
-        Variable {letter}
+    <header className="mb-5 pb-4 border-b border-rule flex items-center justify-between gap-3">
+      <div className="flex items-center gap-3">
+        <div
+          className="w-12 h-12 flex items-center justify-center font-display font-bold text-[26px] text-white"
+          style={{ background: "var(--accent)" }}
+          aria-hidden
+        >
+          {letter}
+        </div>
+        <div>
+          <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+            {role}
+          </div>
+          <h3 className="font-display text-[22px] leading-tight text-ink font-semibold">
+            {title}
+          </h3>
+        </div>
       </div>
+      {carryover ? (
+        <div className="text-right font-mono text-[9.5px] uppercase tracking-[0.14em] text-ink-faint max-w-[170px] leading-snug">
+          {carryover}
+        </div>
+      ) : null}
     </header>
   );
 }
 
 function SourceCard({
   tag,
-  name,
-  tDur,
+  role,
+  className,
   children,
 }: {
   tag: string;
-  name: string;
-  tDur: number;
-  children: React.ReactNode;
+  role: string;
+  className?: string;
+  children: ReactNode;
 }) {
   return (
-    <motion.article
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: tDur }}
-      className="flex flex-col gap-1.5 border-l-2 border-rule pl-2.5 pb-1"
+    <article
+      className={`${className ?? ""} source-card border border-rule p-4`}
+      style={{ background: "rgba(255, 255, 255, 0.7)" }}
     >
-      <div className="flex items-baseline justify-between gap-2">
-        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent">
+      <div className="flex items-baseline justify-between gap-2 mb-3">
+        <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent font-semibold">
           {tag}
         </span>
-        <span className="font-body italic text-[11px] text-ink-faint">{name}</span>
+        <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-ink-faint">
+          {role}
+        </span>
       </div>
       {children}
-    </motion.article>
+    </article>
   );
 }
 
-function CountSpark({
-  values,
-  color,
+function ConclusionBar({
+  className,
+  trend,
+  trendDirection,
+  tier,
+  label,
 }: {
-  values: { year: string; value: number }[];
-  color: string;
+  className?: string;
+  trend: string;
+  trendDirection: string;
+  tier: 1 | 2 | 3;
+  label: "High" | "Medium" | "Low";
 }) {
-  const max = Math.max(...values.map((v) => v.value));
-  const W = 220;
-  const H = 36;
   return (
-    <div className="flex items-end gap-3">
-      <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} className="flex-1">
-        {values.map((v, i) => {
-          const barW = 24;
-          const gap = 12;
-          const x = i * (barW + gap) + 2;
-          const h = (v.value / max) * (H - 14);
-          return (
-            <g key={v.year}>
-              <rect x={x} y={H - h - 12} width={barW} height={h} fill={color} />
-              <text
-                x={x + barW / 2}
-                y={H - 2}
-                textAnchor="middle"
-                fontFamily="var(--font-jetbrains-mono)"
-                fontSize="9"
-                className="fill-ink-faint"
-              >
-                {v.year}
-              </text>
-              <text
-                x={x + barW / 2}
-                y={H - h - 14}
-                textAnchor="middle"
-                fontFamily="var(--font-jetbrains-mono)"
-                fontSize="10"
-                className="fill-ink"
-              >
-                {v.value}
-              </text>
-            </g>
-          );
-        })}
-      </svg>
-    </div>
-  );
-}
-
-function CeilingIndicator({ display, note }: { display: string; note: string }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <div className="relative h-9 border-b border-rule">
-        <div
-          className="absolute left-0 right-0 top-2 border-t-2 border-dashed"
-          style={{ borderColor: "var(--accent)" }}
-          aria-hidden
-        />
-        <div className="absolute right-1 top-3 font-mono text-[10px] text-accent">{display}</div>
-        <div className="absolute left-1 bottom-0 font-mono text-[9px] uppercase tracking-[0.14em] text-ink-faint">
-          Upper bound
+    <div
+      className={`${className ?? ""} conclusion-bar opacity-0 mt-5 pt-4 border-t border-rule flex items-center justify-between gap-4`}
+    >
+      <div>
+        <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-faint mb-1">
+          Trend
+        </div>
+        <div className="font-display text-[20px] leading-none font-semibold text-accent">
+          {trend} <span className="text-ink-faint font-normal">· {trendDirection}</span>
         </div>
       </div>
-      <div className="font-body italic text-[11px] text-ink-faint leading-snug">{note}</div>
+      <TierBadge tier={tier} label={label} />
     </div>
   );
 }
 
-function PewMiniViz() {
-  // Three age buckets, two stripes each (entertainment / learn-new-things)
-  const buckets = [
-    { age: "18–29", a: 18, b: 35 },
-    { age: "30–49", a: 12, b: 26 },
-    { age: "50–64", a: 6, b: 14 },
-  ];
-  const W = 260;
-  const H = 52;
-  const max = 40;
-  const groupW = W / buckets.length;
+// ── HARM PANEL ────────────────────────────────────────────────────────────
+
+function HarmPanel({ state }: { state: Act3State }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      if (state.harm.aiid) animateCardIn(".harm-aiid");
+      if (state.harm.oecd) animateCardIn(".harm-oecd");
+      if (state.harm.openai) animateCardIn(".harm-openai");
+      if (state.harm.conclusion) animateConclusionIn(".harm-conclusion");
+    },
+    {
+      scope: ref,
+      dependencies: [
+        state.harm.aiid,
+        state.harm.oecd,
+        state.harm.openai,
+        state.harm.conclusion,
+      ],
+    },
+  );
+
+  const aiid = chatbotCase.harm.sources[0];
+  const oecd = chatbotCase.harm.sources[1];
+  const openai = chatbotCase.harm.sources[2];
+
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H}>
+    <div ref={ref}>
+      <PanelHeader letter="H" role="Variable H" title="Estimating harm" />
+
+      <div className="space-y-3">
+        {state.harm.aiid && (
+          <SourceCard
+            tag="AIID"
+            role="Lower bound · Tier 2"
+            className="harm-aiid opacity-0"
+          >
+            <div className="flex items-center gap-5">
+              <BarPair
+                v1={aiid.values![0].value}
+                v2={aiid.values![1].value}
+                max={60}
+                rootClass="harm-aiid"
+              />
+              <p className="font-body italic text-[13px] leading-snug text-ink-soft flex-1">
+                LLM-assisted scan of the{" "}
+                <span className="text-ink">AI Incident Database</span> finds 2
+                full matches in 2024. Two matches falls below the threshold for
+                a reliable trend signal.
+              </p>
+            </div>
+          </SourceCard>
+        )}
+
+        {state.harm.oecd && (
+          <SourceCard
+            tag="OECD AIM"
+            role="Lower bound · Tier 2"
+            className="harm-oecd opacity-0"
+          >
+            <div className="flex items-center gap-5">
+              <BarPair
+                v1={oecd.values![0].value}
+                v2={oecd.values![1].value}
+                max={60}
+                rootClass="harm-oecd"
+              />
+              <p className="font-body italic text-[13px] leading-snug text-ink-soft flex-1">
+                Different sourcing pipeline. Harm count{" "}
+                <span className="text-ink">9–17 (2024) → ~100k range (2025)</span>{" "}
+                — an explosive increase in implied severity.
+              </p>
+            </div>
+          </SourceCard>
+        )}
+
+        {state.harm.openai && (
+          <SourceCard
+            tag="OpenAI"
+            role="Upper bound · proxy"
+            className="harm-openai opacity-0"
+          >
+            <div className="flex items-center gap-5">
+              <CeilingViz display={openai.ceiling!.display} rootClass="harm-openai" />
+              <p className="font-body italic text-[13px] leading-snug text-ink-soft flex-1">
+                <span className="text-ink">≈ 0.15% of weekly active users</span>{" "}
+                in conversations indicating potential suicidal planning — a
+                ceiling derived from a proxy proportion, not a match count.
+              </p>
+            </div>
+          </SourceCard>
+        )}
+      </div>
+
+      {state.harm.conclusion && (
+        <ConclusionBar
+          className="harm-conclusion"
+          trend="Increasing"
+          trendDirection="Ĥ ↑"
+          tier={2}
+          label="Low"
+        />
+      )}
+    </div>
+  );
+}
+
+// ── EXPOSURE PANEL ────────────────────────────────────────────────────────
+
+function ExposurePanel({ state }: { state: Act3State }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      if (state.exposure.intro) {
+        gsap.fromTo(
+          ".exposure-intro",
+          { opacity: 0, y: 14 },
+          { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" },
+        );
+      }
+      if (state.exposure.pew) animateCardIn(".exposure-pew");
+      if (state.exposure.marketShare) animateCardIn(".exposure-market", 0.15);
+      if (state.exposure.conclusion) {
+        animateCardIn(".exposure-estimates");
+        animateConclusionIn(".exposure-conclusion");
+      }
+    },
+    {
+      scope: ref,
+      dependencies: [
+        state.exposure.intro,
+        state.exposure.pew,
+        state.exposure.marketShare,
+        state.exposure.conclusion,
+      ],
+    },
+  );
+
+  return (
+    <div ref={ref}>
+      <PanelHeader
+        letter="E"
+        role="Variable E"
+        title="Estimating exposure"
+        carryover={
+          <>
+            H ✓ · Increasing
+            <br />
+            Tier 2 · Low
+          </>
+        }
+      />
+
+      <div className="space-y-3">
+        {state.exposure.intro && !state.exposure.pew && (
+          <p className="exposure-intro opacity-0 font-body italic text-[15px] leading-snug text-ink-soft py-6 text-center">
+            No direct survey data on emotional-support use exists. Exposure
+            must be approximated from partial proxies.
+          </p>
+        )}
+
+        {state.exposure.pew && (
+          <SourceCard
+            tag="Pew Research"
+            role="Category-adjacent proxy"
+            className="exposure-pew opacity-0"
+          >
+            <div className="flex items-center gap-5">
+              <PewViz />
+              <p className="font-body italic text-[13px] leading-snug text-ink-soft flex-1">
+                ChatGPT use by age group: <span className="text-ink">&ldquo;for
+                entertainment&rdquo;</span> (lower bound) and{" "}
+                <span className="text-ink">&ldquo;to learn new things&rdquo;</span>{" "}
+                (upper bound). Mid-point becomes the central estimate.
+              </p>
+            </div>
+          </SourceCard>
+        )}
+
+        {state.exposure.marketShare && (
+          <SourceCard
+            tag="FATJOE"
+            role="× market-share scalar"
+            className="exposure-market opacity-0"
+          >
+            <MarketShareViz />
+          </SourceCard>
+        )}
+
+        {state.exposure.conclusion && (
+          <SourceCard
+            tag="Final estimate"
+            role="2024 → 2025"
+            className="exposure-estimates opacity-0"
+          >
+            <div className="flex items-end justify-around gap-4">
+              {chatbotCase.exposure.estimates.map((e) => (
+                <div key={e.year} className="text-center">
+                  <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-faint mb-1">
+                    {e.year}
+                  </div>
+                  <div
+                    className="font-display font-bold text-[42px] leading-none text-accent"
+                    style={{ fontFeatureSettings: '"tnum"' }}
+                  >
+                    {e.display.split(" ")[0]}
+                  </div>
+                  <div className="font-mono text-[10px] text-ink-faint mt-1">
+                    {e.display.replace(/^[^(]+/, "").trim()}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </SourceCard>
+        )}
+      </div>
+
+      {state.exposure.conclusion && (
+        <ConclusionBar
+          className="exposure-conclusion"
+          trend="Increasing ~40%"
+          trendDirection="E ↑"
+          tier={2}
+          label="Medium"
+        />
+      )}
+    </div>
+  );
+}
+
+// ── Visualizations ────────────────────────────────────────────────────────
+
+function BarPair({
+  v1,
+  v2,
+  max,
+  rootClass,
+}: {
+  v1: number;
+  v2: number;
+  max: number;
+  rootClass: string;
+}) {
+  const W = 200;
+  const H = 130;
+  const barW = 50;
+  const x1 = 30;
+  const x2 = 110;
+  const padBottom = 24;
+  const padTop = 28;
+  const h1 = (v1 / max) * (H - padTop - padBottom);
+  const h2 = (v2 / max) * (H - padTop - padBottom);
+
+  const bar1Ref = useRef<SVGRectElement>(null);
+  const bar2Ref = useRef<SVGRectElement>(null);
+  const num1Ref = useRef<SVGTextElement>(null);
+  const num2Ref = useRef<SVGTextElement>(null);
+
+  useGSAP(
+    () => {
+      // Bars grow with overshoot
+      gsap.set([bar1Ref.current, bar2Ref.current], {
+        scaleY: 0,
+        transformOrigin: "center bottom",
+        transformBox: "fill-box",
+      });
+      gsap.to(bar1Ref.current, {
+        scaleY: 1,
+        duration: 0.7,
+        ease: "back.out(1.2)",
+        delay: 0.2,
+      });
+      gsap.to(bar2Ref.current, {
+        scaleY: 1,
+        duration: 0.7,
+        ease: "back.out(1.2)",
+        delay: 0.35,
+      });
+      // Numbers count up
+      countUpEl(num1Ref.current, v1, 0.8, 0.4);
+      countUpEl(num2Ref.current, v2, 0.8, 0.55);
+    },
+    { scope: `.${rootClass}`, dependencies: [v1, v2] },
+  );
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-[200px] flex-shrink-0">
+      {/* baseline */}
+      <line
+        x1={10}
+        x2={W - 10}
+        y1={H - padBottom + 1}
+        y2={H - padBottom + 1}
+        stroke="var(--rule)"
+        strokeWidth={1}
+      />
+      {/* 2024 bar */}
+      <rect
+        ref={bar1Ref}
+        x={x1}
+        y={H - padBottom - h1}
+        width={barW}
+        height={Math.max(h1, 2)}
+        fill="var(--accent)"
+        opacity={0.7}
+      />
+      <text
+        ref={num1Ref}
+        x={x1 + barW / 2}
+        y={H - padBottom - h1 - 8}
+        textAnchor="middle"
+        fontFamily="var(--next-font-heading)"
+        fontWeight="700"
+        fontSize="22"
+        fill="var(--ink)"
+      >
+        0
+      </text>
+      <text
+        x={x1 + barW / 2}
+        y={H - 6}
+        textAnchor="middle"
+        fontFamily="var(--font-jetbrains-mono)"
+        fontSize="10"
+        fill="var(--ink-faint)"
+        letterSpacing="0.06em"
+      >
+        2024
+      </text>
+      {/* 2025 bar */}
+      <rect
+        ref={bar2Ref}
+        x={x2}
+        y={H - padBottom - h2}
+        width={barW}
+        height={Math.max(h2, 2)}
+        fill="var(--accent)"
+      />
+      <text
+        ref={num2Ref}
+        x={x2 + barW / 2}
+        y={H - padBottom - h2 - 8}
+        textAnchor="middle"
+        fontFamily="var(--next-font-heading)"
+        fontWeight="700"
+        fontSize="22"
+        fill="var(--ink)"
+      >
+        0
+      </text>
+      <text
+        x={x2 + barW / 2}
+        y={H - 6}
+        textAnchor="middle"
+        fontFamily="var(--font-jetbrains-mono)"
+        fontSize="10"
+        fill="var(--ink-faint)"
+        letterSpacing="0.06em"
+      >
+        2025
+      </text>
+    </svg>
+  );
+}
+
+function CeilingViz({ display, rootClass }: { display: string; rootClass: string }) {
+  const lineRef = useRef<SVGLineElement>(null);
+
+  useGSAP(
+    () => {
+      const line = lineRef.current;
+      if (!line) return;
+      const len = line.getTotalLength?.() ?? 200;
+      gsap.set(line, { strokeDasharray: `${len}`, strokeDashoffset: len, opacity: 1 });
+      gsap.to(line, {
+        strokeDashoffset: 0,
+        duration: 0.9,
+        ease: "power2.out",
+        delay: 0.2,
+      });
+      gsap.fromTo(
+        ".ceiling-label",
+        { opacity: 0, y: 6 },
+        { opacity: 1, y: 0, duration: 0.4, delay: 0.6 },
+      );
+    },
+    { scope: `.${rootClass}`, dependencies: [display] },
+  );
+
+  return (
+    <svg viewBox="0 0 200 130" className="w-[200px] flex-shrink-0">
+      {/* baseline */}
+      <line
+        x1={10}
+        x2={190}
+        y1={108}
+        y2={108}
+        stroke="var(--rule)"
+        strokeWidth={1}
+      />
+      {/* faint upward arrow ghost */}
+      <text
+        x={100}
+        y={70}
+        textAnchor="middle"
+        fontFamily="var(--font-jetbrains-mono)"
+        fontSize="9"
+        fill="var(--ink-faint)"
+        letterSpacing="0.12em"
+        className="uppercase ceiling-label"
+        opacity={0}
+      >
+        ceiling
+      </text>
+      {/* dashed ceiling line */}
+      <line
+        ref={lineRef}
+        x1={10}
+        x2={190}
+        y1={50}
+        y2={50}
+        stroke="var(--accent)"
+        strokeWidth={2}
+        strokeDasharray="6 4"
+      />
+      <text
+        x={100}
+        y={42}
+        textAnchor="middle"
+        fontFamily="var(--next-font-heading)"
+        fontWeight="700"
+        fontSize="20"
+        fill="var(--accent)"
+        className="ceiling-label"
+        opacity={0}
+      >
+        {display}
+      </text>
+    </svg>
+  );
+}
+
+function PewViz() {
+  const buckets = [
+    { age: "18–29", entertainment: 18, learn: 35 },
+    { age: "30–49", entertainment: 12, learn: 26 },
+    { age: "50–64", entertainment: 6, learn: 14 },
+  ];
+  const W = 200;
+  const H = 130;
+  const max = 40;
+  const groupW = (W - 20) / buckets.length;
+  const baseY = H - 24;
+  const maxH = baseY - 18;
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-[200px] flex-shrink-0">
+      <line x1={10} x2={W - 10} y1={baseY + 1} y2={baseY + 1} stroke="var(--rule)" strokeWidth={1} />
       {buckets.map((b, i) => {
-        const x0 = i * groupW + 6;
-        const barW = 12;
-        const aH = (b.a / max) * (H - 16);
-        const bH = (b.b / max) * (H - 16);
+        const x0 = 10 + i * groupW + 8;
+        const barW = 14;
+        const eH = (b.entertainment / max) * maxH;
+        const lH = (b.learn / max) * maxH;
         return (
           <g key={b.age}>
-            <rect x={x0} y={H - 12 - aH} width={barW} height={aH} fill="var(--accent-soft)" />
             <rect
-              x={x0 + barW + 4}
-              y={H - 12 - bH}
+              className="pew-bar"
+              x={x0}
+              y={baseY - eH}
               width={barW}
-              height={bH}
+              height={Math.max(eH, 1)}
+              fill="var(--accent-soft)"
+              style={{ transformOrigin: "center bottom", transformBox: "fill-box" }}
+            />
+            <rect
+              className="pew-bar"
+              x={x0 + barW + 4}
+              y={baseY - lH}
+              width={barW}
+              height={Math.max(lH, 1)}
               fill="var(--accent)"
+              style={{ transformOrigin: "center bottom", transformBox: "fill-box" }}
             />
             <text
               x={x0 + barW + 2}
-              y={H - 2}
+              y={baseY + 14}
               textAnchor="middle"
               fontFamily="var(--font-jetbrains-mono)"
               fontSize="9"
-              className="fill-ink-faint"
+              fill="var(--ink-faint)"
             >
               {b.age}
             </text>
           </g>
         );
       })}
-      <g transform={`translate(${W - 130}, 4)`}>
-        <rect x={0} y={0} width={8} height={8} fill="var(--accent-soft)" />
-        <text
-          x={12}
-          y={7}
-          fontFamily="var(--font-jetbrains-mono)"
-          fontSize="9"
-          className="fill-ink-faint"
-        >
-          For entertainment
+      {/* legend */}
+      <g transform={`translate(8, 8)`}>
+        <rect width={8} height={8} fill="var(--accent-soft)" />
+        <text x={12} y={7} fontFamily="var(--font-jetbrains-mono)" fontSize="8" fill="var(--ink-faint)">
+          entertainment
         </text>
-        <rect x={0} y={12} width={8} height={8} fill="var(--accent)" />
-        <text
-          x={12}
-          y={19}
-          fontFamily="var(--font-jetbrains-mono)"
-          fontSize="9"
-          className="fill-ink-faint"
-        >
-          To learn new things
+        <rect y={12} width={8} height={8} fill="var(--accent)" />
+        <text x={12} y={19} fontFamily="var(--font-jetbrains-mono)" fontSize="8" fill="var(--ink-faint)">
+          learn new things
         </text>
       </g>
     </svg>
   );
 }
 
-function MarketShareMiniViz() {
-  // Stacked bar showing 70% / 80% / 90% scenarios
+function MarketShareViz() {
+  const rows = [
+    { tag: "Lower bound", pct: 70, accent: false },
+    { tag: "Point estimate", pct: 80, accent: true },
+    { tag: "Upper bound", pct: 90, accent: false },
+  ];
   return (
-    <div className="flex flex-col gap-1.5">
-      <div className="grid grid-cols-[36px_1fr_44px] items-center gap-2 font-mono text-[9px] text-ink-faint">
-        <span>LOWER</span>
-        <Bar pct={70} color="var(--rule)" />
-        <span>70%</span>
-      </div>
-      <div className="grid grid-cols-[36px_1fr_44px] items-center gap-2 font-mono text-[9px] text-ink-soft">
-        <span>POINT</span>
-        <Bar pct={80} color="var(--accent)" />
-        <span>80%</span>
-      </div>
-      <div className="grid grid-cols-[36px_1fr_44px] items-center gap-2 font-mono text-[9px] text-ink-faint">
-        <span>UPPER</span>
-        <Bar pct={90} color="var(--rule)" />
-        <span>90%</span>
-      </div>
-      <div className="font-body italic text-[11px] text-ink-faint leading-snug">
-        Applied as scalar to extend ChatGPT shares to all conversational AI use.
-      </div>
+    <div className="space-y-2">
+      {rows.map((r) => (
+        <div
+          key={r.tag}
+          className="grid grid-cols-[110px_1fr_50px] items-center gap-3 font-mono text-[10px]"
+        >
+          <span className={`uppercase tracking-[0.12em] ${r.accent ? "text-accent" : "text-ink-faint"}`}>
+            {r.tag}
+          </span>
+          <div className="ms-track h-2 bg-rule/50 relative overflow-hidden">
+            <div
+              className="ms-fill absolute left-0 top-0 h-full"
+              style={{
+                width: `${r.pct}%`,
+                background: r.accent ? "var(--accent)" : "var(--accent-soft)",
+              }}
+            />
+          </div>
+          <span className={`text-right ${r.accent ? "text-accent font-semibold" : "text-ink-faint"}`}>
+            {r.pct}%
+          </span>
+        </div>
+      ))}
+      <p className="font-body italic text-[12px] leading-snug text-ink-faint pt-1">
+        Applied as a scalar to extend ChatGPT shares to all conversational-AI
+        use.
+      </p>
     </div>
   );
 }
 
-function Bar({ pct, color }: { pct: number; color: string }) {
-  return (
-    <div className="h-2 bg-rule/50 relative">
-      <div className="absolute left-0 top-0 h-full" style={{ width: `${pct}%`, background: color }} />
-    </div>
+// ── GSAP helpers ──────────────────────────────────────────────────────────
+
+function animateCardIn(selector: string, delay = 0) {
+  gsap.fromTo(
+    selector,
+    { opacity: 0, y: 18 },
+    { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", delay },
   );
+}
+
+function animateConclusionIn(selector: string) {
+  gsap.fromTo(
+    selector,
+    { opacity: 0, y: 12 },
+    { opacity: 1, y: 0, duration: 0.55, ease: "power3.out", delay: 0.25 },
+  );
+}
+
+function countUpEl(
+  el: SVGTextElement | null,
+  to: number,
+  duration: number,
+  delay: number,
+) {
+  if (!el) return;
+  const obj = { val: 0 };
+  gsap.to(obj, {
+    val: to,
+    duration,
+    delay,
+    ease: "power2.out",
+    onUpdate: () => {
+      el.textContent = String(Math.round(obj.val));
+    },
+  });
 }

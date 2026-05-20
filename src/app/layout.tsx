@@ -5,12 +5,14 @@ import "./globals.css";
 const spaceGrotesk = Space_Grotesk({
   variable: "--next-font-heading",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
 const figtree = Figtree({
   variable: "--next-font-body",
   subsets: ["latin"],
+  weight: ["400", "600", "700"],
   display: "swap",
 });
 

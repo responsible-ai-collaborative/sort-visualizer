@@ -46,6 +46,7 @@ export function useScrollama(
       scrollerRef.current = scroller;
 
       const steps = Array.from(container.querySelectorAll<HTMLElement>(stepSelector));
+      const lastIndex = steps.length - 1;
 
       scroller
         .setup({ step: steps, offset: 0.5, progress: false })
@@ -54,9 +55,13 @@ export function useScrollama(
           setActiveStep(id);
         })
         .onStepExit(({ element, direction, index }) => {
-          // When scrolling up past the first step, clear the active state so
-          // the viz returns to its initial (empty) snapshot.
-          if (direction === "up" && index === 0) {
+          // Clear when leaving the section on either end: scrolling up past the
+          // first step OR down past the last step. The latter is what lets the
+          // page-level pipeline-phase fall through to whatever section the
+          // reader has just entered.
+          const isFirstUp = direction === "up" && index === 0;
+          const isLastDown = direction === "down" && index === lastIndex;
+          if (isFirstUp || isLastDown) {
             const id = element.dataset.step ?? null;
             setActiveStep((current) => (current === id ? null : current));
           }

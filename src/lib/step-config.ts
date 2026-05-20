@@ -1,6 +1,7 @@
 // Step ids and per-act state snapshots. Each viz consumes the snapshot at the
-// active step. Display numbers run 01–21 across all acts; internal ids run
-// "1.1" .. "5.3" for readability.
+// active step. Display numbers run 01–21 across all sections; internal ids run
+// "1.1" .. "5.3" for readability, with "fo.1" (framework output) and "tr.1"
+// (tier reliability) for the two non-act framework reveals.
 
 export type GlobalStepNumber =
   | "01"
@@ -91,7 +92,8 @@ export const act2Initial: Act2State = {
 };
 
 // ── Act 3: Estimating harm and exposure ────────────────────────────────────
-export type Act3StepId = "3.1" | "3.2" | "3.3" | "3.4" | "3.5" | "3.6";
+// Harm: 3.1, 3.2, 3.3. Exposure: 3.4, 3.5 (pew → final estimate).
+export type Act3StepId = "3.1" | "3.2" | "3.3" | "3.4" | "3.5";
 
 export type Act3State = {
   focus: "harm" | "exposure";
@@ -128,14 +130,9 @@ export const act3Snapshots: Record<Act3StepId, Act3State> = {
   "3.4": {
     focus: "exposure",
     harm: { aiid: true, oecd: true, openai: true, conclusion: true },
-    exposure: { intro: true, pew: false, marketShare: false, conclusion: false },
-  },
-  "3.5": {
-    focus: "exposure",
-    harm: { aiid: true, oecd: true, openai: true, conclusion: true },
     exposure: { intro: true, pew: true, marketShare: true, conclusion: false },
   },
-  "3.6": {
+  "3.5": {
     focus: "exposure",
     harm: { aiid: true, oecd: true, openai: true, conclusion: true },
     exposure: { intro: true, pew: true, marketShare: true, conclusion: true },
@@ -149,7 +146,9 @@ export const act3Initial: Act3State = {
 };
 
 // ── Act 4: Classification (chatbot) ────────────────────────────────────────
-export type Act4StepId = "4.1" | "4.2" | "4.3";
+// Two steps: dot placement, then verdict. The empty-quadrant beat now lives
+// upstream in the framework-output reveal.
+export type Act4StepId = "4.1" | "4.2";
 
 export type Act4State = {
   grid: boolean;
@@ -159,9 +158,8 @@ export type Act4State = {
 };
 
 export const act4Snapshots: Record<Act4StepId, Act4State> = {
-  "4.1": { grid: true, activeQuadrant: null, dot: false, verdict: false },
-  "4.2": { grid: true, activeQuadrant: "escalating", dot: true, verdict: false },
-  "4.3": { grid: true, activeQuadrant: "escalating", dot: true, verdict: true },
+  "4.1": { grid: true, activeQuadrant: "escalating", dot: true, verdict: false },
+  "4.2": { grid: true, activeQuadrant: "escalating", dot: true, verdict: true },
 };
 
 export const act4Initial: Act4State = {

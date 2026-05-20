@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useLenis } from "@/lib/useLenis";
 
 type SnapConfig = {
   snapType: "mandatory" | "proximity" | "none";
@@ -9,6 +10,7 @@ type SnapConfig = {
   jsForce: boolean;
   jsForceIdleMs: number;
   jsForceDurationMs: number;
+  lenis: boolean;
 };
 
 const DEFAULTS: SnapConfig = {
@@ -18,6 +20,7 @@ const DEFAULTS: SnapConfig = {
   jsForce: false,
   jsForceIdleMs: 80,
   jsForceDurationMs: 220,
+  lenis: false,
 };
 
 const STORAGE_KEY = "sort-tune-v1";
@@ -26,6 +29,8 @@ export function TuningPanel() {
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const [config, setConfig] = useState<SnapConfig>(DEFAULTS);
+
+  useLenis(config.lenis);
 
   useEffect(() => {
     try {
@@ -148,7 +153,7 @@ export function TuningPanel() {
       {open ? (
         <div
           className="border border-rule p-4 w-[260px] shadow-lg"
-          style={{ background: "rgba(246, 243, 236, 0.95)", backdropFilter: "blur(6px)" }}
+          style={{ background: "rgba(250, 250, 250, 0.95)", backdropFilter: "blur(6px)" }}
         >
           <div className="flex justify-between items-center mb-3 pb-2 border-b border-rule">
             <span className="uppercase tracking-[0.16em] text-ink-soft">Tune snap</span>
@@ -189,6 +194,14 @@ export function TuningPanel() {
             <Toggle
               value={config.landmarks}
               onChange={(v) => update("landmarks", v)}
+              labels={["Off", "On"]}
+            />
+          </Field>
+
+          <Field label="Lenis smooth-scroll">
+            <Toggle
+              value={config.lenis}
+              onChange={(v) => update("lenis", v)}
               labels={["Off", "On"]}
             />
           </Field>
@@ -243,7 +256,7 @@ export function TuningPanel() {
           onClick={() => setOpen(true)}
           aria-label="Open tuning panel"
           className="h-9 px-3 border border-rule uppercase tracking-[0.16em] text-ink-faint hover:text-ink hover:border-accent-soft transition-colors"
-          style={{ background: "rgba(246, 243, 236, 0.85)", backdropFilter: "blur(6px)" }}
+          style={{ background: "rgba(250, 250, 250, 0.85)", backdropFilter: "blur(6px)" }}
         >
           ⚙ Tune
         </button>
