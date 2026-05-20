@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" shape-rendering="crispEdges">
+  <rect width="32" height="32" fill="#ffffff"/>
+  <!-- Concentrating: top-left -->
+  <rect x="2"  y="2"  width="13" height="13" fill="#5e0e20"/>
+  <!-- Escalating: top-right -->
+  <rect x="17" y="2"  width="13" height="13" fill="#a32035"/>
+  <!-- Receding: bottom-left -->
+  <rect x="2"  y="17" width="13" height="13" fill="#898a8d"/>
+  <!-- Mitigating: bottom-right -->
+  <rect x="17" y="17" width="13" height="13" fill="#d07886"/>
+</svg>
