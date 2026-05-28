@@ -1,4 +1,4 @@
-// All numbers, sources, and assumptions are drawn from Slattery et al. (2026),
+// All numbers, sources, and assumptions are drawn from the paper,
 // "A Pragmatic Classification Framework for AI Incident Monitoring." Sections
 // referenced inline. The paper PDF is the source of truth — this file mirrors
 // it but does not paraphrase the assumption stacks.

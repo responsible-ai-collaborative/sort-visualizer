@@ -144,7 +144,7 @@ function Box({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: tDur, delay: 0.05 * index }}
-              className="font-body italic text-[15px] leading-snug text-accent mt-0.5"
+              className="font-body italic text-[15px] leading-snug text-accent-text mt-0.5"
             >
               {letter.content}
             </motion.div>

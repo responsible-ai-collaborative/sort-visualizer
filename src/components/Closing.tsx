@@ -27,7 +27,7 @@ export function Closing() {
         practitioners can argue about the moves, not just the conclusion.
       </p>
       <div className="mt-12 font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
-        Slattery et al. (2026) · Classification of AI incident trajectories
+        The paper · Classification of AI incident trajectories
       </div>
     </section>
   );

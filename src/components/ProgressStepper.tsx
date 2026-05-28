@@ -45,7 +45,7 @@ export function ProgressStepper({
                 <span
                   className={
                     "font-mono text-[9px] uppercase tracking-[0.18em] leading-tight transition-colors duration-300 " +
-                    (isActive ? "text-accent" : "text-ink-faint")
+                    (isActive ? "text-accent-text" : "text-ink-faint")
                   }
                 >
                   Stage {stage.number} of 4
@@ -53,7 +53,7 @@ export function ProgressStepper({
                 <span
                   className={
                     "font-mono text-[11px] uppercase tracking-[0.12em] leading-tight truncate mt-0.5 transition-colors duration-300 " +
-                    (isActive ? "text-accent" : "text-ink-soft")
+                    (isActive ? "text-accent-text" : "text-ink-soft")
                   }
                 >
                   {stage.short}

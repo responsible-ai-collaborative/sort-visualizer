@@ -86,7 +86,7 @@ function SourceCard({
       style={{ background: "rgba(255, 255, 255, 0.7)" }}
     >
       <div className="flex items-baseline justify-between gap-2 mb-3">
-        <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent font-semibold">
+        <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent-text font-semibold">
           {tag}
         </span>
         <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-ink-faint">
@@ -119,7 +119,7 @@ function ConclusionBar({
         <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-faint mb-1">
           Trend
         </div>
-        <div className="font-display text-[20px] leading-none font-semibold text-accent">
+        <div className="font-display text-[20px] leading-none font-semibold text-accent-text">
           {trend} <span className="text-ink-faint font-normal">· {trendDirection}</span>
         </div>
       </div>
@@ -332,7 +332,7 @@ function ExposurePanel({ state }: { state: Act3State }) {
                     {e.year}
                   </div>
                   <div
-                    className="font-display font-bold text-[42px] leading-none text-accent"
+                    className="font-display font-bold text-[42px] leading-none text-accent-text"
                     style={{ fontFeatureSettings: '"tnum"' }}
                   >
                     {e.display.split(" ")[0]}
@@ -654,7 +654,7 @@ function MarketShareViz() {
           key={r.tag}
           className="grid grid-cols-[110px_1fr_50px] items-center gap-3 font-mono text-[10px]"
         >
-          <span className={`uppercase tracking-[0.12em] ${r.accent ? "text-accent" : "text-ink-faint"}`}>
+          <span className={`uppercase tracking-[0.12em] ${r.accent ? "text-accent-text" : "text-ink-faint"}`}>
             {r.tag}
           </span>
           <div className="ms-track h-2 bg-rule/50 relative overflow-hidden">
@@ -666,7 +666,7 @@ function MarketShareViz() {
               }}
             />
           </div>
-          <span className={`text-right ${r.accent ? "text-accent font-semibold" : "text-ink-faint"}`}>
+          <span className={`text-right ${r.accent ? "text-accent-text font-semibold" : "text-ink-faint"}`}>
             {r.pct}%
           </span>
         </div>

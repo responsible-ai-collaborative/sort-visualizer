@@ -4,26 +4,20 @@ export function Header() {
       data-snap-landmark="center"
       className="min-h-screen flex flex-col justify-center mx-auto max-w-[860px] px-6 sm:px-8 pt-28 pb-16 text-center"
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/airi-horizontal.svg"
-        alt="MIT AI Risk Initiative"
-        className="h-12 w-auto mx-auto mb-10"
-      />
-      <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-faint mb-6">
+      <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-faint mb-6 mt-10">
         AI Incident Monitoring · A walk through the SORT framework
       </div>
       <h1 className="font-display text-[44px] sm:text-[58px] leading-[1.04] tracking-[-0.018em] text-ink mb-7">
         AI incident reports are climbing across the board.
         <br />
-        <span className="italic text-accent">What does that actually mean?</span>
+        <span className="italic text-accent-text">What does that actually mean?</span>
       </h1>
       <p className="font-body text-[18px] sm:text-[20px] leading-[1.55] text-ink-soft max-w-[720px] mx-auto">
         A rising line could reflect any combination of three forces — more AI
         being deployed, more reporting infrastructure picking up what was
         always there, or more harm per use. To address frontier-AI risks
-        properly, the readings have to be separated. A new framework from
-        Slattery et al. (2026) does that — and in doing so produces opposite
+        properly, the readings have to be separated. A new framework introduced
+        in the paper does that — and in doing so produces opposite
         verdicts on two harms that look superficially similar.
       </p>
       <div className="mt-8">

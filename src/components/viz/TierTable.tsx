@@ -108,7 +108,7 @@ export function TierTable(_props: { activeStep: string | null }) {
                 style={{ background: "rgba(255, 255, 255, 0.7)" }}
               >
                 <div className="grid grid-cols-[28px_1fr_auto] gap-x-4 items-center">
-                  <span className="font-display font-bold text-[20px] leading-none text-accent">
+                  <span className="font-display font-bold text-[20px] leading-none text-accent-text">
                     {row.tier}
                   </span>
                   <div>

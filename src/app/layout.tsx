@@ -39,7 +39,13 @@ export default function RootLayout({
       className={`${spaceGrotesk.variable} ${figtree.variable} ${jetBrainsMono.variable}`}
       style={{ scrollSnapType: "y mandatory" }}
     >
-      <body className="relative">{children}</body>
+      <body
+        className="relative"
+        data-landmark-snap="on"
+        data-snap-stop="always"
+      >
+        {children}
+      </body>
     </html>
   );
 }

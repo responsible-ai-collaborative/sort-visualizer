@@ -1,20 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  /* AIRI brand palette — see ~/.claude/skills/airi-brand/BRAND.md */
+  /* Brand palette */
   --bg: #fafafa;
-  --bg-deep: #a32035; /* pivot section uses primary red as a banded moment */
+  --bg-deep: #011934; /* pivot section uses primary navy as a banded moment */
   --ink: #1a1a1a;
   --ink-soft: #3a3a3a;
   --ink-faint: #898a8d;
   --rule: #e0e0e0;
-  --accent: #a32035; /* primary */
-  --accent-soft: #d07886; /* primary-light */
-  --escalating: #a32035; /* primary */
-  --mitigating: #d07886; /* primary-light */
-  --concentrating: #5e0e20; /* primary-dark */
+  --accent: #011934; /* primary — chart fills, pivot band, borders */
+  --accent-text: #1f5fa8; /* lighter blue for accented text/links so it pops */
+  --accent-soft: #8aa6c0; /* primary-light */
+  --escalating: #011934; /* primary */
+  --mitigating: #8aa6c0; /* primary-light */
+  --concentrating: #000f1f; /* primary-dark */
   --receding: #898a8d; /* gray */
-  --note: #5e0e20;
+  --note: #000f1f;
 }
 
 @theme inline {
@@ -25,6 +26,7 @@
   --color-ink-faint: var(--ink-faint);
   --color-rule: var(--rule);
   --color-accent: var(--accent);
+  --color-accent-text: var(--accent-text);
   --color-accent-soft: var(--accent-soft);
   --color-escalating: var(--escalating);
   --color-mitigating: var(--mitigating);
@@ -39,9 +41,7 @@
 
 html {
   background: var(--bg);
-  /* scroll-snap-type is applied via inline style from TuningPanel so it can
-     be tweaked live. Default (when the panel hasn't mounted yet) comes from
-     the inline `style` prop in layout.tsx. */
+  /* scroll-snap-type is set via inline style in layout.tsx. */
 }
 
 /* Steps are always snap targets aligned to center. */
@@ -49,7 +49,7 @@ html {
   scroll-snap-align: center;
 }
 
-/* scroll-snap-stop is toggled per body attribute by the TuningPanel. */
+/* scroll-snap-stop is set via body attribute in layout.tsx. */
 body[data-snap-stop="always"] [data-step] {
   scroll-snap-stop: always;
 }
@@ -87,7 +87,7 @@ body {
 }
 
 ::selection {
-  background: rgba(163, 32, 53, 0.18);
+  background: rgba(1, 25, 52, 0.18);
   color: var(--ink);
 }
 

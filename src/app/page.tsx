@@ -8,7 +8,6 @@ import { Header } from "@/components/Header";
 import { PivotSection } from "@/components/PivotSection";
 import { Closing } from "@/components/Closing";
 import { NavArrows } from "@/components/NavArrows";
-import { TuningPanel } from "@/components/TuningPanel";
 import { ScrollySection, type StepDef } from "@/components/ScrollySection";
 import { StepText } from "@/components/steps/StepText";
 import { Em } from "@/components/Em";
@@ -36,7 +35,7 @@ const act1Steps: StepDef[] = [
             href="https://incidentdatabase.ai/"
             target="_blank"
             rel="noopener noreferrer"
-            className="underline decoration-accent/40 hover:decoration-accent text-accent"
+            className="underline decoration-accent-text/40 hover:decoration-accent-text text-accent-text"
           >
             AI Incident Database
           </a>{" "}
@@ -86,7 +85,7 @@ const act1Steps: StepDef[] = [
           infrastructures, and different deployment curves.
         </p>
         <p>
-          Slattery et al. (2026) propose a framework that works at a narrower
+          The paper proposes a framework that works at a narrower
           level: pick one specific harm, estimate its <Em>harm</Em> and{" "}
           <Em>exposure</Em> separately, take the ratio, and classify the
           resulting trajectory of the risk.
@@ -154,7 +153,7 @@ const act2Steps: StepDef[] = [
             href="https://pubmed.ncbi.nlm.nih.gov/7582737/"
             target="_blank"
             rel="noopener noreferrer"
-            className="underline decoration-accent/40 hover:decoration-accent text-accent"
+            className="underline decoration-accent-text/40 hover:decoration-accent-text text-accent-text"
           >
             PICO
           </a>{" "}
@@ -275,7 +274,7 @@ const act2Steps: StepDef[] = [
             href="https://claude.ai/public/artifacts/9ec3813a-399c-48ea-96ed-19443d121b83"
             target="_blank"
             rel="noopener noreferrer"
-            className="not-italic underline decoration-accent/40 hover:decoration-accent text-accent"
+            className="not-italic underline decoration-accent-text/40 hover:decoration-accent-text text-accent-text"
           >
             Claude artifact
           </a>{" "}
@@ -364,7 +363,7 @@ const act3HarmSteps: StepDef[] = [
             href="https://techcrunch.com/2025/10/27/openai-says-over-a-million-people-talk-to-chatgpt-about-suicide-weekly/"
             target="_blank"
             rel="noopener noreferrer"
-            className="underline decoration-accent/40 hover:decoration-accent text-accent"
+            className="underline decoration-accent-text/40 hover:decoration-accent-text text-accent-text"
           >
             own disclosure
           </a>
@@ -580,7 +579,6 @@ export default function Page() {
     <main ref={mainRef} className="relative z-10">
       <ProgressStepper activeStage={activeStage} />
       <NavArrows />
-      <TuningPanel />
       <Header />
 
       <ScrollySection
