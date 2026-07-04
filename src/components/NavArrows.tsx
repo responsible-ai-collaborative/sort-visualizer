@@ -89,12 +89,7 @@ export function NavArrows() {
         hidden={!showTop || atTop}
         ariaLabel="Previous step"
       />
-      <NavButton
-        direction="down"
-        onClick={goNext}
-        hidden={atBottom}
-        ariaLabel="Next step"
-      />
+      <NavButton direction="down" onClick={goNext} hidden={atBottom} ariaLabel="Next step" />
     </>
   );
 }

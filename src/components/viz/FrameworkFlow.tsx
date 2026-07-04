@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { useReducedMotion } from "framer-motion";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { STAGES } from "@/lib/stages";
@@ -12,10 +13,18 @@ gsap.registerPlugin(useGSAP);
 
 export function FrameworkFlow({ visible }: { visible: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
+  const reduced = !!useReducedMotion();
 
   useGSAP(
     () => {
       if (!visible) return;
+      if (reduced) {
+        gsap.set([".framework-flow-box", ".framework-flow-arrow"], {
+          opacity: 1,
+          y: 0,
+        });
+        return;
+      }
       gsap.fromTo(
         ".framework-flow-box",
         { opacity: 0, y: 12 },
@@ -39,7 +48,7 @@ export function FrameworkFlow({ visible }: { visible: boolean }) {
         },
       );
     },
-    { scope: ref, dependencies: [visible] },
+    { scope: ref, dependencies: [visible, reduced] },
   );
 
   return (
@@ -51,15 +60,17 @@ export function FrameworkFlow({ visible }: { visible: boolean }) {
             style={{ opacity: 0 }}
           >
             <div className="flex items-baseline gap-2">
-              <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink-faint leading-tight">
-                Stage {stage.number} of 4
+              <span className="font-display italic text-[12px] text-ink-faint leading-tight">
+                Stage {i + 1} of {STAGES.length}
               </span>
-              <span aria-hidden className="text-ink-faint text-[9px]">·</span>
+              <span aria-hidden className="text-ink-faint text-[9px]">
+                ·
+              </span>
               <span className="font-body italic text-[11px] text-ink-faint leading-tight">
                 {stage.sub}
               </span>
             </div>
-            <div className="font-mono text-[12px] uppercase tracking-[0.12em] text-ink mt-1 leading-tight">
+            <div className="font-body font-semibold text-[14px] text-ink mt-1 leading-tight">
               {stage.short}
             </div>
             <p className="font-body text-[12px] text-ink-soft leading-snug mt-1.5">

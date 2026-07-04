@@ -1,58 +1,56 @@
 // Shared stage metadata for the four framework stages.
-// Used by ChapterCard, ProgressStepper, and the page-level scroll tracking.
+// Used by the stage card, ProgressStepper, and the page-level scroll tracking.
 
 export type StageId = "mq" | "harm" | "exposure" | "classification";
 
 export type Stage = {
   id: StageId;
-  number: 1 | 2 | 3 | 4;
   short: string; // e.g. "Monitoring question"
   long: string; // e.g. "Building the monitoring question"
   sub: string; // e.g. "SORT framework"
   detail: string; // one-sentence description for the framework-flow viz
-  sectionId: string; // matches the ScrollySection's `sectionId`
+  // ScrollySection `sectionId`s covered by this stage, in page order. The
+  // page creates one ScrollTrigger per entry so interstitial sections (e.g.
+  // the tier table) stay attributed to the right stage.
+  sectionIds: readonly string[];
 };
 
 export const STAGES: readonly Stage[] = [
   {
     id: "mq",
-    number: 1,
     short: "Monitoring question",
     long: "Monitoring question",
     sub: "SORT framework",
     detail:
-      "Pin the harm being studied — who is at risk, through what mechanism, over what period.",
-    sectionId: "act-2",
+      "Pin the harm being studied — who or what is at risk, through what mechanism, over what period.",
+    sectionIds: ["act-2"],
   },
   {
     id: "harm",
-    number: 2,
     short: "Harm",
     long: "Harm",
     sub: "Recorded incidents",
     detail:
-      "Count reported incidents across multiple databases, scored by a confidence tier.",
-    sectionId: "act-3-harm",
+      "Bound harm with incident databases, then construct a point estimate from proxy measures, scored by a confidence tier.",
+    sectionIds: ["act-tier-reliability", "act-3-harm"],
   },
   {
     id: "exposure",
-    number: 3,
     short: "Exposure",
     long: "Exposure",
     sub: "Estimation procedure",
     detail:
-      "Estimate the population at risk by chaining proxy surveys with a market-share scalar.",
-    sectionId: "act-3-exposure",
+      "Estimate the opportunity for harm by chaining usage disclosures, traffic shares, and disclosed rates.",
+    sectionIds: ["act-3-exposure"],
   },
   {
     id: "classification",
-    number: 4,
     short: "Classification",
     long: "Classification",
-    sub: "2 × 2 trajectory",
+    sub: "Trajectory + weights",
     detail:
-      "Compare harm and exposure trends to land in one of four governance quadrants.",
-    sectionId: "act-4",
+      "Compare harm and exposure trends to land in one of four governance quadrants — with a probability on the placement.",
+    sectionIds: ["act-4"],
   },
 ] as const;
 

@@ -1,338 +1,307 @@
 [
   {
-    "ym": "2020-01",
-    "count": 10
-  },
-  {
-    "ym": "2020-02",
-    "count": 6
-  },
-  {
-    "ym": "2020-03",
-    "count": 5
-  },
-  {
-    "ym": "2020-04",
-    "count": 4
-  },
-  {
-    "ym": "2020-05",
-    "count": 2
-  },
-  {
-    "ym": "2020-06",
-    "count": 16
-  },
-  {
-    "ym": "2020-07",
-    "count": 8
-  },
-  {
-    "ym": "2020-08",
-    "count": 5
-  },
-  {
-    "ym": "2020-09",
-    "count": 5
-  },
-  {
-    "ym": "2020-10",
-    "count": 16
-  },
-  {
-    "ym": "2020-11",
-    "count": 4
-  },
-  {
     "ym": "2020-12",
-    "count": 9
+    "incidents": 14,
+    "hazards": 10
   },
   {
     "ym": "2021-01",
-    "count": 7
+    "incidents": 39,
+    "hazards": 47
   },
   {
     "ym": "2021-02",
-    "count": 8
+    "incidents": 33,
+    "hazards": 36
   },
   {
     "ym": "2021-03",
-    "count": 7
+    "incidents": 51,
+    "hazards": 34
   },
   {
     "ym": "2021-04",
-    "count": 8
+    "incidents": 44,
+    "hazards": 43
   },
   {
     "ym": "2021-05",
-    "count": 5
+    "incidents": 47,
+    "hazards": 45
   },
   {
     "ym": "2021-06",
-    "count": 5
+    "incidents": 52,
+    "hazards": 34
   },
   {
     "ym": "2021-07",
-    "count": 10
+    "incidents": 187,
+    "hazards": 35
   },
   {
     "ym": "2021-08",
-    "count": 4
+    "incidents": 89,
+    "hazards": 50
   },
   {
     "ym": "2021-09",
-    "count": 3
+    "incidents": 80,
+    "hazards": 63
   },
   {
     "ym": "2021-10",
-    "count": 7
+    "incidents": 96,
+    "hazards": 47
   },
   {
     "ym": "2021-11",
-    "count": 7
+    "incidents": 83,
+    "hazards": 41
   },
   {
     "ym": "2021-12",
-    "count": 7
+    "incidents": 73,
+    "hazards": 47
   },
   {
     "ym": "2022-01",
-    "count": 7
+    "incidents": 62,
+    "hazards": 41
   },
   {
     "ym": "2022-02",
-    "count": 10
+    "incidents": 53,
+    "hazards": 26
   },
   {
     "ym": "2022-03",
-    "count": 10
+    "incidents": 46,
+    "hazards": 36
   },
   {
     "ym": "2022-04",
-    "count": 10
+    "incidents": 49,
+    "hazards": 23
   },
   {
     "ym": "2022-05",
-    "count": 6
+    "incidents": 53,
+    "hazards": 39
   },
   {
     "ym": "2022-06",
-    "count": 8
+    "incidents": 53,
+    "hazards": 40
   },
   {
     "ym": "2022-07",
-    "count": 5
+    "incidents": 69,
+    "hazards": 36
   },
   {
     "ym": "2022-08",
-    "count": 8
+    "incidents": 70,
+    "hazards": 45
   },
   {
     "ym": "2022-09",
-    "count": 7
+    "incidents": 55,
+    "hazards": 36
   },
   {
     "ym": "2022-10",
-    "count": 6
+    "incidents": 59,
+    "hazards": 47
   },
   {
     "ym": "2022-11",
-    "count": 18
+    "incidents": 40,
+    "hazards": 42
   },
   {
     "ym": "2022-12",
-    "count": 10
+    "incidents": 49,
+    "hazards": 38
   },
   {
     "ym": "2023-01",
-    "count": 13
+    "incidents": 73,
+    "hazards": 48
   },
   {
     "ym": "2023-02",
-    "count": 30
+    "incidents": 65,
+    "hazards": 53
   },
   {
     "ym": "2023-03",
-    "count": 16
+    "incidents": 98,
+    "hazards": 87
   },
   {
     "ym": "2023-04",
-    "count": 8
+    "incidents": 80,
+    "hazards": 71
   },
   {
     "ym": "2023-05",
-    "count": 17
+    "incidents": 125,
+    "hazards": 65
   },
   {
     "ym": "2023-06",
-    "count": 15
+    "incidents": 98,
+    "hazards": 69
   },
   {
     "ym": "2023-07",
-    "count": 7
+    "incidents": 82,
+    "hazards": 77
   },
   {
     "ym": "2023-08",
-    "count": 10
+    "incidents": 117,
+    "hazards": 58
   },
   {
     "ym": "2023-09",
-    "count": 5
+    "incidents": 111,
+    "hazards": 64
   },
   {
     "ym": "2023-10",
-    "count": 18
+    "incidents": 129,
+    "hazards": 69
   },
   {
     "ym": "2023-11",
-    "count": 9
+    "incidents": 149,
+    "hazards": 71
   },
   {
     "ym": "2023-12",
-    "count": 21
+    "incidents": 105,
+    "hazards": 59
   },
   {
     "ym": "2024-01",
-    "count": 16
+    "incidents": 174,
+    "hazards": 103
   },
   {
     "ym": "2024-02",
-    "count": 26
+    "incidents": 160,
+    "hazards": 81
   },
   {
     "ym": "2024-03",
-    "count": 19
+    "incidents": 167,
+    "hazards": 80
   },
   {
     "ym": "2024-04",
-    "count": 33
+    "incidents": 147,
+    "hazards": 95
   },
   {
     "ym": "2024-05",
-    "count": 25
+    "incidents": 160,
+    "hazards": 107
   },
   {
     "ym": "2024-06",
-    "count": 22
+    "incidents": 130,
+    "hazards": 95
   },
   {
     "ym": "2024-07",
-    "count": 25
+    "incidents": 134,
+    "hazards": 73
   },
   {
     "ym": "2024-08",
-    "count": 22
+    "incidents": 132,
+    "hazards": 65
   },
   {
     "ym": "2024-09",
-    "count": 28
+    "incidents": 99,
+    "hazards": 67
   },
   {
     "ym": "2024-10",
-    "count": 33
+    "incidents": 154,
+    "hazards": 95
   },
   {
     "ym": "2024-11",
-    "count": 17
+    "incidents": 123,
+    "hazards": 81
   },
   {
     "ym": "2024-12",
-    "count": 26
+    "incidents": 104,
+    "hazards": 84
   },
   {
     "ym": "2025-01",
-    "count": 30
+    "incidents": 188,
+    "hazards": 111
   },
   {
     "ym": "2025-02",
-    "count": 44
+    "incidents": 220,
+    "hazards": 141
   },
   {
     "ym": "2025-03",
-    "count": 42
+    "incidents": 190,
+    "hazards": 98
   },
   {
     "ym": "2025-04",
-    "count": 46
+    "incidents": 216,
+    "hazards": 100
   },
   {
     "ym": "2025-05",
-    "count": 29
+    "incidents": 229,
+    "hazards": 124
   },
   {
     "ym": "2025-06",
-    "count": 39
+    "incidents": 213,
+    "hazards": 108
   },
   {
     "ym": "2025-07",
-    "count": 34
+    "incidents": 240,
+    "hazards": 133
   },
   {
     "ym": "2025-08",
-    "count": 30
+    "incidents": 289,
+    "hazards": 99
   },
   {
     "ym": "2025-09",
-    "count": 13
+    "incidents": 270,
+    "hazards": 146
   },
   {
     "ym": "2025-10",
-    "count": 32
+    "incidents": 326,
+    "hazards": 184
   },
   {
     "ym": "2025-11",
-    "count": 22
+    "incidents": 345,
+    "hazards": 148
   },
   {
     "ym": "2025-12",
-    "count": 39
-  },
-  {
-    "ym": "2026-01",
-    "count": 30
-  },
-  {
-    "ym": "2026-02",
-    "count": 24
-  },
-  {
-    "ym": "2026-03",
-    "count": 15
-  },
-  {
-    "ym": "2026-04",
-    "count": 4
-  },
-  {
-    "ym": "2026-05",
-    "count": 0
-  },
-  {
-    "ym": "2026-06",
-    "count": 0
-  },
-  {
-    "ym": "2026-07",
-    "count": 0
-  },
-  {
-    "ym": "2026-08",
-    "count": 0
-  },
-  {
-    "ym": "2026-09",
-    "count": 0
-  },
-  {
-    "ym": "2026-10",
-    "count": 0
-  },
-  {
-    "ym": "2026-11",
-    "count": 0
-  },
-  {
-    "ym": "2026-12",
-    "count": 0
+    "incidents": 203,
+    "hazards": 113
   }
 ]

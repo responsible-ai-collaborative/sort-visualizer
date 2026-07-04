@@ -65,18 +65,12 @@ export function SortAssembly({ activeStep }: { activeStep: string | null }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: tDur }}
-            className="grid grid-cols-1 gap-4"
+            className="grid grid-cols-1 gap-2 md:gap-4"
           >
             {LETTERS.map((l, i) => (
-              <Box
-                key={l.key}
-                letter={l}
-                filled={state.contents[l.key]}
-                tDur={tDur}
-                index={i}
-              />
+              <Box key={l.key} letter={l} filled={state.contents[l.key]} tDur={tDur} index={i} />
             ))}
-            <div className="mt-2 border-t border-rule pt-3 font-mono text-[10px] uppercase tracking-[0.14em] text-ink-faint">
+            <div className="hidden md:block md:mt-2 border-t border-rule md:pt-3 font-mono text-[12px] text-ink-faint">
               Among [S] that [O], how many [R] per [T]?
             </div>
           </motion.div>
@@ -91,16 +85,12 @@ export function SortAssembly({ activeStep }: { activeStep: string | null }) {
             transition={{ duration: tDur }}
             className="text-center"
           >
-            <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-faint mb-4">
+            <div className="font-display italic text-[16px] text-ink-faint mb-4">
               The monitoring question
             </div>
-            <p
-              className="font-display text-[22px] md:text-[26px] leading-[1.32] text-ink"
-            >
-              Among <Em>{chatbotCase.mq.subject}</Em>{" "}
-              <Em>{chatbotCase.mq.opportunity}</Em>, how many{" "}
-              <Em>{chatbotCase.mq.riskEvent}</Em>{" "}
-              <Em>{chatbotCase.mq.timeframe}</Em>?
+            <p className="font-display text-[22px] md:text-[26px] leading-[1.32] text-ink">
+              Among <Em>{chatbotCase.mq.subject}</Em> <Em>{chatbotCase.mq.opportunity}</Em>, in how
+              many do <Em>{chatbotCase.mq.riskEvent}</Em> <Em>{chatbotCase.mq.timeframe}</Em>?
             </p>
           </motion.div>
         ) : null}
@@ -132,10 +122,8 @@ function Box({
       >
         {letter.key}
       </div>
-      <div className="flex-1 border border-rule bg-[rgba(255,255,255,0.5)] min-h-[60px] py-2.5 px-3">
-        <div className="font-mono text-[9px] uppercase tracking-[0.16em] text-ink-faint">
-          {letter.name}
-        </div>
+      <div className="flex-1 border border-rule bg-[rgba(255,255,255,0.5)] md:min-h-[60px] py-1.5 md:py-2.5 px-3">
+        <div className="font-display italic text-[13px] text-ink-faint">{letter.name}</div>
         <AnimatePresence mode="wait">
           {filled ? (
             <motion.div

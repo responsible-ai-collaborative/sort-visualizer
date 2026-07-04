@@ -2,13 +2,15 @@
 
 import { QuadrantChart, type DotProps } from "@/components/viz/QuadrantChart";
 import { resolveAct4 } from "@/lib/step-config";
+import { chatbotCase } from "@/lib/case-data";
 
-// Chatbot lands in the escalating quadrant: Ĥ↑, E↑. Upper-right.
+// The chatbot case lands in the mitigating quadrant: Ĥ ↓ (×~0.55), E ↑ (×~3).
+// Lower-right. The deep token keeps the dot legible on the light background.
 const CHATBOT_DOT: DotProps = {
   x: 0.78,
-  y: 0.22,
-  color: "var(--escalating)",
-  label: "Chatbot",
+  y: 0.78,
+  color: "var(--mitigating-deep)",
+  label: chatbotCase.shortLabel,
   caseLabel: "Chatbot · self-harm",
 };
 
@@ -18,7 +20,9 @@ export function Act4Quadrant({ activeStep }: { activeStep: string | null }) {
     <QuadrantChart
       activeQuadrant={state.activeQuadrant}
       dot={state.dot ? CHATBOT_DOT : null}
+      weights={state.weights ? chatbotCase.classification.weights : null}
       showVerdict={state.verdict}
+      verdictDetail={chatbotCase.classification.verdict}
     />
   );
 }

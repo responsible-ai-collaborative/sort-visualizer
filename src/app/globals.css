@@ -13,6 +13,7 @@
   --accent-soft: #8aa6c0; /* primary-light */
   --escalating: #011934; /* primary */
   --mitigating: #8aa6c0; /* primary-light */
+  --mitigating-deep: #44688f; /* legible variant for dot fills / verdict text */
   --concentrating: #000f1f; /* primary-dark */
   --receding: #898a8d; /* gray */
   --note: #000f1f;
@@ -30,6 +31,7 @@
   --color-accent-soft: var(--accent-soft);
   --color-escalating: var(--escalating);
   --color-mitigating: var(--mitigating);
+  --color-mitigating-deep: var(--mitigating-deep);
   --color-concentrating: var(--concentrating);
   --color-receding: var(--receding);
   --color-note: var(--note);
@@ -44,38 +46,57 @@ html {
   /* scroll-snap-type is set via inline style in layout.tsx. */
 }
 
-/* Steps are always snap targets aligned to center. */
+/* Steps and landmarks (Header, Closing) are firm snap stops — mandatory
+   snap on <html> (see layout.tsx) advances one beat per gesture. Steps snap
+   to center; the Header snaps to start and the Closing to end so the page's
+   absolute top and bottom stay reachable even when those landmarks grow
+   taller than the viewport (center-aligning a taller-than-viewport landmark
+   puts its snap rest below scrollTop 0, clipping the top for good).
+   Trade-off: steps taller than the viewport can clip on short screens, and
+   programmatic jumps re-snap to the nearest step. */
+[data-step],
+[data-snap-landmark] {
+  scroll-snap-stop: always;
+}
+
 [data-step] {
   scroll-snap-align: center;
 }
 
-/* scroll-snap-stop is set via body attribute in layout.tsx. */
-body[data-snap-stop="always"] [data-step] {
-  scroll-snap-stop: always;
-}
-body[data-snap-stop="normal"] [data-step] {
-  scroll-snap-stop: normal;
+/* On small screens (single-column scrolly layout) the viz is pinned to the
+   top ~40% of the viewport and step text scrolls beneath it, so steps snap
+   to the viewport bottom instead of center — the text then rests exactly in
+   the space below the pinned viz. Keep in sync with the max-md heights in
+   ScrollySection.tsx. */
+@media (max-width: 767px) {
+  [data-step] {
+    scroll-snap-align: end;
+  }
 }
 
-/* Landmarks (Header, Pivot, Closing) only become snap targets when the
-   panel toggle is on — this lets the user A/B the feel. */
-body[data-landmark-snap="on"] [data-snap-landmark="start"] {
+[data-snap-landmark="start"] {
   scroll-snap-align: start;
 }
-body[data-landmark-snap="on"] [data-snap-landmark="center"] {
-  scroll-snap-align: center;
-}
-body[data-landmark-snap="on"] [data-snap-landmark="end"] {
+
+[data-snap-landmark="end"] {
   scroll-snap-align: end;
 }
-body[data-landmark-snap="on"][data-snap-stop="always"] [data-snap-landmark] {
-  scroll-snap-stop: always;
+
+/* A viz sets data-viz-obscures-caption while an overlay state (e.g. the
+   act-1 pipeline flow) covers the space the figure caption sits in; fade the
+   caption out rather than let the overlay collide with it. */
+figure:has([data-viz-obscures-caption]) figcaption {
+  opacity: 0;
 }
 
 body {
   background: var(--bg);
   color: var(--ink);
-  font-family: var(--next-font-body), system-ui, -apple-system, sans-serif;
+  font-family:
+    var(--next-font-body),
+    system-ui,
+    -apple-system,
+    sans-serif;
   font-size: 17px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;

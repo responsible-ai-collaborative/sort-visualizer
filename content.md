@@ -1,13 +1,15 @@
 # SORT Framework Scrollytelling — Site Copy
 
-A scrollytelling explainer of the SORT framework from Slattery et al. (2026), *Classification of AI incident trajectories*.
+A scrollytelling explainer of the SORT framework from Mengesha et al. (2026), *A Pragmatic Classification Framework for AI Incident Monitoring*.
+
+This file is the prose reference for the site. It is not consumed at build time; the step copy lives in `src/content/`. Keep the two in sync.
 
 ---
 
 ## Site metadata
 
 - **Title:** Separating harm from exposure — a walk through the SORT framework
-- **Description:** A scrollytelling explainer of the SORT framework for classifying AI incident trajectories, using the conversational-AI self-harm case study and an autonomous-vehicle contrast.
+- **Description:** A scrollytelling explainer of a pragmatic classification framework for AI incident monitoring, walked through its conversational-AI self-harm case study — from raw incident counts to a probabilistic trajectory classification.
 
 ---
 
@@ -18,7 +20,7 @@ A scrollytelling explainer of the SORT framework from Slattery et al. (2026), *C
 # AI incident reports are climbing.
 ## *What does that actually mean?*
 
-Raw incident counts conflate three things: more deployed AI, more reporting infrastructure, and more harm per use. A new framework from Slattery et al. (2026) separates them — and in doing so produces opposite verdicts on two harms that look superficially similar.
+Raw incident counts conflate three things: more deployed AI, more reporting infrastructure, and more harm per use. A new framework from Mengesha et al. (2026) separates them — and reaches a verdict on AI chatbots and self-harm that the headlines would never suggest.
 
 — Scroll to begin —
 
@@ -28,7 +30,7 @@ Raw incident counts conflate three things: more deployed AI, more reporting infr
 
 ### Step 01: Reports are climbing.
 
-The chart on the right is the most-cited evidence in current AI-risk discourse: monthly counts from the two major public incident databases, climbing year over year. By 2026 the curve looks alarming.
+The chart on the right is the most-cited evidence in current AI-risk discourse: monthly counts of AI incidents and hazards from the OECD's public monitor, climbing year over year. By late 2025 the curve looks alarming.
 
 But before reacting to the slope, ask what it is actually measuring.
 
@@ -45,9 +47,9 @@ These three readings imply very different policy responses.
 
 ### Step 03: Separate harm from exposure.
 
-Slattery et al. (2026) propose a pipeline that refuses to pick between those three readings until *exposure* — how many people actually interact with the system — has been estimated separately from *harm*.
+Mengesha et al. (2026) propose a pipeline that refuses to pick between those three readings until *exposure* — the opportunity for harm to occur — has been estimated separately from *harm*.
 
-The framework has four steps: define a precise monitoring question, estimate harm and exposure independently, take their ratio, and classify the resulting trajectory.
+The framework proceeds in three parts: define a precise monitoring question, estimate harm and exposure trends independently, and classify the resulting pair of trends into a governance-relevant trajectory.
 
 **Pipeline caption (left-to-right):**
 
@@ -55,13 +57,23 @@ The framework has four steps: define a precise monitoring question, estimate har
 - Recorded incidents — *AIID · OECD AIM*
 - Monitoring questions — *SORT framework*
 - Harm · Exposure — *Estimation procedure*
-- Classification — *2 × 2 trajectory*
+- Classification — *Trajectory category*
+
+---
+
+## Framework output preview
+
+### Step 04: The output is a trajectory, not a number.
+
+Every monitoring question ends up in one of four trajectory categories, built from two directional trends: harm-per-exposure and exposure. Each category carries a distinct governance implication — from *continue strategy* to *urgent attention*.
+
+And when the evidence cannot support even a directional call, the framework does something raw counts never do: it *abstains*. Keep that fifth outcome in mind — it returns at the end.
 
 ---
 
 ## Act 2 — Building the monitoring question
 
-### Step 04: A monitoring question has four parts.
+### Step 05: A monitoring question has four parts.
 
 SORT — *Subject, Opportunity, Risk event, Timeframe* — is the paper's structured analogue to PICO in evidence-based medicine. It forces analytical choices to be explicit rather than buried in framing.
 
@@ -75,138 +87,129 @@ Each box on the right holds one piece of the question. They will fill in one at 
 
 **Template caption:** Among [S] that [O], how many [R] per [T]?
 
-### Step 05: Subject: who or what is at risk.
+### Step 06: Subject: who or what is at risk.
 
-The subject is the population whose welfare is at stake — not the system causing the harm, but the people the harm reaches. Choose a population narrow enough to be measurable, broad enough to capture the phenomenon you actually care about.
+The subject need not be a population of people — it can be systems, content, deployments, or *conversations*. The paper's choice here is deliberately fine-grained: *conversations between US users and conversational AI systems*.
 
-For this case: *people living in the United States*. The choice of country fixes the available denominators downstream — census, regulatory filings, survey instruments.
+Counting conversations rather than people fixes the unit of analysis for everything downstream. Exposure will be a conversation count, and harm a count of conversations that go wrong.
 
-### Step 06: Opportunity: what creates the exposure.
+### Step 07: Opportunity: what creates the exposure.
 
 Opportunity isolates the specific mechanism through which the subject is exposed to the harm. It is not "uses AI" — that would cast too wide a net. It is the precise interaction pattern that makes the risk event possible.
 
-Here: *using conversational AI systems for emotional support*. That tightens scope considerably and tightens the proxy choices we can use to estimate exposure later.
+Here: conversations *in which users seek support regarding suicidal ideation or self-harm*. That tightens scope considerably and pins down which proxy sources can stand in for exposure later.
 
-### Step 07: Risk event: the specific harm.
+### Step 08: Risk event: the specific harm.
 
-The risk event is the countable harm itself — phrased so an incident report can be matched against it. The paper specifies: *receiving responses that encourage, or fail to discourage, suicidal ideation or self-harm*.
+The risk event is the countable harm itself — phrased so an incident report can be matched against it. The paper specifies: the AI system *encourages, or fails to discourage, suicidal ideation or self-harm*.
 
 A vaguer phrasing — "AI causes mental health harms" — would inflate the number of partial matches and make the trend signal noisier.
 
-### Step 08: Timeframe: the unit of comparison.
+### Step 09: Timeframe: the unit of comparison.
 
-Timeframe defines the observation window. *Per calendar year* is the default chosen here because the underlying databases publish in year-resolution and trends are what the framework is trying to surface.
+Timeframe defines the observation window. *Per calendar year* is chosen here, comparing T1 = 2024 against T2 = 2025 — the framework always compares two periods to produce a trend, not an absolute level.
 
-### Step 09: Assembled, the monitoring question reads:
+### Step 10: Assembled, the monitoring question reads:
 
-> Among *people living in the United States* *who use conversational AI systems for emotional support*, how many *receive responses that encourage, or fail to discourage, suicidal ideation or self-harm* *per calendar year*?
+> Among *conversations between US users and conversational AI systems* *in which users seek support regarding suicidal ideation or self-harm*, in how many does the AI *encourage, or fail to discourage, suicidal ideation or self-harm* *per calendar year*?
 
 That single sentence is the unit of analysis. Everything downstream — which databases to search, which proxies to allow, what counts as a full match — flows from its exact phrasing.
 
-> **Why this matters.** A monitoring question that is too narrow yields too few matches for a reliable trend. Too broad and the matches blur unrelated harms. The paper's interactive SORT tool exists to help analysts iterate toward questions that are both precise *and* answerable from available data.
+> **Why this matters.** A monitoring question that is too narrow yields too few matches for a reliable trend. Too broad and the matches blur unrelated harms. A high ratio of partial to full matches in the databases is the framework's built-in warning that a question may be overspecified.
 
 ---
 
-## Act 3 — Estimating the two trends
+## Estimation tiers
 
-### Step 10: Harm, source one: the AI Incident Database.
+### Step 11: Four tiers of evidence.
 
-With no authoritative single source for this monitoring question, the procedure begins at *Tier 2* — combining proxy measures to construct bounds.
+Answering the monitoring question means estimating harm and exposure across both periods. The paper grades every estimate by the strength of its evidence:
 
-An LLM-assisted scan of the AIID returns *2 full matches in 2024* and *17 in 2025*. Two matches in 2024 is below the threshold for a reliable signal, so this database alone cannot resolve the trend. A second source is needed.
-
-### Step 11: Source two: OECD AIM joins the lower bound.
-
-The OECD AI Incidents Monitor uses a different sourcing pipeline. After filtering for US-based incidents involving conversational AI resulting in physical or psychological injury, the LLM analysis yields *8 full matches in 2024* (harm count range 9–17) and *55 in 2025* with a harm count in the hundred-thousand range — an explosive increase in the implied severity.
-
-Two independent lower bounds, both directionally consistent. The trend claim begins to firm up.
-
-### Step 12: An upper bound from a single proxy.
-
-For an upper-bound estimate, the paper draws on OpenAI's own disclosure: approximately *0.15% of weekly active users* engage in conversations indicating potential suicidal planning or intent — more than one million people per week globally.
-
-That number is not a lower-bound match count. It is a ceiling derived from a proxy proportion. The visual treatment on the right shows the two kinds of evidence differently for that reason.
-
-> **Confidence tier — harm.** Both bounds move in the same direction, but the AIID count for 2024 falls below the three-match threshold and the OpenAI ceiling reflects global rather than US use. The trend claim is *increasing — Tier 2 · Low*. Expert elicitation or close monitoring of 2026 data would tighten this considerably.
-
-### Step 13: Exposure has no direct measurement.
-
-We rarely know how many people interact with a particular AI system, how many decisions are automated, or how many conversations take place. Exposure estimation typically relies on *Tier 2 methods* that combine multiple partial sources.
-
-For this case the paper proxies emotional-support use via Pew Research data on adjacent ChatGPT uses, then scales by an estimate of ChatGPT's share of the broader LLM market.
-
-### Step 14: The Pew proxy, plus a scaling assumption.
-
-Pew Research data on ChatGPT use *"to learn new things"* and *"for entertainment"* by age group serves as the proxy frontier. The mid-point of those two shares becomes the point estimate; the shares are taken separately for the lower and upper bounds.
-
-To extend from ChatGPT to all conversational AI, the paper applies a market-share scalar: *80%* at the point estimate, *90%* and *70%* for the upper and lower bounds.
-
-> **Assumption stack — exposure.** The Pew share answering "for entertainment" serves as the lower bound on emotional-support use; the share answering "to learn new things" serves as the upper bound; the mid-point of the two serves as the central estimate. These shares are then applied uniformly to the US census population in matching age groups, and scaled by an assumed ChatGPT market share of LLM personal use.
-
-### Step 15: Exposure: 64M in 2024, 88M in 2025.
-
-Combining the assumption stack with the Pew bucket data and the US census yields a central estimate of *64 million* people in 2024 (plausible range 54–73M) and *88 million* in 2025 (75–99M). Order-of-magnitude estimate: 10⁸.
-
-The trend is *increasing — approximately 40% year on year*. Confidence tier 2 · Medium: the bounds are derived from reasonable sources, the assumptions are explicit, and the directional reading is robust to the moves used to construct them.
+- **Tier 1 — Direct measurement.** An authoritative source: crash filings, pharmacovigilance registries, platform transparency reports. High confidence.
+- **Tier 2 — Combine proxy measures.** No single source suffices; partial sources are combined into a point estimate. Medium confidence.
+- **Tier 3 — Expert elicitation.** No quantitative sources at all; domain experts bound a plausible range. Low confidence.
+- **Tier 4 — Abstain.** The plausible range spans orders of magnitude, or experts cannot converge. Principled abstention is a valid finding in its own right.
 
 ---
 
-## Act 4 — Classification (chatbot)
+## Act 3 — Estimating harm
 
-### Step 16: The simplest classification is a 2 × 2 grid.
+### Step 12: Harm, source one: the AI Incident Database.
 
-The grid on the right takes the exposure trend (E) and the harm-per-exposure trend (Ĥ) as its two axes, producing four governance-relevant categories:
+Authoritative single sources rarely exist for AI harms, so the procedure starts with what incident databases can supply: a hard *lower bound* — the true harm cannot fall below what has already been recorded.
 
-- *Escalating* — both Ĥ and E are increasing. Urgent attention.
-- *Mitigating* — Ĥ is decreasing while E is increasing. Continue monitoring.
-- *Concentrating* — Ĥ is increasing while E is decreasing. Targeted measures.
-- *Receding* — neither dimension is worsening. Continue strategy.
+An LLM-assisted scan of the AIID returns *2 full matches in 2024* (assessed harm count: two) and *12 in 2025* — but the 2025 harm count explodes to *10,014–110,025*, because three of the matches are composite narratives: an APA warning about AI chatbots on Character.AI, an OpenAI statement on users showing signs of suicidal ideation, and an assessment of chatbot personas designed to promote self-harm.
 
-### Step 17: The chatbot case lands in the top-right.
+### Step 13: Source two: OECD AIM joins the lower bound.
 
-The OECD AIM signal grew sharply between 2024 and 2025, while exposure grew by approximately 40%. Harm rose faster than exposure — so harm-per-exposure is *increasing* against a rising exposure base.
+The OECD AI Incidents Monitor uses a different sourcing pipeline. Filtered for US-based incidents involving chatbots or content generation resulting in death or physical or psychological injury, LLM analysis yields *8 full matches in 2024* and *77 in 2025*.
 
-Both arrows point up. The dot sits in the escalating quadrant.
+Most matching entries are duplicates, lawsuits, or composite narratives. Removing them leaves *1 individual case of suicide in 2024* and *3 individual cases of suicide, murder-suicide or self-harm in 2025*. Two independent floors, both rising — but floors this sparse cannot carry a trend claim alone.
 
-### Step 18: Verdict: Escalating.
+### Step 14: From floor to point estimate.
 
-Both the population at risk and the harm per unit exposure are growing. The framework's recommendation: *urgent attention* — expanded monitoring, active investigation into causal drivers, and possibly regulatory intervention.
+For a Tier 2 point estimate, the paper turns to OpenAI's own disclosures: around *0.15% of weekly active users* have conversations with explicit indicators of potential suicidal planning or intent — and, crucially, the disclosed ratio of *desired to undesired* model responses on self-harm conversations improved from roughly *40:60* (January 2024 – July 2025) to *80:20* (August–September 2025) to *92:8* (October–December 2025).
 
-The confidence tier is Low; tightening it would require either mandatory disclosure of conversational-AI use or a dedicated survey instrument. Both fall outside the current data environment.
+Combining those ratios with estimated conversation volumes gives a point estimate of total harm: conversations in which the model's response was undesired.
 
----
+### Step 15: Harm: ≈2.4M in 2024, ≈4M in 2025.
 
-## Pivot
+The point estimate lands at roughly *2.4 million* harmful conversations in 2024 and *4 million* in 2025 — a trend of *increasing, ×~1.7*.
 
-> Same framework · Different case · Different verdict
-
-## AV crashes are rising too. Why does the framework call them *mitigating*?
-
-The same procedure — define a monitoring question, estimate harm and exposure separately, classify — is now applied to a second case. The numbers come from NHTSA's mandatory reporting and the Autonomous Vehicle Industry Association. Watch where the dot lands.
+> **Confidence tier — harm.** Tier 2 · Medium: derived from reasonable publicly available proxy sources. The lower-bound estimates, although individually unrepresentative, are directionally consistent with the point estimate. The choice of harm type has a low inclusion probability in incident databases, which is why the floors sit six orders of magnitude below the point estimate.
 
 ---
 
-## Act 5 — AV contrast
+## Act 3 — Estimating exposure
 
-### Step 19: Now apply the same framework to autonomous vehicles.
+### Step 16: Exposure: a funnel of proxies.
 
-NHTSA's mandatory reporting puts the procedure at *Tier 1* for harm: ADS incidents rose from *526 in 2024* to *975 in 2025*, an 85.4% increase — primarily driven by property-damage cases.
+Exposure is *the opportunity for harm to occur* — here, the number of conversations matching the opportunity, not the number of users. No one publishes that number, so it is assembled from a funnel of partial sources:
 
-A headline that, by itself, would suggest the framework's most urgent classification. The chatbot dot from the previous section is ghosted for comparison.
+- ChatGPT weekly active users: *140M* (Jan 2024) → *300M* (Jan 2025) → *≈850M* (Dec 2025)
+- Scaled up by OpenAI's share of generative-AI web traffic (*~75% falling to ~60%*) to cover all conversational AI
+- Scaled down to the *~18%* of users based in the US
 
-### Step 20: But exposure doubled in the same period.
+Interpolating monthly gives *≈34 million* US weekly active users across conversational AI platforms in January 2024, rising to *≈243 million* by December 2025.
 
-The Autonomous Vehicle Industry Association reports 145M miles driven on US public roads from June 2024 to May 2025, compared to 75M the previous year — roughly a doubling. Waymo's paid-ride velocity grew 80% in eight months in 2025.
+### Step 17: Exposure: ≈4M conversations in 2024, ≈12M in 2025.
 
-The point estimate puts AV miles at *78M in 2024* and *156M in 2025*. Exposure grew approximately 100%.
+Applying OpenAI's 0.15% rate to those user counts, week by week, and summing each year: approximately *4 million* conversations matching the opportunity in 2024 and *12 million* in 2025.
 
-> **Exposure assumption stack — AV.** The point estimate uses the AVIA anchor and assumes the monthly growth rate implied by Waymo's 2025 trajectory. The lower bound uses AVIA's May 2024 and May 2025 totals as whole-year proxies. The upper bound increases the point estimate by 10%.
+The trend is *increasing, ×~3*.
 
-### Step 21: Verdict: Mitigating.
+> **Confidence tier — exposure.** Tier 2 · Medium: reasonable public proxies, explicit assumptions. The main limitation is aggregation bias: ChatGPT data proxies for all conversational AI platforms, and conversations are treated as equivalent regardless of user age — while OpenAI's share of a sharply growing market fell from ~80% to ~60% over the period.
 
-Exposure growth (≈100%) outpaces harm growth (≈85%), yielding a *decreasing* harm-per-exposure trend against rising exposure. Fewer incidents occur per million vehicle-miles than the year before.
+---
 
-Same procedure. Comparable headline counts. Opposite governance implication. The framework's value is that it makes the second number — the exposure denominator — visible enough to change the verdict.
+## Act 4 — Classification
+
+### Step 18: Take the ratio: the dot lands in Mitigating.
+
+The grid takes the exposure trend (E) and the harm-per-exposure trend (Ĥ) as its two axes. Harm grew ×1.7 while exposure grew ×3 — so harm *per unit of exposure* fell by a factor of about *0.55*, against a rising exposure base.
+
+Ĥ down, E up: the dot lands in the *mitigating* quadrant. Per conversation, these systems are getting safer — even as more people than ever have the conversations.
+
+- *Escalating* — Ĥ ↑ · E ↑. Urgent attention.
+- *Mitigating* — Ĥ ↓ · E ↑. Monitor closely.
+- *Concentrating* — Ĥ ↑ · E ↓. Targeted measures.
+- *Receding* — Ĥ ↓ · E ↓. Continue strategy.
+
+### Step 19: How confident is that placement?
+
+The estimates behind the dot carry real uncertainty — a factor of ~2 on each harm estimate, ~1.5 on each exposure estimate. The paper treats each quantity as log-normal, samples all four by Monte Carlo, and classifies every draw. The result is not a cell but a *distribution*:
+
+- **Mitigating — 58.6%**
+- **Unclassifiable — 31.6%**
+- **Escalating — 9.8%**
+
+The fifth outcome, *Unclassifiable*, absorbs the draws where a trend is too weak to call. Uncertainty appears as probability mass, not as false confidence.
+
+### Step 20: Verdict: Mitigating — read alongside absolute harm.
+
+Per-unit-exposure harm is decreasing while more people are exposed: existing safeguards appear to be working, and the classification is *Mitigating* at Medium confidence.
+
+But the classification says nothing about absolute scale. Roughly four million harmful conversations is *more* than the year before — a Mitigating trajectory can coexist with large and growing absolute harm. The framework's instruction: always read the trajectory alongside the absolute estimates. A naive reading of the incident counts would have called this system more dangerous; the framework says it is becoming safer per use while the harm still grows.
 
 ---
 
@@ -214,13 +217,13 @@ Same procedure. Comparable headline counts. Opposite governance implication. The
 
 > What the framework reveals
 
-## Two harms with comparable headline counts, two opposite trajectories.
+## The headlines say chatbot harm is exploding. The framework says both more and less than that.
 
-Conversational AI and self-harm gets *escalating*: both exposure and harm-per-exposure are rising. Autonomous vehicle crashes get *mitigating*: exposure is rising faster than harm. The headline count alone could not have told the difference between them.
+Incident counts for conversational AI and self-harm rose sharply between 2024 and 2025 — the naive reading is that chatbots are becoming more dangerous. Separate exposure from harm and the picture inverts: use grew three times over while harm grew 1.7×, so each conversation became meaningfully *safer*. And yet absolute harm still rose. Both facts are true at once, and only the decomposition can hold them together.
 
-The point of the framework isn't to settle the verdict. It's to make the assumption stack visible — the bound construction, the proxy choices, the confidence tier — so that policy makers and practitioners can argue about the moves, not just the conclusion.
+The point of the framework isn't to settle the verdict — nearly a third of the probability mass lands on *Unclassifiable*, and the paper says so. It's to make the assumption stack visible — the bound construction, the proxy choices, the uncertainty factors — so that policy makers and practitioners can argue about the moves, not just the conclusion.
 
-— Slattery et al. (2026) · Classification of AI incident trajectories —
+— Mengesha et al. (2026) · A Pragmatic Classification Framework for AI Incident Monitoring —
 
 ---
 
@@ -228,83 +231,50 @@ The point of the framework isn't to settle the verdict. It's to make the assumpt
 
 ### Chatbot case study
 
-**Monitoring question:** Among people living in the United States who use conversational AI systems for emotional support, how many receive responses that encourage, or fail to discourage, suicidal ideation or self-harm per calendar year?
+**Monitoring question:** Among conversations between US users and conversational AI systems in which users seek support regarding suicidal ideation or self-harm, in how many does the AI encourage, or fail to discourage, suicidal ideation or self-harm, per calendar year?
+
+**Time periods:** T1 = 2024 (1 Jan–31 Dec 2024); T2 = 2025 (1 Jan–31 Dec 2025).
 
 #### Harm sources
 
 | Source | Type | 2024 | 2025 |
 |---|---|---|---|
-| AIID (AI Incident Database) | Count — lower bound | 2 full matches | 17 full matches |
-| OECD AIM (AI Incidents Monitor) | Count — lower bound | 8 full matches (harm count 9–17) | 55 full matches (harm count ~100k range) |
-| OpenAI weekly-user report | Ceiling — upper bound | — | ≈ 1M / week globally (0.15% of WAU) |
+| AIID (AI Incident Database) | Count — lower bound | 2 full matches (harm count 2) | 12 full matches (harm count 10,014–110,025, driven by composite narratives) |
+| OECD AIM (AI Incidents Monitor) | Count — lower bound | 8 full matches; de-duplicated: 1 suicide case | 77 full matches; de-duplicated: 3 cases of suicide, murder-suicide or self-harm |
+| OpenAI disclosures | Point estimate — Tier 2 | desired:undesired ≈ 40:60 | 40:60 → 80:20 (Aug–Sep) → 92:8 (Oct–Dec) |
 
-**Harm trend:** Increasing — Tier 2 · Low confidence.
+#### Harm point estimate
 
-**Harm summary:** OECD AIM results increase over consecutive time periods. The limited AIID matches and upper-bound proxy likely reflect limited awareness and detection methods in 2024. Given the shifts in measurement and mitigation, expert elicitation or close monitoring of 2026 data is necessary before drawing high-confidence conclusions.
+| Year | Estimate |
+|---|---|
+| 2024 | ≈2.4M harmful conversations |
+| 2025 | ≈4M harmful conversations |
 
-#### Exposure sources
+**Harm trend:** Increasing ×~1.7 — Tier 2 · Medium confidence.
 
-- **Pew Research (Sidoti & McClain, 2025)** — ChatGPT use "to learn new things" and "for entertainment" by age bucket, 2024–2025. Lower bound: "for entertainment" only. Upper bound: "to learn new things" only.
-- **FATJOE — LLM market-share statistics** — ChatGPT holds ≈ 80% market share of LLM personal use. Point: 80%. Lower: 70%. Upper: 90%.
+**Harm summary:** Derived from reasonable publicly available proxy sources. The lower-bound estimates, although individually unrepresentative, are directionally consistent with the point estimates. Composite narratives account for the four-to-five order-of-magnitude spread in the AIID harm counts.
 
-#### Exposure assumption stack (verbatim)
+#### Exposure funnel (proxy stack)
 
-1. The Pew share answering "for entertainment" serves as the lower bound on emotional-support use; the share answering "to learn new things" serves as the upper bound; the mid-point of the two serves as the central estimate.
-2. These shares apply uniformly to the US census population in matching age groups.
-3. ChatGPT accounts for 80% of LLM personal use (90% upper / 70% lower) — applied as a scalar to extend ChatGPT shares to all conversational AI use.
-
-#### Exposure estimates
-
-| Year | Central | Plausible range |
-|---|---|---|
-| 2024 | 64M | 54–73M |
-| 2025 | 88M | 75–99M |
-
-**Exposure trend:** Increasing (~40% YoY) — Tier 2 · Medium confidence. Order of magnitude: 10⁸.
-
-**Classification:** *Escalating*.
-
-**Verdict:** Both the population at risk and the harm per unit exposure are growing. This demands an urgent response: expanded monitoring, active investigation into causal drivers, and possibly regulatory intervention.
-
----
-
-### AV case study
-
-**Monitoring question:** Among autonomous vehicles (SAE Levels 3 through 5) on US public roads, how many experience incidents involving injury or property damage per million vehicle-miles, per calendar year?
-
-#### Harm source
-
-| Source | Type | 2024 | 2025 |
-|---|---|---|---|
-| NHTSA (US National Highway Traffic Safety Administration) | Mandatory — Tier 1 | 526 ADS incidents | 975 ADS incidents (~85.4% increase) |
-
-**Harm trend:** Increasing — Tier 1 · High confidence.
-
-**Harm summary:** Tier 1 — mandatory reporting ensures NHTSA provides a comprehensive dataset for analysis.
-
-#### Exposure sources
-
-- **AVIA — 2025 State of AV report** — 145M miles on US public roads from June 2024 to May 2025, vs. 75M in 2023–2024 — roughly doubling. Used as the point estimate's anchor for whole-year totals.
-- **Waymo / CNBC paid-ride reports** — ≈ 250,000 rides/week April 2025 → ≈ 450,000 by December 2025 (80% in eight months). Implies a monthly growth rate applied to the AVIA central estimate.
-
-#### Exposure assumption stack (verbatim)
-
-1. The point estimate uses the AVIA anchor and assumes the monthly growth rate implied by Waymo's 2025 trajectory.
-2. The lower bound uses AVIA's May 2024 and May 2025 endpoint totals for the whole years 2024 and 2025 respectively.
-3. The upper bound increases the point estimate by 10%, mirroring the gap between the lower bound and the point estimate.
+1. ChatGPT weekly active users: 140M (Jan 2024) → 300M (Jan 2025) → ≈850M (Dec 2025).
+2. OpenAI share of generative-AI web traffic ~75% → ~60% — scales ChatGPT figures to all conversational AI platforms.
+3. ~18% of ChatGPT users are US-based → ≈34M (Jan 2024) → ≈243M (Dec 2025) US weekly active users across conversational AI.
+4. ≈0.15% of weekly active users have conversations matching the opportunity (OpenAI disclosure), summed weekly across each year.
 
 #### Exposure estimates
 
-| Year | Central | Plausible range |
-|---|---|---|
-| 2024 | 78M miles | 75–86M |
-| 2025 | 156M miles | 145–171M |
+| Year | Estimate |
+|---|---|
+| 2024 | ≈4M conversations |
+| 2025 | ≈12M conversations |
 
-**Exposure trend:** Increasing (~100%) — Tier 2 · Medium confidence. Order of magnitude: 10⁸.
+**Exposure trend:** Increasing ×~3 — Tier 2 · Medium confidence.
 
-**Classification:** *Mitigating*.
+**Classification:** *Mitigating* — Ĥ ↓ ×~0.55 (1.7/3) against E ↑ ×~3. Confidence: Medium (lowest of the contributing estimates).
 
-**Verdict:** Exposure growth (≈ 100%) outpaces harm growth (≈ 85%), yielding a decreasing harm-per-exposure trend [Ĥ ↓] against rising exposure [E ↑]. Fewer incidents occur per million vehicle-miles, suggesting current safeguards keep pace with deployment. Absolute harm may still rise and warrants continued monitoring.
+**Probabilistic weights** (uncertainty factors ~2 on harm, ~1.5 on exposure): Mitigating 58.6% · Unclassifiable 31.6% · Escalating 9.8%.
+
+**Verdict:** Per-unit-exposure harm is decreasing while exposure rises — existing safeguards appear to be working. Absolute harm is still increasing; a Mitigating classification must always be read alongside the absolute estimates.
 
 ---
 
@@ -316,16 +286,24 @@ The point of the framework isn't to settle the verdict. It's to make the assumpt
 | **Mitigating** | Ĥ ↓ · E ↑ | Monitor closely | More people are exposed, but harm per unit exposure is decreasing — existing safeguards appear to be working. Continued monitoring warranted; a failure of current controls could shift the trajectory to escalating. |
 | **Concentrating** | Ĥ ↑ · E ↓ | Targeted measures | Fewer people are exposed, but those who face exposure face worse outcomes. Calls for targeted protective measures and investigation into why harm is intensifying. |
 | **Receding** | Ĥ ↓ · E ↓ | Continue strategy | Neither dimension is worsening. Additional intervention may not be required; where specific measures preceded this trajectory, maintaining or extending them to related domains may be worthwhile. |
+| **Unclassifiable** | — | Principled abstention | One or both trends cannot be determined with enough certainty to place the question on the grid. A valid finding in its own right: current evidence cannot support even a directional estimate. |
 
 ---
 
 ### Visualization labels
 
+#### Design voice (site-wide)
+
+- Display face: Newsreader (serif, italic voice for labels/annotations); body: Figtree; mono: JetBrains Mono, **data only** — no all-caps tracked eyebrow labels anywhere.
+- Every viz carries a paper-style figure caption: *Fig. N — caption*, numbered by section order (1–7).
+- Labels, roles, and captions are sentence case, set in italic Newsreader.
+
 #### Act 1 — Incidents chart
-- **Y axis label:** COUNT / MO
-- **X axis:** 2020 — 2026
+- **Y axis label:** count / month
+- **X axis:** Dec 2020 — Dec 2025
 - **Series legend:** Incidents (6-mo avg) · Hazards (6-mo avg) · Total (monthly)
-- **Reference line:** CHATGPT LAUNCH (Dec 2022)
+- **Reference line:** ChatGPT launch (Dec 2022), italic annotation
+- **Data note:** monthly series exported from the OECD AI Incidents and Hazards Monitor (AIM) — actual counts, not the old Figure-1 approximation. Hovering a bar shows a tooltip with that month's incidents / hazards / total.
 
 #### Act 2 — SORT assembly
 - **Caption when monitoring question is shown:** The monitoring question
@@ -333,20 +311,20 @@ The point of the framework isn't to settle the verdict. It's to make the assumpt
 #### Act 3 — Estimation panels
 - **Panel headings:** Harm · Exposure
 - **Panel sub-labels:** Variable H · Variable E
-- **AIID card tag:** AIID — *AI Incident Database* — "Tier 2 · proxy construction · lower bound"
-- **OECD card tag:** OECD AIM — *AI Incidents Monitor* — "Harm count 9–17 (2024) → ~100k range (2025)"
-- **OpenAI card tag:** OpenAI — *Weekly user report* — "≈ 1M / week globally · Upper bound" — "Upper bound — proxy from disclosed proportion. No upper bound for 2024 was disclosed."
-- **Pew card tag:** Pew — *Sidoti & McClain, 2025* — "Category-adjacent proxy"
-- **Pew chart legend:** "For entertainment" · "To learn new things"
-- **Market-share card tag:** FATJOE — *LLM market share* — "Lower 70% / Point 80% / Upper 90%" — "Applied as scalar to extend ChatGPT shares to all conversational AI use."
-- **Harm conclusion label:** Trend → Increasing · Ĥ ↑ — Tier 2 · Low
-- **Exposure conclusion label:** Trend → Increasing · E ↑ — Tier 2 · Medium
-- **Exposure intro (before Pew loads):** No direct survey data on emotional-support use exists. Exposure must be approximated from partial proxies.
+- **AIID card tag:** AIID — *AI Incident Database* — "Lower bound · 2 → 12 full matches" — "2025 harm count 10,014–110,025, driven by composite narratives."
+- **OECD card tag:** OECD AIM — *AI Incidents Monitor* — "Lower bound · 8 → 77 full matches" — "De-duplicated individual cases: 1 → 3."
+- **Point-estimate card tag:** OpenAI — *Disclosed response quality* — "0.15% of WAU · desired:undesired 40:60 → 80:20 → 92:8"
+- **Harm conclusion label:** Trend → Increasing ×~1.7 · H ↑ — Tier 2 · Medium
+- **Exposure funnel row labels:** ChatGPT WAU · ÷ traffic share (~75%→~60%) · × ~18% US-based · × 0.15% weekly
+- **Exposure conclusion label:** Trend → Increasing ×~3 · E ↑ — Tier 2 · Medium
+- **Exposure intro note:** Exposure counts conversations matching the opportunity — not people.
+- **Harm carryover chip (exposure panel):** H ✓ · Increasing ×~1.7 / Tier 2 · Medium
 
-#### Acts 4 & 5 — Quadrant chart
+#### Act 4 — Quadrant chart
 - **Axes:** Ĥ trend → (decreasing ← → increasing) · E trend ↑ (decreasing ← → increasing)
 - **Chatbot dot label:** Chatbot · self-harm
-- **AV dot label:** AV · injury/damage
+- **Weight chips (step 19):** Mitigating 58.6% · Escalating 9.8%
+- **Unclassifiable pill:** Unclassifiable · 31.6% — evidence too uncertain to place
 - **Classification caption label:** Classification
 
 ---
@@ -354,12 +332,4 @@ The point of the framework isn't to settle the verdict. It's to make the assumpt
 ### UI / navigation
 
 - **Nav arrow labels:** Previous step · Next step
-- **Tuning panel:**
-  - Heading: TUNE SNAP
-  - Snap type: Mandatory / Proximity / Off
-  - Snap stop: Always / Normal
-  - Landmark snap: Off / On
-  - JS force-snap: Off / On
-  - Idle (slider, ms) · Anim (slider, ms)
-  - Reset
-- **Open-panel trigger:** ⚙ Tune
+- **Progress stepper:** Stage N of 4 — Monitoring question · Harm · Exposure · Classification

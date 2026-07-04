@@ -4,7 +4,8 @@ import { useRef } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
-import { quadrantCopy, type Quadrant } from "@/lib/case-data";
+import type { Quadrant, ClassificationWeights } from "@/lib/case-data";
+import { quadrantCopy, unclassifiableCopy } from "@/lib/quadrant-copy";
 
 gsap.registerPlugin(useGSAP);
 
@@ -48,16 +49,24 @@ export type DotProps = {
   caseLabel: string;
 };
 
+const formatWeight = (w: number) => `${(w * 100).toFixed(1)}%`;
+
 export function QuadrantChart({
   activeQuadrant,
   dot,
-  ghostDot,
+  weights,
   showVerdict,
+  verdictDetail,
 }: {
   activeQuadrant: Quadrant | null;
   dot: DotProps | null;
-  ghostDot?: DotProps | null;
+  // Probability weights from the paper's probabilistic classifier; when
+  // present, nonzero quadrants get a percentage chip and the unclassifiable
+  // mass is rendered as a pill below the chart.
+  weights?: ClassificationWeights | null;
   showVerdict?: boolean;
+  // Case-specific verdict text; falls back to the generic quadrant summary.
+  verdictDetail?: string;
 }) {
   const reduced = useReducedMotion();
   const tDur = reduced ? 0 : FADE.duration;
@@ -67,13 +76,17 @@ export function QuadrantChart({
 
   const dotX = dot ? PAD.left + dot.x * PLOT_W : 0;
   const dotY = dot ? PAD.top + dot.y * PLOT_H : 0;
-  const ghostX = ghostDot ? PAD.left + ghostDot.x * PLOT_W : 0;
-  const ghostY = ghostDot ? PAD.top + ghostDot.y * PLOT_H : 0;
 
   // GSAP dot landing: overshoot scale-in with a ripple ring + label fade.
   useGSAP(
     () => {
       if (!dot) return;
+      if (reduced) {
+        gsap.set(".quad-dot-circle", { scale: 1, opacity: 1 });
+        gsap.set(".quad-dot-label", { opacity: 1 });
+        gsap.set(".quad-dot-ripple", { opacity: 0 });
+        return;
+      }
       gsap.set(".quad-dot-circle", { transformOrigin: "center center", scale: 0, opacity: 1 });
       gsap.set(".quad-dot-label", { opacity: 0 });
       gsap.set(".quad-dot-ripple", { attr: { r: 0 }, opacity: 0.6 });
@@ -94,13 +107,9 @@ export function QuadrantChart({
           },
           "<",
         )
-        .to(
-          ".quad-dot-label",
-          { opacity: 1, duration: 0.3, ease: "power2.out" },
-          "-=0.25",
-        );
+        .to(".quad-dot-label", { opacity: 1, duration: 0.3, ease: "power2.out" }, "-=0.25");
     },
-    { scope: containerRef, dependencies: [dot?.x, dot?.y, dot?.color] },
+    { scope: containerRef, dependencies: [dot?.x, dot?.y, dot?.color, reduced] },
   );
 
   return (
@@ -118,12 +127,10 @@ export function QuadrantChart({
             : "Trajectory classification quadrant chart — 2 × 2 grid with four trajectory categories."}
         </title>
         <desc id="quad-desc">
-          A two-by-two grid. The horizontal axis is the exposure trend (E),
-          decreasing on the left and increasing on the right. The vertical
-          axis is the harm-per-exposure trend (Ĥ), decreasing at the bottom
-          and increasing at the top. The four quadrants are Concentrating
-          (top-left), Escalating (top-right), Receding (bottom-left), and
-          Mitigating (bottom-right).
+          A two-by-two grid. The horizontal axis is the exposure trend (E), decreasing on the left
+          and increasing on the right. The vertical axis is the harm-per-exposure trend (Ĥ),
+          decreasing at the bottom and increasing at the top. The four quadrants are Concentrating
+          (top-left), Escalating (top-right), Receding (bottom-left), and Mitigating (bottom-right).
         </desc>
 
         {/* Quadrant highlight (back layer) */}
@@ -179,8 +186,7 @@ export function QuadrantChart({
                 textAnchor="middle"
                 fontFamily="var(--font-jetbrains-mono)"
                 fontSize="9"
-                letterSpacing="0.14em"
-                className="uppercase fill-ink-faint"
+                className="fill-ink-faint"
               >
                 {copy.trends.h} · {copy.trends.e}
               </text>
@@ -188,16 +194,40 @@ export function QuadrantChart({
                 x={cx}
                 y={q.y + halfH - 8}
                 textAnchor="middle"
-                fontFamily="var(--font-jetbrains-mono)"
-                fontSize="9"
-                letterSpacing="0.12em"
-                className="uppercase fill-ink-faint"
+                fontFamily="var(--next-font-heading)"
+                fontStyle="italic"
+                fontSize="11"
+                className="fill-ink-faint"
               >
                 {copy.description}
               </text>
             </g>
           );
         })}
+
+        {/* Probability-weight chips */}
+        <AnimatePresence>
+          {weights
+            ? QUADS.filter((q) => (weights[q.key] ?? 0) > 0).map((q, i) => (
+                <motion.text
+                  key={`w-${q.key}`}
+                  x={q.x + halfW / 2}
+                  y={q.y + 26 + 40}
+                  textAnchor="middle"
+                  fontFamily="var(--next-font-heading)"
+                  fontWeight="700"
+                  fontSize="24"
+                  fill={q.key === "mitigating" ? "var(--mitigating-deep)" : q.fill}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: tDur, delay: reduced ? 0 : i * 0.15 }}
+                >
+                  {formatWeight(weights[q.key])}
+                </motion.text>
+              ))
+            : null}
+        </AnimatePresence>
 
         {/* Axes */}
         <text
@@ -206,8 +236,7 @@ export function QuadrantChart({
           textAnchor="middle"
           fontFamily="var(--font-jetbrains-mono)"
           fontSize="10"
-          letterSpacing="0.16em"
-          className="uppercase fill-ink-soft"
+          className="fill-ink-soft"
         >
           E trend →
         </text>
@@ -215,10 +244,10 @@ export function QuadrantChart({
           x={PAD.left + 8}
           y={PAD.top + PLOT_H + 30}
           textAnchor="start"
-          fontFamily="var(--font-jetbrains-mono)"
-          fontSize="9"
-          className="fill-ink-faint uppercase"
-          letterSpacing="0.12em"
+          fontFamily="var(--next-font-heading)"
+          fontStyle="italic"
+          fontSize="10"
+          className="fill-ink-faint"
         >
           decreasing
         </text>
@@ -226,10 +255,10 @@ export function QuadrantChart({
           x={PAD.left + PLOT_W - 8}
           y={PAD.top + PLOT_H + 30}
           textAnchor="end"
-          fontFamily="var(--font-jetbrains-mono)"
-          fontSize="9"
-          className="fill-ink-faint uppercase"
-          letterSpacing="0.12em"
+          fontFamily="var(--next-font-heading)"
+          fontStyle="italic"
+          fontSize="10"
+          className="fill-ink-faint"
         >
           increasing
         </text>
@@ -241,46 +270,11 @@ export function QuadrantChart({
             textAnchor="middle"
             fontFamily="var(--font-jetbrains-mono)"
             fontSize="10"
-            letterSpacing="0.16em"
-            className="uppercase fill-ink-soft"
+            className="fill-ink-soft"
           >
             Ĥ trend ↑
           </text>
         </g>
-
-        {/* Ghost dot (lower z) */}
-        <AnimatePresence>
-          {ghostDot && (
-            <motion.g
-              key="ghost"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.3 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: tDur }}
-            >
-              <circle
-                cx={ghostX}
-                cy={ghostY}
-                r={9}
-                fill="none"
-                stroke={ghostDot.color}
-                strokeWidth={1.4}
-                strokeDasharray="2 3"
-              />
-              <text
-                x={ghostX + 14}
-                y={ghostY + 4}
-                fontFamily="var(--font-jetbrains-mono)"
-                fontSize="9"
-                fill={ghostDot.color}
-                opacity={0.7}
-                letterSpacing="0.06em"
-              >
-                {ghostDot.caseLabel}
-              </text>
-            </motion.g>
-          )}
-        </AnimatePresence>
 
         {/* Main dot — GSAP-driven landing with overshoot + ripple. */}
         {dot && (
@@ -321,6 +315,29 @@ export function QuadrantChart({
         )}
       </svg>
 
+      {/* Unclassifiable mass — the fifth outcome lives off the grid. */}
+      <AnimatePresence>
+        {weights && weights.unclassifiable > 0 ? (
+          <motion.div
+            key="unclassifiable"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: tDur, delay: reduced ? 0 : 0.3 }}
+            className="mt-1 mb-2 max-w-[500px] mx-auto px-2"
+          >
+            <div className="border border-dashed border-ink-faint/60 px-3 py-2 flex items-baseline gap-3">
+              <span className="font-display font-bold text-[18px] leading-none text-ink-soft">
+                {formatWeight(weights.unclassifiable)}
+              </span>
+              <span className="font-display italic text-[14px] text-ink-faint">
+                {unclassifiableCopy.label} — evidence too uncertain to place
+              </span>
+            </div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+
       {/* Verdict caption */}
       <AnimatePresence>
         {showVerdict && verdictCopy ? (
@@ -329,20 +346,20 @@ export function QuadrantChart({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: tDur, delay: 0.2 }}
+            transition={{ duration: tDur, delay: reduced ? 0 : 0.2 }}
             className="mt-2 max-w-[500px] mx-auto px-2"
           >
-            <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-faint mb-1">
+            <div className="font-display italic text-[14px] text-ink-faint mb-1">
               Classification
             </div>
             <p
-              className="font-body italic text-[17px] leading-snug"
+              className="font-display italic text-[19px] leading-snug"
               style={{ color: getVerdictColor(activeQuadrant) }}
             >
               {verdictCopy.label}.
             </p>
             <p className="font-body text-[14px] text-ink-soft leading-snug mt-1">
-              {verdictCopy.summary}
+              {verdictDetail ?? verdictCopy.summary}
             </p>
           </motion.div>
         ) : null}
@@ -353,7 +370,7 @@ export function QuadrantChart({
 
 function getVerdictColor(q: Quadrant | null) {
   if (q === "escalating") return "var(--escalating)";
-  if (q === "mitigating") return "var(--mitigating)";
+  if (q === "mitigating") return "var(--mitigating-deep)";
   if (q === "concentrating") return "var(--concentrating)";
   if (q === "receding") return "var(--receding)";
   return "var(--ink)";

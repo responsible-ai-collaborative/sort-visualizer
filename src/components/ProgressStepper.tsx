@@ -6,16 +6,14 @@ import { STAGES, type StageId } from "@/lib/stages";
 // framework. The current stage is filled with the accent color; the others
 // are dimmed. Reader always sees where they are in the system.
 
-export function ProgressStepper({
-  activeStage,
-}: {
-  activeStage: StageId | null;
-}) {
+export function ProgressStepper({ activeStage }: { activeStage: StageId | null }) {
   const visible = activeStage !== null;
 
   return (
     <div
-      aria-hidden={!visible}
+      // `inert` (not aria-hidden) so the anchors also drop out of the tab
+      // order while hidden — aria-hidden over focusable content is invalid.
+      inert={!visible}
       className={
         "fixed top-0 left-0 right-0 z-30 backdrop-blur-md bg-[rgba(255,255,255,0.78)] border-b border-rule transition-[opacity,transform] duration-300 " +
         (visible
@@ -29,12 +27,9 @@ export function ProgressStepper({
         {STAGES.map((stage, i) => {
           const isActive = stage.id === activeStage;
           return (
-            <li
-              key={stage.id}
-              className="flex items-center gap-2 flex-1 min-w-0"
-            >
+            <li key={stage.id} className="flex items-center gap-2 flex-1 min-w-0">
               <a
-                href={`#${stage.sectionId}`}
+                href={`#${stage.sectionIds[0]}`}
                 className={
                   "flex flex-col justify-center flex-1 min-w-0 px-3 py-1.5 border transition-colors duration-300 " +
                   (isActive
@@ -44,26 +39,23 @@ export function ProgressStepper({
               >
                 <span
                   className={
-                    "font-mono text-[9px] uppercase tracking-[0.18em] leading-tight transition-colors duration-300 " +
+                    "font-display italic text-[11px] leading-tight transition-colors duration-300 " +
                     (isActive ? "text-accent-text" : "text-ink-faint")
                   }
                 >
-                  Stage {stage.number} of 4
+                  Stage {i + 1} of {STAGES.length}
                 </span>
                 <span
                   className={
-                    "font-mono text-[11px] uppercase tracking-[0.12em] leading-tight truncate mt-0.5 transition-colors duration-300 " +
-                    (isActive ? "text-accent-text" : "text-ink-soft")
+                    "font-body text-[13px] leading-tight truncate mt-0.5 transition-colors duration-300 " +
+                    (isActive ? "text-accent-text font-semibold" : "text-ink-soft")
                   }
                 >
                   {stage.short}
                 </span>
               </a>
               {i < STAGES.length - 1 ? (
-                <span
-                  aria-hidden
-                  className="text-ink-faint text-[12px] flex-shrink-0 select-none"
-                >
+                <span aria-hidden className="text-ink-faint text-[12px] flex-shrink-0 select-none">
                   →
                 </span>
               ) : null}

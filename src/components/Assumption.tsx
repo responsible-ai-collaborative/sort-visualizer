@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+// A margin note in the editor's hand: thin rule, italic lead-in, no box.
 export function Assumption({
   label = "Assumption",
   children,
@@ -8,18 +9,9 @@ export function Assumption({
   children: ReactNode;
 }) {
   return (
-    <aside
-      className="my-5 border-l-2 border-accent-soft pl-4 py-2"
-      style={{ background: "rgba(1, 25, 52, 0.05)" }}
-    >
-      <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent-soft mb-1.5">
-        {label}
-      </div>
-      <div
-        className="font-body italic text-[15px] leading-[1.55] text-ink-soft"
-      >
-        {children}
-      </div>
+    <aside className="my-5 border-l-2 border-accent-soft pl-4 py-1">
+      <div className="font-display italic text-[16px] text-accent-text mb-1">{label}.</div>
+      <div className="font-body text-[15px] leading-[1.55] text-ink-soft">{children}</div>
     </aside>
   );
 }

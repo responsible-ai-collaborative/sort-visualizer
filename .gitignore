@@ -32,3 +32,13 @@ pnpm-debug.log*
 # typescript / IDE
 .idea
 .vscode
+
+# design-sync (staged converter, build output, machine state)
+.ds-sync/
+ds-bundle/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules
+
+# claude code (machine-local permissions; napkin.md stays tracked)
+.claude/settings.local.json

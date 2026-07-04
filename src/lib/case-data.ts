@@ -1,297 +1,184 @@
-// All numbers, sources, and assumptions are drawn from the paper,
-// "A Pragmatic Classification Framework for AI Incident Monitoring." Sections
-// referenced inline. The paper PDF is the source of truth — this file mirrors
-// it but does not paraphrase the assumption stacks.
+// All numbers, sources, and assumptions are drawn from the paper
+// "A Pragmatic Classification Framework for AI Incident Monitoring"
+// (Mengesha et al., 2026), §3.1 and Appendix E. The paper PDF is the source
+// of truth — this file mirrors it but does not paraphrase the full analysis.
 
 export type Quadrant = "escalating" | "mitigating" | "receding" | "concentrating";
-export type Trend = "increasing" | "decreasing" | "stable" | "indeterminate";
+export type TrajectoryCategory = Quadrant | "unclassifiable";
+export type Trend = "increasing" | "decreasing" | "indeterminate";
 export type ConfidenceLabel = "High" | "Medium" | "Low";
 
-export type SparkPoint = { year: string; value: number };
+export type YearValue = { year: string; value: number; display: string };
 
-export type HarmSource = {
-  kind: "count" | "ceiling";
-  tag: string; // e.g. "AIID", "OECD AIM", "OPENAI", "NHTSA"
+export type LowerBoundSource = {
+  tag: string; // e.g. "AIID"
   name: string;
   blurb: string;
-  // For "count" sources: year-on-year match counts that serve as lower bounds.
-  values?: SparkPoint[];
-  // For "ceiling" sources: a single upper-bound number with a label.
-  ceiling?: { display: string; note: string };
-  note?: string;
+  matches: YearValue[]; // full-match counts per period (bar pairs)
+  note: string;
 };
 
-export type ExposureSource = {
+export type RatioPeriod = {
+  period: string; // e.g. "Jan 24 – Jul 25"
+  desired: number; // percentage 0–100
+  undesired: number;
+};
+
+export type HarmPointEstimate = {
   tag: string;
   name: string;
   blurb: string;
-  // Bars or numbers attached to the source; structure varies by case.
-  detail: string;
+  rateDisplay: string; // "≈0.15% of WAU"
+  rateNote: string;
+  ratios: RatioPeriod[];
+  estimates: YearValue[]; // harmful conversations per period
 };
 
-export type ExposureEstimate = {
-  year: string;
-  central: number; // in raw units (people, vehicle-miles)
-  range: [number, number];
-  display: string; // formatted, e.g. "64M (54–73M)"
+export type FunnelRow = {
+  label: string; // e.g. "ChatGPT weekly active users"
+  operation: string | null; // e.g. "÷ traffic share" — null for the base row
+  detail: string; // e.g. "140M → 300M → ≈850M"
 };
 
-export type CaseStudy = {
-  id: "chatbot" | "av";
-  label: string;
-  shortLabel: string;
-  mq: {
-    subject: string;
-    opportunity: string;
-    riskEvent: string;
-    timeframe: string;
-  };
-  harm: {
-    sources: HarmSource[];
-    trend: Trend;
-    confidenceTier: 1 | 2 | 3;
-    confidenceLabel: ConfidenceLabel;
-    summary: string;
-  };
-  exposure: {
-    sources: ExposureSource[];
-    assumptions: string[];
-    estimates: ExposureEstimate[];
-    trend: Trend;
-    confidenceTier: 1 | 2 | 3;
-    confidenceLabel: ConfidenceLabel;
-    summary: string;
-  };
-  classification: Quadrant;
-  verdict: string;
+export type TrendConclusion = {
+  trend: Trend;
+  multiplierDisplay: string; // e.g. "×~1.7"
+  arrow: string; // e.g. "Ĥ ↑"
+  confidenceTier: 1 | 2 | 3;
+  confidenceLabel: ConfidenceLabel;
+  summary: string;
 };
 
-// ── Case 1: Conversational AI and self-harm ─────────────────────────────────
+export type ClassificationWeights = Record<TrajectoryCategory, number>;
+
+// ── Case study: conversational AI systems and self-harm ────────────────────
 // Source: paper §3.1.
 
-export const chatbotCase: CaseStudy = {
+export const chatbotCase = {
   id: "chatbot",
   label: "Conversational AI and self-harm",
   shortLabel: "Chatbot",
+
   mq: {
-    subject: "people living in the United States",
-    opportunity: "who use conversational AI systems for emotional support",
-    riskEvent:
-      "receive responses that encourage, or fail to discourage, suicidal ideation or self-harm",
+    subject: "conversations between US users and conversational AI systems",
+    opportunity: "in which users seek support regarding suicidal ideation or self-harm",
+    riskEvent: "AI systems encourage, or fail to discourage, suicidal ideation or self-harm",
     timeframe: "per calendar year",
   },
+
   harm: {
-    sources: [
+    lowerBounds: [
       {
-        kind: "count",
         tag: "AIID",
         name: "AI Incident Database",
         blurb:
-          "LLM analysis of the AIID found 2 full matches in 2024 and 17 in 2025. Two matches is below the threshold for a reliable signal, so a second database is needed.",
-        values: [
-          { year: "2024", value: 2 },
-          { year: "2025", value: 17 },
+          "LLM analysis of the AIID found 2 full matches in 2024 and 12 in 2025. The 2025 assessed harm count spans 10,014–110,025 — three matches are composite narratives covering populations, not individuals.",
+        matches: [
+          { year: "2024", value: 2, display: "2" },
+          { year: "2025", value: 12, display: "12" },
         ],
+        note: "Assessed harm count: 2 (2024) → 10,014–110,025 (2025).",
       },
       {
-        kind: "count",
         tag: "OECD AIM",
         name: "OECD AI Incidents Monitor",
         blurb:
-          "After filtering for US-based incidents involving conversational AI resulting in physical or psychological injury, OECD AIM yields 8 full matches in 2024 (harm count 9–17) and 55 full matches in 2025 (harm count in the 100k range — an explosive increase).",
-        values: [
-          { year: "2024", value: 8 },
-          { year: "2025", value: 55 },
+          "Filtered for US-based incidents involving chatbots or content generation resulting in death, physical or psychological harm: 8 full matches in 2024 and 77 in 2025. Most are duplicates, lawsuits, or composite narratives.",
+        matches: [
+          { year: "2024", value: 8, display: "8" },
+          { year: "2025", value: 77, display: "77" },
         ],
-        note: "Harm count range 9–17 (2024); ~100k range (2025).",
+        note: "De-duplicated individual cases: 1 (2024) → 3 (2025).",
       },
-      {
-        kind: "ceiling",
-        tag: "OPENAI",
-        name: "OpenAI weekly-user report",
-        blurb:
-          "OpenAI reported that approximately 0.15% of its weekly active users engage in conversations indicating potential suicidal planning or intent, representing more than one million people per week globally.",
-        ceiling: {
-          display: "≈ 1M / week globally",
-          note: "Upper bound — proxy from disclosed proportion. No upper bound for 2024 was disclosed.",
-        },
-      },
-    ],
-    trend: "increasing",
-    confidenceTier: 2,
-    confidenceLabel: "Low",
-    summary:
-      "OECD AIM results increase over consecutive time periods. The limited AIID matches and upper-bound proxy likely reflect limited awareness and detection methods in 2024. Given the shifts in measurement and mitigation, expert elicitation or close monitoring of 2026 data is necessary before drawing high-confidence conclusions.",
+    ] satisfies LowerBoundSource[],
+
+    pointEstimate: {
+      tag: "OPENAI",
+      name: "OpenAI disclosed response quality",
+      blurb:
+        "OpenAI reports that around 0.15% of weekly active users have conversations with explicit indicators of potential suicidal planning or intent, and disclosed the ratio of desired to undesired model responses on such conversations across three periods.",
+      rateDisplay: "≈0.15% of WAU",
+      rateNote: "conversations with explicit suicidal-planning indicators",
+      ratios: [
+        { period: "Jan 24 – Jul 25", desired: 40, undesired: 60 },
+        { period: "Aug – Sep 25", desired: 80, undesired: 20 },
+        { period: "Oct – Dec 25", desired: 92, undesired: 8 },
+      ],
+      estimates: [
+        { year: "2024", value: 2_400_000, display: "≈2.4M" },
+        { year: "2025", value: 4_000_000, display: "≈4M" },
+      ],
+    } satisfies HarmPointEstimate,
+
+    conclusion: {
+      trend: "increasing",
+      multiplierDisplay: "×~1.7",
+      arrow: "H ↑",
+      confidenceTier: 2,
+      confidenceLabel: "Medium",
+      summary:
+        "Derived from reasonable publicly available proxy sources. The lower-bound estimates, although individually unrepresentative, are directionally consistent with the point estimates.",
+    } satisfies TrendConclusion,
   },
+
   exposure: {
-    sources: [
+    definition: "Exposure counts conversations matching the opportunity — not people.",
+    funnel: [
       {
-        tag: "PEW",
-        name: "Pew Research — Sidoti & McClain, 2025",
-        blurb:
-          "ChatGPT use “to learn new things” and “for entertainment” by age bucket, 2024–2025.",
-        detail:
-          "Lower bound takes “for entertainment” only; upper bound takes “to learn new things” only.",
+        label: "ChatGPT weekly active users",
+        operation: null,
+        detail: "140M (Jan 24) → 300M (Jan 25) → ≈850M (Dec 25)",
       },
       {
-        tag: "FATJOE",
-        name: "FATJOE — LLM market-share statistics",
-        blurb:
-          "ChatGPT holds ≈ 80% market share of LLM personal use.",
-        detail:
-          "Point estimate: 80%. Lower bound: 70%. Upper bound: 90%.",
+        label: "All conversational AI platforms",
+        operation: "÷ OpenAI share of gen-AI traffic",
+        detail: "~75% (2024) falling to ~60% (2025)",
       },
-    ],
-    assumptions: [
-      "The Pew share answering “for entertainment” serves as the lower bound on emotional-support use; the share answering “to learn new things” serves as the upper bound; the mid-point of the two serves as the central estimate.",
-      "These shares apply uniformly to the US census population in matching age groups.",
-      "ChatGPT accounts for 80% of LLM personal use (90% upper / 70% lower) — applied as a scalar to extend ChatGPT shares to all conversational AI use.",
-    ],
+      {
+        label: "US-based weekly active users",
+        operation: "× ~18% US-based",
+        detail: "≈34M (Jan 24) → ≈243M (Dec 25)",
+      },
+      {
+        label: "Conversations matching [O]",
+        operation: "× ≈0.15% weekly, summed",
+        detail: "one user may have multiple matching conversations",
+      },
+    ] satisfies FunnelRow[],
     estimates: [
-      {
-        year: "2024",
-        central: 64_000_000,
-        range: [54_000_000, 73_000_000],
-        display: "64M (54–73M)",
-      },
-      {
-        year: "2025",
-        central: 88_000_000,
-        range: [75_000_000, 99_000_000],
-        display: "88M (75–99M)",
-      },
-    ],
-    trend: "increasing",
-    confidenceTier: 2,
-    confidenceLabel: "Medium",
-    summary:
-      "Estimates suggest approximately a 40% increase in US emotional-support use of conversational AI between 2024 and 2025. Order-of-magnitude estimate: 10⁸.",
-  },
-  classification: "escalating",
-  verdict:
-    "Both the population at risk and the harm per unit exposure are growing. This demands an urgent response: expanded monitoring, active investigation into causal drivers, and possibly regulatory intervention.",
-};
+      { year: "2024", value: 4_000_000, display: "≈4M" },
+      { year: "2025", value: 12_000_000, display: "≈12M" },
+    ] satisfies YearValue[],
 
-// ── Case 2: Autonomous vehicles and injury/damage ───────────────────────────
-// Source: paper §3.2.
+    conclusion: {
+      trend: "increasing",
+      multiplierDisplay: "×~3",
+      arrow: "E ↑",
+      confidenceTier: 2,
+      confidenceLabel: "Medium",
+      summary:
+        "Derived from reasonable publicly available proxy sources. Main limitation is aggregation bias: ChatGPT data proxies for all conversational AI platforms, and conversations are treated as equivalent regardless of user age.",
+    } satisfies TrendConclusion,
+  },
 
-export const avCase: CaseStudy = {
-  id: "av",
-  label: "Autonomous vehicles and injury/damage",
-  shortLabel: "AV",
-  mq: {
-    subject: "autonomous vehicles (SAE Levels 3 through 5)",
-    opportunity: "on US public roads",
-    riskEvent: "experience incidents involving injury or property damage",
-    timeframe: "per million vehicle-miles, per calendar year",
+  classification: {
+    quadrant: "mitigating" as Quadrant,
+    hRatioDisplay: "×~0.55",
+    eRatioDisplay: "×~3",
+    confidenceLabel: "Medium" as ConfidenceLabel,
+    // Adjusted weights from the paper's probabilistic classifier, based on
+    // uncertainty factors of ~2 on both harm estimates and 1.5 on both
+    // exposure estimates (§2.3, Appendix E).
+    weights: {
+      mitigating: 0.586,
+      unclassifiable: 0.316,
+      escalating: 0.098,
+      concentrating: 0,
+      receding: 0,
+    } satisfies ClassificationWeights,
+    verdict:
+      "Per-unit-exposure harm is decreasing while more people are exposed — existing safeguards appear to be working. Absolute harm is still increasing: a Mitigating classification must always be read alongside the absolute estimates.",
   },
-  harm: {
-    sources: [
-      {
-        kind: "count",
-        tag: "NHTSA",
-        name: "US National Highway Traffic Safety Administration",
-        blurb:
-          "Mandatory reporting from manufacturers and operators of vehicles with automated driving or SAE Level 2 advanced driver assistance. Automated Driving System (ADS) incidents rose from 526 in 2024 to 975 in 2025 — a ≈85.4% increase, primarily driven by property damage cases.",
-        values: [
-          { year: "2024", value: 526 },
-          { year: "2025", value: 975 },
-        ],
-      },
-    ],
-    trend: "increasing",
-    confidenceTier: 1,
-    confidenceLabel: "High",
-    summary:
-      "Tier 1 — mandatory reporting ensures NHTSA provides a comprehensive dataset for analysis. The increase is primarily driven by property-damage cases rather than injury cases.",
-  },
-  exposure: {
-    sources: [
-      {
-        tag: "AVIA",
-        name: "Autonomous Vehicle Industry Association — 2025 State of AV report",
-        blurb:
-          "AVs drove 145M miles on US public roads from June 2024 to May 2025, compared to 75M miles in 2023–2024 — roughly a doubling in exposure over one year.",
-        detail:
-          "Used as the point estimate's anchor for whole-year totals.",
-      },
-      {
-        tag: "WAYMO",
-        name: "Waymo / CNBC paid-ride reports",
-        blurb:
-          "Waymo delivered ≈ 250,000 paid rides per week in April 2025 and ≈ 450,000 by December 2025 — an 80% increase in eight months.",
-        detail:
-          "Implies a monthly growth rate applied to the AVIA central estimate.",
-      },
-    ],
-    assumptions: [
-      "The point estimate uses the AVIA anchor and assumes the monthly growth rate implied by Waymo's 2025 trajectory.",
-      "The lower bound uses AVIA's May 2024 and May 2025 endpoint totals for the whole years 2024 and 2025 respectively.",
-      "The upper bound increases the point estimate by 10%, mirroring the gap between the lower bound and the point estimate.",
-    ],
-    estimates: [
-      {
-        year: "2024",
-        central: 78_000_000,
-        range: [75_000_000, 86_000_000],
-        display: "78M mi (75–86M)",
-      },
-      {
-        year: "2025",
-        central: 156_000_000,
-        range: [145_000_000, 171_000_000],
-        display: "156M mi (145–171M)",
-      },
-    ],
-    trend: "increasing",
-    confidenceTier: 2,
-    confidenceLabel: "Medium",
-    summary:
-      "Exposure is estimated to have approximately doubled between 2024 and 2025. Order-of-magnitude estimate: 10⁸.",
-  },
-  classification: "mitigating",
-  verdict:
-    "Exposure growth (≈ 100%) outpaces harm growth (≈ 85%), yielding a decreasing harm-per-exposure trend [Ĥ ↓] against rising exposure [E ↑]. Fewer incidents occur per million vehicle-miles, suggesting current safeguards keep pace with deployment. Absolute harm may still rise and warrants continued monitoring.",
-};
+} as const;
 
-// ── Quadrant copy ───────────────────────────────────────────────────────────
-// Source: paper §2.2.
-
-export const quadrantCopy: Record<
-  Quadrant,
-  {
-    label: string;
-    description: string;
-    summary: string;
-    trends: { h: string; e: string };
-  }
-> = {
-  escalating: {
-    label: "Escalating",
-    description: "Urgent attention",
-    summary:
-      "Both the population at risk and the harm per unit exposure are growing. Demands urgent response: expanded monitoring, active investigation, possibly regulatory intervention.",
-    trends: { h: "Ĥ ↑", e: "E ↑" },
-  },
-  mitigating: {
-    label: "Mitigating",
-    description: "Monitor closely",
-    summary:
-      "More people are exposed, but harm per unit exposure is decreasing — existing safeguards appear to be working. Continued monitoring warranted; a failure of current controls could shift the trajectory to escalating.",
-    trends: { h: "Ĥ ↓", e: "E ↑" },
-  },
-  concentrating: {
-    label: "Concentrating",
-    description: "Targeted measures",
-    summary:
-      "Fewer people are exposed, but those who face exposure face worse outcomes. Calls for targeted protective measures and investigation into why harm is intensifying.",
-    trends: { h: "Ĥ ↑", e: "E ↓" },
-  },
-  receding: {
-    label: "Receding",
-    description: "Continue strategy",
-    summary:
-      "Neither dimension is worsening. Additional intervention may not be required; where specific measures preceded this trajectory, maintaining or extending them to related domains may be worthwhile.",
-    trends: { h: "Ĥ ↓", e: "E ↓" },
-  },
-};
+export type ChatbotCase = typeof chatbotCase;

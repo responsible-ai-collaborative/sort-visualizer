@@ -18,28 +18,27 @@ type TierRow = {
 const ROWS: TierRow[] = [
   {
     tier: 1,
-    method: "Direct retrieval",
+    method: "Direct measurement",
     sensitiveTo: "Authoritative source",
     confidence: "High",
     body: (
       <p>
-        The estimate is read directly from an authoritative source: mandatory
-        regulatory filings (NHTSA crash reports), pharmacovigilance registries,
-        audited platform transparency reports.
+        The estimate is read directly from an authoritative source: vehicle crash filings,
+        pharmacovigilance registries, platform transparency reports.
       </p>
     ),
   },
   {
     tier: 2,
-    method: "Combine proxies / records",
+    method: "Combine proxy measures",
     sensitiveTo: "Proxy construction",
     confidence: "Medium",
     body: (
       <p>
-        No single source is complete, so bounds are built from partial data.
-        Harm has a natural lower bound — the count of incidents already
-        captured in public databases — and an upper bound from proxy measures.
-        Exposure has no natural lower bound; both ends must be proxied.
+        No single source is complete, so a point estimate is constructed by combining partial
+        sources and proxy measures. For harm, public incident databases supply a hard lower bound —
+        the true harm cannot fall below what has already been recorded. Exposure has no such floor;
+        it must be proxied end to end.
       </p>
     ),
   },
@@ -50,22 +49,21 @@ const ROWS: TierRow[] = [
     confidence: "Low",
     body: (
       <p>
-        No quantitative source supports even a rough estimate. Domain experts
-        are asked to bound the plausible range.
+        No quantitative source supports even a rough estimate. Domain experts are asked to bound the
+        plausible range.
       </p>
     ),
   },
   {
     tier: 4,
-    method: "Principled abstention",
+    method: "Abstain",
     sensitiveTo: "—",
     confidence: "—",
     body: (
       <p>
-        Where the plausible range spans more than two orders of magnitude, or
-        no expert consensus is reachable, the estimate is withheld. A valid
-        finding in its own right: current evidence cannot support even an
-        order-of-magnitude claim.
+        Where the plausible range spans more than two orders of magnitude, or no expert consensus is
+        reachable, the estimate is withheld. A valid finding in its own right: current evidence
+        cannot support even an order-of-magnitude claim.
       </p>
     ),
   },
@@ -80,16 +78,14 @@ export function TierTable(_props: { activeStep: string | null }) {
     <div className="w-full max-w-[560px]">
       <div className="mb-4 flex items-baseline justify-between gap-3 pb-3 border-b border-rule">
         <div>
-          <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
-            Estimation methods
-          </div>
-          <h3 className="font-display text-[22px] leading-tight text-ink font-semibold mt-1">
+          <div className="font-display italic text-[14px] text-ink-faint">Estimation methods</div>
+          <h3 className="font-display text-[23px] leading-tight text-ink font-medium mt-1">
             Four tiers of source reliability
           </h3>
         </div>
       </div>
 
-      <div className="grid grid-cols-[28px_1fr_auto] gap-x-4 px-1 pb-2 font-mono text-[9px] uppercase tracking-[0.16em] text-ink-faint">
+      <div className="grid grid-cols-[28px_1fr_auto] gap-x-4 px-1 pb-2 font-display italic text-[13px] text-ink-faint">
         <span>Tier</span>
         <span>Method</span>
         <span>Confidence</span>
@@ -112,15 +108,13 @@ export function TierTable(_props: { activeStep: string | null }) {
                     {row.tier}
                   </span>
                   <div>
-                    <div className="font-body text-[15px] leading-tight text-ink">
-                      {row.method}
-                    </div>
-                    <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-faint mt-1">
+                    <div className="font-body text-[15px] leading-tight text-ink">{row.method}</div>
+                    <div className="font-display italic text-[13px] text-ink-faint mt-1">
                       Sensitive to: {row.sensitiveTo}
                     </div>
                   </div>
                   {row.confidence === "—" ? (
-                    <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-faint px-2 py-1 border border-rule">
+                    <span className="font-display italic text-[14px] text-ink-faint px-2.5 py-1 border border-rule">
                       Abstain
                     </span>
                   ) : (
@@ -150,7 +144,7 @@ export function TierTable(_props: { activeStep: string | null }) {
         })}
       </ul>
 
-      <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.14em] text-ink-faint">
+      <p className="mt-4 font-display italic text-[14px] text-ink-faint">
         Click a row to read more.
       </p>
     </div>
