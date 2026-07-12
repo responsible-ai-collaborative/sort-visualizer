@@ -4,7 +4,7 @@ import { useRef, type ReactNode } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { TierBadge } from "@/components/TierBadge";
-import type { TrendConclusion } from "@/lib/case-data";
+import type { SourceLink, TrendConclusion } from "@/lib/case-data";
 
 gsap.registerPlugin(useGSAP);
 
@@ -25,22 +25,26 @@ export function PanelHeader({
   carryover?: ReactNode;
 }) {
   return (
-    <header className="mb-5 pb-4 border-b border-rule flex items-center justify-between gap-3">
-      <div className="flex items-center gap-3">
+    <header className="mb-3 pb-2.5 md:mb-5 md:pb-4 border-b border-rule flex items-center justify-between gap-3">
+      <div className="flex items-center gap-2.5 md:gap-3">
         <div
-          className="w-12 h-12 flex items-center justify-center font-display font-bold text-[26px] text-white"
+          className="w-9 h-9 md:w-12 md:h-12 flex items-center justify-center font-display font-bold text-[20px] md:text-[26px] text-white"
           style={{ background: "var(--accent)" }}
           aria-hidden
         >
           {letter}
         </div>
         <div>
-          <div className="font-display italic text-[14px] text-ink-faint">{role}</div>
-          <h3 className="font-display text-[23px] leading-tight text-ink font-medium">{title}</h3>
+          <div className="font-display italic text-[13px] md:text-[14px] text-ink-faint">
+            {role}
+          </div>
+          <h3 className="font-display text-[19px] md:text-[23px] leading-tight text-ink font-medium">
+            {title}
+          </h3>
         </div>
       </div>
       {carryover ? (
-        <div className="text-right font-display italic text-[13px] text-ink-faint max-w-[190px] leading-snug">
+        <div className="max-md:hidden text-right font-display italic text-[13px] text-ink-faint max-w-[190px] leading-snug">
           {carryover}
         </div>
       ) : null}
@@ -48,25 +52,59 @@ export function PanelHeader({
   );
 }
 
+// Small right-aligned "source ↗" link(s) for the citation behind a card's
+// numbers; the source name lives in the title/aria-label.
+export function SourceLinks({ links }: { links?: readonly SourceLink[] }) {
+  if (!links || links.length === 0) return null;
+  return (
+    <span className="whitespace-nowrap">
+      {links.map((link, i) => (
+        <span key={link.href}>
+          {i > 0 ? (
+            <span aria-hidden className="text-ink-faint text-[11px]">
+              {" · "}
+            </span>
+          ) : null}
+          <a
+            href={link.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={link.label}
+            aria-label={`Source: ${link.label}`}
+            className="font-display italic text-[11px] text-accent-text hover:underline"
+          >
+            {links.length > 1 ? `source ${i + 1}` : "source"} ↗
+          </a>
+        </span>
+      ))}
+    </span>
+  );
+}
+
 export function SourceCard({
   tag,
   role,
+  sources,
   className,
   children,
 }: {
   tag: string;
   role: string;
+  sources?: readonly SourceLink[];
   className?: string;
   children: ReactNode;
 }) {
   return (
     <article
-      className={`${className ?? ""} source-card border border-rule p-4`}
+      className={`${className ?? ""} source-card border border-rule p-3 md:p-4`}
       style={{ background: "rgba(255, 255, 255, 0.7)" }}
     >
       <div className="flex items-baseline justify-between gap-2 mb-3">
         <span className="font-body font-semibold text-[14px] text-accent-text">{tag}</span>
-        <span className="font-display italic text-[13px] text-ink-faint">{role}</span>
+        <span className="flex items-baseline justify-end gap-2 flex-wrap text-right">
+          <span className="font-display italic text-[13px] text-ink-faint">{role}</span>
+          <SourceLinks links={sources} />
+        </span>
       </div>
       {children}
     </article>
@@ -83,13 +121,15 @@ export function ConclusionBar({
   const trendLabel = conclusion.trend.charAt(0).toUpperCase() + conclusion.trend.slice(1);
   return (
     <div
-      className={`${className ?? ""} conclusion-bar opacity-0 mt-5 pt-4 border-t border-rule flex items-center justify-between gap-4`}
+      className={`${className ?? ""} conclusion-bar opacity-0 mt-3 pt-3 md:mt-5 md:pt-4 border-t border-rule flex items-center justify-between gap-4`}
     >
       <div>
-        <div className="font-display italic text-[14px] text-ink-faint mb-1">Trend</div>
-        <div className="font-display text-[21px] leading-none font-medium text-accent-text">
+        <div className="font-display italic text-[13px] md:text-[14px] text-ink-faint mb-1">
+          Trend
+        </div>
+        <div className="font-display text-[18px] md:text-[21px] leading-none font-medium text-accent-text">
           {trendLabel} {conclusion.multiplierDisplay}{" "}
-          <span className="text-ink-faint font-normal font-mono text-[15px]">
+          <span className="whitespace-nowrap text-ink-faint font-normal font-mono text-[13px] md:text-[15px]">
             · {conclusion.arrow}
           </span>
         </div>
@@ -111,7 +151,7 @@ export function EstimatePair({
         <div key={e.year} className="text-center">
           <div className="font-mono text-[12px] text-ink-faint mb-1">{e.year}</div>
           <div
-            className="font-display font-bold text-[42px] leading-none text-accent-text"
+            className="font-display font-bold text-[32px] md:text-[42px] leading-none text-accent-text"
             style={{ fontFeatureSettings: '"tnum"' }}
           >
             {e.display}
@@ -185,7 +225,7 @@ export function BarPair({
   );
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="w-[200px] flex-shrink-0">
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-[170px] md:w-[200px] flex-shrink-0">
       <line
         x1={10}
         x2={W - 10}

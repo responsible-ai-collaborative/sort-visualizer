@@ -45,7 +45,7 @@ export const classificationSteps: ContentStep[] = [
         </ul>
         <p>
           The fifth outcome, <Em>Unclassifiable</Em>, absorbs the draws where a trend is too weak to
-          call. Uncertainty appears as probability mass, not as false confidence.
+          call. Uncertainty shows up in the shape of the distribution, not as false confidence.
         </p>
       </StepText>
     ),
@@ -64,6 +64,32 @@ export const classificationSteps: ContentStep[] = [
           with large and growing absolute harm. A naive reading of the incident counts would have
           called this system more dangerous; the framework says it is becoming safer per use while
           the harm still grows.
+        </p>
+      </StepText>
+    ),
+  },
+  {
+    id: "4.4",
+    render: (num) => (
+      <StepText number={num} heading="Don't take our word for it — move the assumptions.">
+        <p>
+          Nothing about those weights is hand-tuned: they fall out of the Monte Carlo given the
+          estimates, two uncertainty factors, and an indifference band. The sliders start at the
+          paper&apos;s values — each faint point is one draw of the classifier.
+        </p>
+        <p>
+          Widen the harm uncertainty and watch the distribution drain into <Em>Unclassifiable</Em>.
+          Shrink the indifference band and the verdict sharpens. Push harm growth past exposure
+          growth and the dot crosses into <Em>Escalating</Em>. The conclusion is only as strong as
+          the assumptions — and now you can check which ones carry it.
+        </p>
+        <p className="mt-3">
+          <a
+            href="/classifier"
+            className="inline-block font-body text-[14px] px-4 py-2 border border-accent text-accent bg-transparent hover:bg-accent hover:text-white transition-colors"
+          >
+            Run it on your own numbers ↗
+          </a>
         </p>
       </StepText>
     ),

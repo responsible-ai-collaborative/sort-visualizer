@@ -1,18 +1,21 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { collectSlides, nearestSlideIndex, scrollToSlide, type Slide } from "@/lib/slide-nav";
 
-// Faint top/bottom arrows that step through the [data-step] beats. Visible
-// only after the reader has begun scrolling; auto-disabled at the boundaries.
-// Snapping is handled by CSS scroll-snap-type: mandatory on <html>, so all
-// the arrows have to do is pick the right element and call scrollIntoView —
-// the browser then snaps to it cleanly.
+// Faint top/bottom arrows that step through every snap beat — header,
+// [data-step] slides, closing — one slide per click. ArrowUp/ArrowDown do
+// the same (mandatory snap otherwise swallows small keyboard scrolls).
+// Snapping is handled by CSS scroll-snap-type: mandatory on <html> and the
+// glide by scroll-behavior: smooth, so all the arrows do is pick the right
+// element and scroll to it — the browser settles the landing.
 
 export function NavArrows() {
   const [mounted, setMounted] = useState(false);
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [stepCount, setStepCount] = useState(0);
-  const [showTop, setShowTop] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [slideCount, setSlideCount] = useState(0);
+  const slidesRef = useRef<Slide[]>([]);
+  const ticking = useRef(false);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -20,76 +23,75 @@ export function NavArrows() {
   }, []);
 
   useEffect(() => {
-    const steps = Array.from(document.querySelectorAll<HTMLElement>("[data-step]"));
-    if (steps.length === 0) return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setStepCount(steps.length);
+    const update = () => {
+      if (slidesRef.current.length === 0) return;
+      setActiveIndex(nearestSlideIndex(slidesRef.current));
+    };
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        let best: { idx: number; ratio: number } | null = null;
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          const idx = steps.indexOf(entry.target as HTMLElement);
-          if (idx < 0) return;
-          if (!best || entry.intersectionRatio > best.ratio) {
-            best = { idx, ratio: entry.intersectionRatio };
-          }
-        });
-        if (best) setActiveIndex((best as { idx: number }).idx);
-      },
-      { rootMargin: "-40% 0px -40% 0px", threshold: [0, 0.1, 0.5, 1] },
-    );
-    steps.forEach((s) => observer.observe(s));
+    const schedule = () => {
+      if (ticking.current) return;
+      ticking.current = true;
+      requestAnimationFrame(() => {
+        ticking.current = false;
+        update();
+      });
+    };
 
-    const onScroll = () => setShowTop(window.scrollY > window.innerHeight * 0.4);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
+    // Collect after layout settles, same as ProgressRail; offsets are
+    // re-measured on every update so only the slide list is cached.
+    requestAnimationFrame(() => {
+      slidesRef.current = collectSlides();
+      setSlideCount(slidesRef.current.length);
+      update();
+    });
 
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
     return () => {
-      observer.disconnect();
-      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
     };
   }, []);
 
-  const scrollToIndex = useCallback((idx: number) => {
-    const steps = Array.from(document.querySelectorAll<HTMLElement>("[data-step]"));
-    const target = steps[idx];
-    if (target) target.scrollIntoView({ block: "center" });
-  }, []);
-
   const goPrev = useCallback(() => {
-    if (activeIndex === null) {
-      scrollToIndex(0);
-      return;
-    }
-    if (activeIndex > 0) scrollToIndex(activeIndex - 1);
-    else window.scrollTo({ top: 0 });
-  }, [activeIndex, scrollToIndex]);
+    if (activeIndex > 0) scrollToSlide(slidesRef.current, activeIndex - 1);
+  }, [activeIndex]);
 
   const goNext = useCallback(() => {
-    if (activeIndex === null) {
-      scrollToIndex(0);
-      return;
-    }
-    if (activeIndex < stepCount - 1) scrollToIndex(activeIndex + 1);
-    else window.scrollTo({ top: document.documentElement.scrollHeight });
-  }, [activeIndex, stepCount, scrollToIndex]);
+    if (activeIndex < slidesRef.current.length - 1)
+      scrollToSlide(slidesRef.current, activeIndex + 1);
+  }, [activeIndex]);
 
-  const atTop = activeIndex === null || activeIndex === 0;
-  const atBottom = activeIndex !== null && activeIndex >= stepCount - 1;
+  // Arrow keys page through slides too — skipped when a form control or
+  // editable element has focus so native key handling still works there.
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+      if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
+      const target = e.target instanceof HTMLElement ? e.target : null;
+      if (
+        target &&
+        (target.isContentEditable ||
+          target.closest('input, textarea, select, [role="slider"], [role="listbox"]'))
+      )
+        return;
+      e.preventDefault();
+      if (e.key === "ArrowUp") goPrev();
+      else goNext();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [goPrev, goNext]);
+
+  const atTop = activeIndex === 0;
+  const atBottom = slideCount > 0 && activeIndex >= slideCount - 1;
 
   if (!mounted) return null;
 
   return (
     <>
-      <NavButton
-        direction="up"
-        onClick={goPrev}
-        hidden={!showTop || atTop}
-        ariaLabel="Previous step"
-      />
-      <NavButton direction="down" onClick={goNext} hidden={atBottom} ariaLabel="Next step" />
+      <NavButton direction="up" onClick={goPrev} hidden={atTop} ariaLabel="Previous slide" />
+      <NavButton direction="down" onClick={goNext} hidden={atBottom} ariaLabel="Next slide" />
     </>
   );
 }
@@ -111,10 +113,13 @@ function NavButton({
       type="button"
       aria-label={ariaLabel}
       onClick={onClick}
+      data-nav-arrow={direction}
       className={[
-        "fixed left-1/2 -translate-x-1/2 z-30",
+        // md+ only — on mobile the arrows just crowd the small screen, and
+        // thumb-scrolling with snap already pages one slide at a time.
+        "max-md:hidden fixed left-1/2 -translate-x-1/2 z-30",
         "h-11 w-11 flex items-center justify-center",
-        "rounded-full transition-opacity duration-300",
+        "rounded-full transition-[opacity,top] duration-300",
         isUp ? "top-4" : "bottom-6",
         hidden ? "opacity-0 pointer-events-none" : "opacity-35 hover:opacity-90",
       ].join(" ")}

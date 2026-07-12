@@ -41,9 +41,19 @@
   --font-mono: var(--font-jetbrains-mono);
 }
 
+/* Short-viewport variant (e.g. `short:pt-10`) — used by the Header to
+   compress its vertical chrome so it never outgrows the screen. A
+   taller-than-viewport first snap landmark rests top-aligned on load but
+   bottom-aligned after a scroll cycle, which reads as a stray gap. */
+@custom-variant short (@media (max-height: 899px));
+
 html {
   background: var(--bg);
   /* scroll-snap-type is set via inline style in layout.tsx. */
+  /* Programmatic jumps (nav arrows, progress rail, stage/anchor links)
+     glide instead of teleporting; the reduced-motion block below forces
+     this back to auto. */
+  scroll-behavior: smooth;
 }
 
 /* Steps and landmarks (Header, Closing) are firm snap stops — mandatory
@@ -80,6 +90,13 @@ html {
 
 [data-snap-landmark="end"] {
   scroll-snap-align: end;
+}
+
+/* While the framework stage stepper is pinned to the top of the viewport
+   (it drops `inert` when visible), push the up nav-arrow below it so the
+   two never overlap. Offset = stepper height (~63px) + breathing room. */
+body:has([aria-label="Framework progress"]:not([inert])) [data-nav-arrow="up"] {
+  top: 76px;
 }
 
 /* A viz sets data-viz-obscures-caption while an overlay state (e.g. the
@@ -128,4 +145,61 @@ body {
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* driver.js guided-tour popover — themed to match the piece (classifier page).
+   Overrides the library's defaults with the editorial serif/mono voice and
+   the navy accent. */
+.driver-popover.sort-tour {
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  box-shadow: 0 12px 44px rgba(1, 25, 52, 0.2);
+  max-width: 320px;
+  padding: 18px 18px 16px;
+}
+.driver-popover.sort-tour .driver-popover-title {
+  font-family: var(--next-font-heading);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 19px;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.driver-popover.sort-tour .driver-popover-description {
+  font-family: var(--next-font-body);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.driver-popover.sort-tour .driver-popover-progress-text {
+  font-family: var(--font-jetbrains-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+}
+.driver-popover.sort-tour .driver-popover-footer button {
+  font-family: var(--next-font-body);
+  font-size: 13px;
+  text-shadow: none;
+  border-radius: 0;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+  padding: 5px 12px;
+}
+.driver-popover.sort-tour .driver-popover-footer button:hover {
+  border-color: var(--accent-text);
+  color: var(--accent-text);
+  background: transparent;
+}
+.driver-popover.sort-tour .driver-popover-next-btn {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: #fff !important;
+}
+.driver-popover.sort-tour .driver-popover-next-btn:hover {
+  color: #fff !important;
+}
+.driver-popover.sort-tour .driver-popover-arrow {
+  border-color: #fff;
 }

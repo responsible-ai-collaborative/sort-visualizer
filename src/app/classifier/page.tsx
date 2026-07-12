@@ -1,0 +1,54 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import "driver.js/dist/driver.css";
+import { ClassifierTool } from "@/components/viz/ClassifierTool";
+
+export const metadata: Metadata = {
+  title: "The classifier — run your own trajectory classification",
+  description:
+    "An interactive tool: enter your own harm and exposure estimates, with their uncertainty, and read the probabilistic trajectory classification from the SORT framework.",
+};
+
+export default function ClassifierPage() {
+  return (
+    <main className="mx-auto max-w-[1440px] px-6 sm:px-10 py-10 xl:h-screen xl:py-7 xl:flex xl:flex-col xl:overflow-hidden">
+      {/* Compact header strip — keeps the interactive body above the fold. */}
+      <header className="shrink-0 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between border-b border-rule pb-5 mb-8 xl:mb-6">
+        <div className="max-w-[720px]">
+          <div className="font-display italic text-[13px] text-ink-soft mb-1.5">
+            The classifier · a walk through the SORT framework
+          </div>
+          <h1 className="font-display font-medium text-[27px] sm:text-[31px] leading-[1.1] tracking-[-0.012em] text-ink">
+            Run the classification on{" "}
+            <span className="italic font-normal text-accent-text">your own numbers.</span>
+          </h1>
+          <p className="font-body text-[14px] leading-[1.55] text-ink-soft mt-2">
+            The walkthrough classifies one case. Give this tool your own point estimates for harm
+            and exposure across two periods, plus how uncertain each is, and it runs the same
+            probabilistic classifier — the whole thing lives on this one screen.
+          </p>
+        </div>
+        <nav className="flex shrink-0 items-baseline gap-5 sm:flex-col sm:items-end sm:gap-2">
+          <Link
+            href="/"
+            className="font-display italic text-[14px] text-accent-text hover:underline whitespace-nowrap"
+          >
+            ← Back to the walkthrough
+          </Link>
+          <a
+            href="/source_paper.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block font-body text-[13px] px-4 py-2 border border-accent text-accent bg-transparent hover:bg-accent hover:text-white transition-colors whitespace-nowrap"
+          >
+            Read the paper
+          </a>
+        </nav>
+      </header>
+
+      <div className="xl:flex-1 xl:min-h-0">
+        <ClassifierTool />
+      </div>
+    </main>
+  );
+}

@@ -61,19 +61,9 @@ The framework proceeds in three parts: define a precise monitoring question, est
 
 ---
 
-## Framework output preview
-
-### Step 04: The output is a trajectory, not a number.
-
-Every monitoring question ends up in one of four trajectory categories, built from two directional trends: harm-per-exposure and exposure. Each category carries a distinct governance implication — from *continue strategy* to *urgent attention*.
-
-And when the evidence cannot support even a directional call, the framework does something raw counts never do: it *abstains*. Keep that fifth outcome in mind — it returns at the end.
-
----
-
 ## Act 2 — Building the monitoring question
 
-### Step 05: A monitoring question has four parts.
+### Step 04: A monitoring question has four parts.
 
 SORT — *Subject, Opportunity, Risk event, Timeframe* — is the paper's structured analogue to PICO in evidence-based medicine. It forces analytical choices to be explicit rather than buried in framing.
 
@@ -87,29 +77,29 @@ Each box on the right holds one piece of the question. They will fill in one at 
 
 **Template caption:** Among [S] that [O], how many [R] per [T]?
 
-### Step 06: Subject: who or what is at risk.
+### Step 05: Subject: who or what is at risk.
 
 The subject need not be a population of people — it can be systems, content, deployments, or *conversations*. The paper's choice here is deliberately fine-grained: *conversations between US users and conversational AI systems*.
 
 Counting conversations rather than people fixes the unit of analysis for everything downstream. Exposure will be a conversation count, and harm a count of conversations that go wrong.
 
-### Step 07: Opportunity: what creates the exposure.
+### Step 06: Opportunity: what creates the exposure.
 
 Opportunity isolates the specific mechanism through which the subject is exposed to the harm. It is not "uses AI" — that would cast too wide a net. It is the precise interaction pattern that makes the risk event possible.
 
 Here: conversations *in which users seek support regarding suicidal ideation or self-harm*. That tightens scope considerably and pins down which proxy sources can stand in for exposure later.
 
-### Step 08: Risk event: the specific harm.
+### Step 07: Risk event: the specific harm.
 
 The risk event is the countable harm itself — phrased so an incident report can be matched against it. The paper specifies: the AI system *encourages, or fails to discourage, suicidal ideation or self-harm*.
 
 A vaguer phrasing — "AI causes mental health harms" — would inflate the number of partial matches and make the trend signal noisier.
 
-### Step 09: Timeframe: the unit of comparison.
+### Step 08: Timeframe: the unit of comparison.
 
 Timeframe defines the observation window. *Per calendar year* is chosen here, comparing T1 = 2024 against T2 = 2025 — the framework always compares two periods to produce a trend, not an absolute level.
 
-### Step 10: Assembled, the monitoring question reads:
+### Step 09: Assembled, the monitoring question reads:
 
 > Among *conversations between US users and conversational AI systems* *in which users seek support regarding suicidal ideation or self-harm*, in how many does the AI *encourage, or fail to discourage, suicidal ideation or self-harm* *per calendar year*?
 
@@ -119,50 +109,48 @@ That single sentence is the unit of analysis. Everything downstream — which da
 
 ---
 
-## Estimation tiers
+## Estimation tiers (modal, not a slide)
 
-### Step 11: Four tiers of evidence.
+The tier reference no longer has its own slide. Tier mentions in the estimation steps ("Tier 2" in the harm intro and both confidence notes, "reliability of its sources" in the uncertainty step) are click-to-open triggers (`TierLink`) styled like the walkthrough's links; they open a modal titled *Four tiers of source reliability*, with the triggering tier highlighted ("— this estimate").
 
-Answering the monitoring question means estimating harm and exposure across both periods. The paper grades every estimate by the strength of its evidence:
+**Modal intro:** Every estimate rests on whatever sources the data environment makes available, and those sources vary widely in how directly they speak to the question. The paper grades estimation methods into four tiers by the strength of the underlying evidence.
 
-- **Tier 1 — Direct measurement.** An authoritative source: crash filings, pharmacovigilance registries, platform transparency reports. High confidence.
-- **Tier 2 — Combine proxy measures.** No single source suffices; partial sources are combined into a point estimate. Medium confidence.
-- **Tier 3 — Expert elicitation.** No quantitative sources at all; domain experts bound a plausible range. Low confidence.
-- **Tier 4 — Abstain.** The plausible range spans orders of magnitude, or experts cannot converge. Principled abstention is a valid finding in its own right.
+- **Tier 1 — Direct measurement.** Sensitive to: authoritative source. An authoritative source: vehicle crash filings, pharmacovigilance registries, platform transparency reports. High confidence.
+- **Tier 2 — Combine proxy measures.** Sensitive to: proxy construction. No single source is complete, so a point estimate is constructed by combining partial sources and proxy measures. For harm, public incident databases can back-stop the estimate: where their recorded counts approach it, they raise the lower band of its uncertainty interval. Exposure has no such backstop; it must be proxied end to end. Medium confidence.
+- **Tier 3 — Expert elicitation.** Sensitive to: panel selection. No quantitative source supports even a rough estimate; domain experts bound the plausible range. Low confidence.
+- **Tier 4 — Abstain.** Where the plausible range spans more than two orders of magnitude, or no expert consensus is reachable, the estimate is withheld. A valid finding in its own right.
 
 ---
 
 ## Act 3 — Estimating harm
 
-### Step 12: Harm, source one: the AI Incident Database.
+### Step 10: Harm: start from the point estimate.
 
-Authoritative single sources rarely exist for AI harms, so the procedure starts with what incident databases can supply: a hard *lower bound* — the true harm cannot fall below what has already been recorded.
+The estimate that carries the classification is a *point estimate*, built from the strongest tiered data available. Authoritative single sources rarely exist for AI harms, so this question sits at Tier 2 and anchors on OpenAI's own disclosures: around *0.15% of weekly active users* have conversations with explicit indicators of potential suicidal planning or intent.
 
-An LLM-assisted scan of the AIID returns *2 full matches in 2024* (assessed harm count: two) and *12 in 2025* — but the 2025 harm count explodes to *10,014–110,025*, because three of the matches are composite narratives: an APA warning about AI chatbots on Character.AI, an OpenAI statement on users showing signs of suicidal ideation, and an assessment of chatbot personas designed to promote self-harm.
+Crucially, OpenAI also disclosed the ratio of *desired to undesired* model responses on those conversations, improving from roughly *40:60* (January 2024 – July 2025) to *80:20* (August–September 2025) to *92:8* (October–December 2025).
 
-### Step 13: Source two: OECD AIM joins the lower bound.
+### Step 11: Harm: ≈2.4M in 2024, ≈4M in 2025.
 
-The OECD AI Incidents Monitor uses a different sourcing pipeline. Filtered for US-based incidents involving chatbots or content generation resulting in death or physical or psychological injury, LLM analysis yields *8 full matches in 2024* and *77 in 2025*.
+Combining those ratios with estimated conversation volumes gives the point estimate of total harm — conversations in which the model's response was undesired: roughly *2.4 million* in 2024 and *4 million* in 2025.
 
-Most matching entries are duplicates, lawsuits, or composite narratives. Removing them leaves *1 individual case of suicide in 2024* and *3 individual cases of suicide, murder-suicide or self-harm in 2025*. Two independent floors, both rising — but floors this sparse cannot carry a trend claim alone.
+### Step 12: Then handle the uncertainty.
 
-### Step 14: From floor to point estimate.
+The point estimate carries an uncertainty band, set by the reliability of its sources. Incident databases enter only here: when their recorded counts come reasonably close to the estimate, they raise the *lower band* — the true harm cannot fall below what has already been recorded.
 
-For a Tier 2 point estimate, the paper turns to OpenAI's own disclosures: around *0.15% of weekly active users* have conversations with explicit indicators of potential suicidal planning or intent — and, crucially, the disclosed ratio of *desired to undesired* model responses on self-harm conversations improved from roughly *40:60* (January 2024 – July 2025) to *80:20* (August–September 2025) to *92:8* (October–December 2025).
+An LLM-assisted scan of the AIID returns *2 full matches in 2024* and *12 in 2025*, with the 2025 assessed harm count spanning *10,014–110,025* because three matches are composite narratives covering whole populations: an APA warning about AI chatbots on Character.AI, an OpenAI statement on users showing signs of suicidal ideation, and an assessment of chatbot personas designed to promote self-harm. This harm type has a low inclusion probability in incident databases, so the recorded floor sits orders of magnitude below the point estimate — it barely moves the band, and the classification rests on the point estimate alone.
 
-Combining those ratios with estimated conversation volumes gives a point estimate of total harm: conversations in which the model's response was undesired.
+### Step 13: Harm trend: increasing, ×~1.7.
 
-### Step 15: Harm: ≈2.4M in 2024, ≈4M in 2025.
+Across the two periods the point estimate grows from *≈2.4 million* to *≈4 million* harmful conversations — a trend of *increasing, ×~1.7*.
 
-The point estimate lands at roughly *2.4 million* harmful conversations in 2024 and *4 million* in 2025 — a trend of *increasing, ×~1.7*.
-
-> **Confidence tier — harm.** Tier 2 · Medium: derived from reasonable publicly available proxy sources. The lower-bound estimates, although individually unrepresentative, are directionally consistent with the point estimate. The choice of harm type has a low inclusion probability in incident databases, which is why the floors sit six orders of magnitude below the point estimate.
+> **Confidence tier — harm.** Tier 2 · Medium: derived from reasonable publicly available proxy sources. The AIID's sparse recorded counts are directionally consistent with the point estimate, but lift the lower band of its uncertainty interval only marginally.
 
 ---
 
 ## Act 3 — Estimating exposure
 
-### Step 16: Exposure: a funnel of proxies.
+### Step 14: Exposure: a funnel of proxies.
 
 Exposure is *the opportunity for harm to occur* — here, the number of conversations matching the opportunity, not the number of users. No one publishes that number, so it is assembled from a funnel of partial sources:
 
@@ -172,7 +160,7 @@ Exposure is *the opportunity for harm to occur* — here, the number of conversa
 
 Interpolating monthly gives *≈34 million* US weekly active users across conversational AI platforms in January 2024, rising to *≈243 million* by December 2025.
 
-### Step 17: Exposure: ≈4M conversations in 2024, ≈12M in 2025.
+### Step 15: Exposure: ≈4M conversations in 2024, ≈12M in 2025.
 
 Applying OpenAI's 0.15% rate to those user counts, week by week, and summing each year: approximately *4 million* conversations matching the opportunity in 2024 and *12 million* in 2025.
 
@@ -184,7 +172,7 @@ The trend is *increasing, ×~3*.
 
 ## Act 4 — Classification
 
-### Step 18: Take the ratio: the dot lands in Mitigating.
+### Step 16: Take the ratio: the dot lands in Mitigating.
 
 The grid takes the exposure trend (E) and the harm-per-exposure trend (Ĥ) as its two axes. Harm grew ×1.7 while exposure grew ×3 — so harm *per unit of exposure* fell by a factor of about *0.55*, against a rising exposure base.
 
@@ -195,7 +183,7 @@ The grid takes the exposure trend (E) and the harm-per-exposure trend (Ĥ) as it
 - *Concentrating* — Ĥ ↑ · E ↓. Targeted measures.
 - *Receding* — Ĥ ↓ · E ↓. Continue strategy.
 
-### Step 19: How confident is that placement?
+### Step 17: How confident is that placement?
 
 The estimates behind the dot carry real uncertainty — a factor of ~2 on each harm estimate, ~1.5 on each exposure estimate. The paper treats each quantity as log-normal, samples all four by Monte Carlo, and classifies every draw. The result is not a cell but a *distribution*:
 
@@ -205,11 +193,17 @@ The estimates behind the dot carry real uncertainty — a factor of ~2 on each h
 
 The fifth outcome, *Unclassifiable*, absorbs the draws where a trend is too weak to call. Uncertainty appears as probability mass, not as false confidence.
 
-### Step 20: Verdict: Mitigating — read alongside absolute harm.
+### Step 18: Verdict: Mitigating — read alongside absolute harm.
 
 Per-unit-exposure harm is decreasing while more people are exposed: existing safeguards appear to be working, and the classification is *Mitigating* at Medium confidence.
 
 But the classification says nothing about absolute scale. Roughly four million harmful conversations is *more* than the year before — a Mitigating trajectory can coexist with large and growing absolute harm. The framework's instruction: always read the trajectory alongside the absolute estimates. A naive reading of the incident counts would have called this system more dangerous; the framework says it is becoming safer per use while the harm still grows.
+
+### Step 19: Don't take our word for it — move the assumptions.
+
+Nothing about those weights is hand-tuned: they fall out of the Monte Carlo given the estimates, two uncertainty factors, and an indifference band. The sliders start at the paper's values — each faint point is one draw of the classifier.
+
+Widen the harm uncertainty and watch probability mass drain into *Unclassifiable*. Shrink the indifference band and the verdict sharpens. Push harm growth past exposure growth and the dot crosses into *Escalating*. The conclusion is only as strong as the assumptions — and now you can check which ones carry it.
 
 ---
 
@@ -239,9 +233,10 @@ The point of the framework isn't to settle the verdict — nearly a third of the
 
 | Source | Type | 2024 | 2025 |
 |---|---|---|---|
-| AIID (AI Incident Database) | Count — lower bound | 2 full matches (harm count 2) | 12 full matches (harm count 10,014–110,025, driven by composite narratives) |
-| OECD AIM (AI Incidents Monitor) | Count — lower bound | 8 full matches; de-duplicated: 1 suicide case | 77 full matches; de-duplicated: 3 cases of suicide, murder-suicide or self-harm |
-| OpenAI disclosures | Point estimate — Tier 2 | desired:undesired ≈ 40:60 | 40:60 → 80:20 (Aug–Sep) → 92:8 (Oct–Dec) |
+| OpenAI disclosures | Point estimate — Tier 2 (the anchor) | desired:undesired ≈ 40:60 | 40:60 → 80:20 (Aug–Sep) → 92:8 (Oct–Dec) |
+| AIID (AI Incident Database) | Uncertainty check — raises the lower band of the point estimate's interval | 2 full matches (harm count 2) | 12 full matches (harm count 10,014–110,025, driven by composite narratives) |
+
+The OECD AIM is **not** used as an estimation source in this worked example (duplication problems in its automated scraping pipeline); it appears only in Act 1 as motivation.
 
 #### Harm point estimate
 
@@ -252,7 +247,7 @@ The point of the framework isn't to settle the verdict — nearly a third of the
 
 **Harm trend:** Increasing ×~1.7 — Tier 2 · Medium confidence.
 
-**Harm summary:** Derived from reasonable publicly available proxy sources. The lower-bound estimates, although individually unrepresentative, are directionally consistent with the point estimates. Composite narratives account for the four-to-five order-of-magnitude spread in the AIID harm counts.
+**Harm summary:** Derived from reasonable publicly available proxy sources. The AIID's sparse recorded counts are directionally consistent with the point estimate, but lift the lower band of its uncertainty interval only marginally. Composite narratives account for the four-to-five order-of-magnitude spread in the AIID harm counts.
 
 #### Exposure funnel (proxy stack)
 
@@ -295,7 +290,7 @@ The point of the framework isn't to settle the verdict — nearly a third of the
 #### Design voice (site-wide)
 
 - Display face: Newsreader (serif, italic voice for labels/annotations); body: Figtree; mono: JetBrains Mono, **data only** — no all-caps tracked eyebrow labels anywhere.
-- Every viz carries a paper-style figure caption: *Fig. N — caption*, numbered by section order (1–7).
+- Every viz carries a paper-style figure caption: *Fig. N — caption*, numbered by section order (1–5).
 - Labels, roles, and captions are sentence case, set in italic Newsreader.
 
 #### Act 1 — Incidents chart
@@ -311,9 +306,8 @@ The point of the framework isn't to settle the verdict — nearly a third of the
 #### Act 3 — Estimation panels
 - **Panel headings:** Harm · Exposure
 - **Panel sub-labels:** Variable H · Variable E
-- **AIID card tag:** AIID — *AI Incident Database* — "Lower bound · 2 → 12 full matches" — "2025 harm count 10,014–110,025, driven by composite narratives."
-- **OECD card tag:** OECD AIM — *AI Incidents Monitor* — "Lower bound · 8 → 77 full matches" — "De-duplicated individual cases: 1 → 3."
-- **Point-estimate card tag:** OpenAI — *Disclosed response quality* — "0.15% of WAU · desired:undesired 40:60 → 80:20 → 92:8"
+- **Point-estimate card tag:** OpenAI — *Disclosed response quality* — "0.15% of WAU · desired:undesired 40:60 → 80:20 → 92:8" (shown first — the anchor)
+- **AIID card tag:** AIID — *Uncertainty check · lower band* — "2 → 12 full matches" — "2025 harm count 10,014–110,025, driven by composite narratives; only nudges the lower band." (no OECD card — the OECD AIM is not an estimation source in this case)
 - **Harm conclusion label:** Trend → Increasing ×~1.7 · H ↑ — Tier 2 · Medium
 - **Exposure funnel row labels:** ChatGPT WAU · ÷ traffic share (~75%→~60%) · × ~18% US-based · × 0.15% weekly
 - **Exposure conclusion label:** Trend → Increasing ×~3 · E ↑ — Tier 2 · Medium
@@ -321,11 +315,14 @@ The point of the framework isn't to settle the verdict — nearly a third of the
 - **Harm carryover chip (exposure panel):** H ✓ · Increasing ×~1.7 / Tier 2 · Medium
 
 #### Act 4 — Quadrant chart
-- **Axes:** Ĥ trend → (decreasing ← → increasing) · E trend ↑ (decreasing ← → increasing)
-- **Chatbot dot label:** Chatbot · self-harm
-- **Weight chips (step 19):** Mitigating 58.6% · Escalating 9.8%
+- **Axes:** "exposure growth →" (x, decreasing ← → increasing) · "harm trend ↑" (y)
+- **Quadrant cells:** italic name only — the trend-arrow line and governance blurbs ("Continue strategy" etc.) were removed 2026-07-06 for clutter; quadrant-copy.ts still holds them if ever needed
+- **Slider hints:** each classifier input has a "?" that reveals a one-sentence explanation on hover/focus
+- **Dot:** unlabeled (the narrative names the case; a label collided with the cloud/chips)
+- **Weight chips (step 17):** Mitigating 58.6% · Escalating 9.8% — centered under each quadrant heading; a chip dodges to the quadrant's outer edge at mid-height if the dot encroaches
 - **Unclassifiable pill:** Unclassifiable · 31.6% — evidence too uncertain to place
 - **Classification caption label:** Classification
+- **Step 19 explorer:** live port of the paper's Algorithm 2 (Appendix E) in `src/lib/classifier.ts`. Sliders: Harm growth H₂/H₁ (×1.67), Exposure growth E₂/E₁ (×3.00), Harm uncertainty u_H (×2.0), Exposure uncertainty u_E (×1.5), Indifference band ε (±5%) — all initialized to the paper's values (ε = 5% reproduces the published weights within MC noise). The dot sits at the point-estimate trends and is colored by the most probable quadrant; ~260 of the 20,000 Monte Carlo draws render as a faint cloud colored by each draw's category (gray = Unclassifiable). Buttons: "↻ new draws" (reseeds the MC — weights jitter within sampling noise) and "reset to paper values".
 
 ---
 

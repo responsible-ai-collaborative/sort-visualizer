@@ -46,10 +46,20 @@ const LETTERS: {
 
 const FADE = { duration: 0.4, ease: [0.22, 0.61, 0.36, 1] as const };
 
+// The letter each step focuses on. Below md only that box is shown full-size
+// (the others collapse into the chip row) so the stack fits the 40vh pin.
+const ACTIVE_LETTER: Record<string, LetterKey> = {
+  "2.2": "S",
+  "2.3": "O",
+  "2.4": "R",
+  "2.5": "T",
+};
+
 export function SortAssembly({ activeStep }: { activeStep: string | null }) {
   const state = resolveAct2(activeStep);
   const reduced = useReducedMotion();
   const tDur = reduced ? 0 : FADE.duration;
+  const activeLetter = activeStep ? (ACTIVE_LETTER[activeStep] ?? null) : null;
 
   return (
     <div
@@ -67,8 +77,37 @@ export function SortAssembly({ activeStep }: { activeStep: string | null }) {
             transition={{ duration: tDur }}
             className="grid grid-cols-1 gap-2 md:gap-4"
           >
+            {activeLetter ? (
+              <div className="md:hidden flex items-center justify-center gap-2.5 mb-1">
+                {LETTERS.map((l) => (
+                  <span
+                    key={l.key}
+                    className="flex items-center justify-center w-7 h-7 rounded-full font-mono text-[11px] font-bold"
+                    style={
+                      state.contents[l.key]
+                        ? { background: l.color, color: "#fff" }
+                        : {
+                            border: `1.5px solid ${l.color}`,
+                            color: l.color,
+                            background: "rgba(255,255,255,0.6)",
+                          }
+                    }
+                    aria-hidden
+                  >
+                    {l.key}
+                  </span>
+                ))}
+              </div>
+            ) : null}
             {LETTERS.map((l, i) => (
-              <Box key={l.key} letter={l} filled={state.contents[l.key]} tDur={tDur} index={i} />
+              <Box
+                key={l.key}
+                letter={l}
+                filled={state.contents[l.key]}
+                tDur={tDur}
+                index={i}
+                mobileHidden={activeLetter !== null && l.key !== activeLetter}
+              />
             ))}
             <div className="hidden md:block md:mt-2 border-t border-rule md:pt-3 font-mono text-[12px] text-ink-faint">
               Among [S] that [O], how many [R] per [T]?
@@ -85,10 +124,10 @@ export function SortAssembly({ activeStep }: { activeStep: string | null }) {
             transition={{ duration: tDur }}
             className="text-center"
           >
-            <div className="font-display italic text-[16px] text-ink-faint mb-4">
+            <div className="font-display italic text-[15px] md:text-[16px] text-ink-faint mb-2 md:mb-4">
               The monitoring question
             </div>
-            <p className="font-display text-[22px] md:text-[26px] leading-[1.32] text-ink">
+            <p className="font-display text-[17px] md:text-[26px] leading-[1.32] text-ink">
               Among <Em>{chatbotCase.mq.subject}</Em> <Em>{chatbotCase.mq.opportunity}</Em>, in how
               many do <Em>{chatbotCase.mq.riskEvent}</Em> <Em>{chatbotCase.mq.timeframe}</Em>?
             </p>
@@ -104,14 +143,16 @@ function Box({
   filled,
   tDur,
   index,
+  mobileHidden,
 }: {
   letter: (typeof LETTERS)[number];
   filled: boolean;
   tDur: number;
   index: number;
+  mobileHidden?: boolean;
 }) {
   return (
-    <div className="flex gap-3 items-start">
+    <div className={"flex gap-3 items-start" + (mobileHidden ? " max-md:hidden" : "")}>
       <div
         className="flex items-center justify-center w-7 h-7 rounded-full font-mono text-[11px] font-bold flex-shrink-0 mt-1"
         style={{

@@ -56,7 +56,7 @@ export function FrameworkFlow({ visible }: { visible: boolean }) {
       {STAGES.map((stage, i) => (
         <div key={stage.id} className="flex flex-col items-center w-full">
           <div
-            className="framework-flow-box border border-rule bg-[rgba(255,255,255,0.7)] px-5 py-3 w-full"
+            className="framework-flow-box border border-rule bg-[rgba(255,255,255,0.7)] px-4 py-2 md:px-5 md:py-3 w-full"
             style={{ opacity: 0 }}
           >
             <div className="flex items-baseline gap-2">
@@ -73,14 +73,14 @@ export function FrameworkFlow({ visible }: { visible: boolean }) {
             <div className="font-body font-semibold text-[14px] text-ink mt-1 leading-tight">
               {stage.short}
             </div>
-            <p className="font-body text-[12px] text-ink-soft leading-snug mt-1.5">
+            <p className="max-md:hidden font-body text-[12px] text-ink-soft leading-snug mt-1.5">
               {stage.detail}
             </p>
           </div>
           {i < STAGES.length - 1 ? (
             <span
               aria-hidden
-              className="framework-flow-arrow text-ink-faint text-[16px] py-1 select-none"
+              className="framework-flow-arrow text-ink-faint text-[16px] py-0.5 md:py-1 select-none"
               style={{ opacity: 0 }}
             >
               ↓

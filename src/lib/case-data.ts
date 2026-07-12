@@ -10,12 +10,22 @@ export type ConfidenceLabel = "High" | "Medium" | "Low";
 
 export type YearValue = { year: string; value: number; display: string };
 
-export type LowerBoundSource = {
+// External citation behind a card's numbers — rendered as a small "source ↗"
+// link on the card. `label` names the source (shown as the link title).
+// URLs are the ones cited in the paper's references for §3.1.
+export type SourceLink = { label: string; href: string };
+
+// Incident-database check on the point estimate's lower band — the AIID is
+// not an input to the classification itself; when its recorded counts come
+// close to the point estimate they raise the lower band of its uncertainty
+// interval.
+export type IncidentCheckSource = {
   tag: string; // e.g. "AIID"
   name: string;
   blurb: string;
   matches: YearValue[]; // full-match counts per period (bar pairs)
   note: string;
+  sourceLinks: SourceLink[];
 };
 
 export type RatioPeriod = {
@@ -32,12 +42,16 @@ export type HarmPointEstimate = {
   rateNote: string;
   ratios: RatioPeriod[];
   estimates: YearValue[]; // harmful conversations per period
+  sourceLinks: SourceLink[];
 };
 
 export type FunnelRow = {
   label: string; // e.g. "ChatGPT weekly active users"
   operation: string | null; // e.g. "÷ traffic share" — null for the base row
   detail: string; // e.g. "140M → 300M → ≈850M"
+  // Omitted for rows that are derived from the rows above rather than read
+  // from an external source.
+  sourceLinks?: SourceLink[];
 };
 
 export type TrendConclusion = {
@@ -67,30 +81,21 @@ export const chatbotCase = {
   },
 
   harm: {
-    lowerBounds: [
-      {
-        tag: "AIID",
-        name: "AI Incident Database",
-        blurb:
-          "LLM analysis of the AIID found 2 full matches in 2024 and 12 in 2025. The 2025 assessed harm count spans 10,014–110,025 — three matches are composite narratives covering populations, not individuals.",
-        matches: [
-          { year: "2024", value: 2, display: "2" },
-          { year: "2025", value: 12, display: "12" },
-        ],
-        note: "Assessed harm count: 2 (2024) → 10,014–110,025 (2025).",
-      },
-      {
-        tag: "OECD AIM",
-        name: "OECD AI Incidents Monitor",
-        blurb:
-          "Filtered for US-based incidents involving chatbots or content generation resulting in death, physical or psychological harm: 8 full matches in 2024 and 77 in 2025. Most are duplicates, lawsuits, or composite narratives.",
-        matches: [
-          { year: "2024", value: 8, display: "8" },
-          { year: "2025", value: 77, display: "77" },
-        ],
-        note: "De-duplicated individual cases: 1 (2024) → 3 (2025).",
-      },
-    ] satisfies LowerBoundSource[],
+    // The OECD AIM appears only in Act 1 as motivation ("numbers go up") —
+    // the worked example does not use it as an estimation source because of
+    // duplication problems in its automated scraping pipeline.
+    incidentCheck: {
+      tag: "AIID",
+      name: "AI Incident Database",
+      blurb:
+        "LLM analysis of the AIID found 2 full matches in 2024 and 12 in 2025. The 2025 assessed harm count spans 10,014–110,025 — three matches are composite narratives covering populations, not individuals. Used only to check the lower band of the point estimate's uncertainty interval.",
+      matches: [
+        { year: "2024", value: 2, display: "2" },
+        { year: "2025", value: 12, display: "12" },
+      ],
+      note: "Assessed harm count: 2 (2024) → 10,014–110,025 (2025).",
+      sourceLinks: [{ label: "AI Incident Database", href: "https://incidentdatabase.ai" }],
+    } satisfies IncidentCheckSource,
 
     pointEstimate: {
       tag: "OPENAI",
@@ -108,6 +113,12 @@ export const chatbotCase = {
         { year: "2024", value: 2_400_000, display: "≈2.4M" },
         { year: "2025", value: 4_000_000, display: "≈4M" },
       ],
+      sourceLinks: [
+        {
+          label: "OpenAI — Strengthening ChatGPT's responses in sensitive conversations (2025)",
+          href: "https://openai.com/index/strengthening-chatgpt-responses-in-sensitive-conversations/",
+        },
+      ],
     } satisfies HarmPointEstimate,
 
     conclusion: {
@@ -117,7 +128,7 @@ export const chatbotCase = {
       confidenceTier: 2,
       confidenceLabel: "Medium",
       summary:
-        "Derived from reasonable publicly available proxy sources. The lower-bound estimates, although individually unrepresentative, are directionally consistent with the point estimates.",
+        "Derived from reasonable publicly available proxy sources. The AIID's sparse recorded counts are directionally consistent with the point estimate, but lift the lower band of its uncertainty interval only marginally.",
     } satisfies TrendConclusion,
   },
 
@@ -128,21 +139,49 @@ export const chatbotCase = {
         label: "ChatGPT weekly active users",
         operation: null,
         detail: "140M (Jan 24) → 300M (Jan 25) → ≈850M (Dec 25)",
+        sourceLinks: [
+          {
+            label: "OpenAI — ChatGPT usage and adoption patterns at work (2025)",
+            href: "https://openai.com/business/guides-and-resources/chatgpt-usage-and-adoption-patterns-at-work/",
+          },
+          {
+            label: "Backlinko — ChatGPT statistics (2026)",
+            href: "https://backlinko.com/chatgpt-stats",
+          },
+        ],
       },
       {
         label: "All conversational AI platforms",
         operation: "÷ OpenAI share of gen-AI traffic",
         detail: "~75% (2024) falling to ~60% (2025)",
+        sourceLinks: [
+          {
+            label: "Similarweb — Gen AI website traffic share (2026)",
+            href: "https://x.com/Similarweb/status/2032019226806951989",
+          },
+        ],
       },
       {
         label: "US-based weekly active users",
         operation: "× ~18% US-based",
         detail: "≈34M (Jan 24) → ≈243M (Dec 25)",
+        sourceLinks: [
+          {
+            label: "Exploding Topics — ChatGPT users (2026)",
+            href: "https://explodingtopics.com/blog/chatgpt-users",
+          },
+        ],
       },
       {
         label: "Conversations matching [O]",
         operation: "× ≈0.15% weekly, summed",
         detail: "one user may have multiple matching conversations",
+        sourceLinks: [
+          {
+            label: "OpenAI — Strengthening ChatGPT's responses in sensitive conversations (2025)",
+            href: "https://openai.com/index/strengthening-chatgpt-responses-in-sensitive-conversations/",
+          },
+        ],
       },
     ] satisfies FunnelRow[],
     estimates: [
@@ -166,6 +205,23 @@ export const chatbotCase = {
     hRatioDisplay: "×~0.55",
     eRatioDisplay: "×~3",
     confidenceLabel: "Medium" as ConfidenceLabel,
+    // Inputs to the paper's probabilistic classifier (Algorithm 2,
+    // Appendix E): point estimates from §3.1, uncertainty factors ~2 on both
+    // harm estimates and 1.5 on both exposure estimates, incident-database
+    // floors (AIID assessed harm counts), and an indifference band of 5% —
+    // "a few percent" in the paper; 5% reproduces the published weights
+    // below within Monte Carlo noise.
+    classifierInputs: {
+      h1: 2_400_000,
+      h2: 4_000_000,
+      e1: 4_000_000,
+      e2: 12_000_000,
+      uH: 2,
+      uE: 1.5,
+      eps: 0.05,
+      floorH1: 2,
+      floorH2: 10_014,
+    },
     // Adjusted weights from the paper's probabilistic classifier, based on
     // uncertainty factors of ~2 on both harm estimates and 1.5 on both
     // exposure estimates (§2.3, Appendix E).

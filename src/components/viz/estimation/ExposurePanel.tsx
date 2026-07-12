@@ -9,6 +9,7 @@ import type { FunnelRow } from "@/lib/case-data";
 import {
   PanelHeader,
   SourceCard,
+  SourceLinks,
   ConclusionBar,
   EstimatePair,
   animateCardIn,
@@ -28,6 +29,9 @@ export function ExposurePanel({ activeStep }: { activeStep: string | null }) {
   const state = resolveExposure(activeStep);
   const reduced = !!useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
+  // Below md only the current step's cards fit the 40vh pin: 3.5 shows the
+  // base funnel rows, 3.6 swaps them for the rate row + estimate + trend.
+  const atRate = activeStep === "3.6";
 
   useGSAP(
     () => {
@@ -58,17 +62,27 @@ export function ExposurePanel({ activeStep }: { activeStep: string | null }) {
         }
       />
 
-      <p className="font-display italic text-[14px] leading-snug text-ink-faint mb-3">
+      {/* Below md the step text already defines exposure — the line costs
+          more pin height than it earns. */}
+      <p className="max-md:hidden font-display italic text-[14px] leading-snug text-ink-faint mb-3">
         {chatbotCase.exposure.definition}
       </p>
 
-      <div className="space-y-2">
+      <div className="space-y-1.5 md:space-y-2">
         {state.funnel &&
           baseRows.map((row, i) => (
-            <FunnelRowCard key={row.label} row={row} className={`exposure-row-${i} opacity-0`} />
+            <FunnelRowCard
+              key={row.label}
+              row={row}
+              className={`exposure-row-${i} opacity-0` + (atRate ? " max-md:hidden" : "")}
+            />
           ))}
 
-        {state.rate && <FunnelRowCard row={rateRow} className="exposure-rate opacity-0" accent />}
+        {/* The ×0.15% row is narrated by the 3.6 step text, so below md the
+            pin shows just the estimate + trend it produces. */}
+        {state.rate && (
+          <FunnelRowCard row={rateRow} className="exposure-rate opacity-0 max-md:hidden" accent />
+        )}
 
         {state.conclusion && (
           <SourceCard
@@ -102,23 +116,26 @@ function FunnelRowCard({
 }) {
   return (
     <div
-      className={`${className ?? ""} border border-rule px-4 py-3 flex items-baseline justify-between gap-4`}
+      className={`${className ?? ""} border border-rule px-3 py-1.5 md:px-4 md:py-3 flex items-baseline justify-between gap-3 md:gap-4`}
       style={{
         background: accent ? "rgba(1, 25, 52, 0.05)" : "rgba(255, 255, 255, 0.7)",
       }}
     >
       <div className="min-w-0">
         {row.operation ? (
-          <div className="font-display italic text-[13px] text-accent-text mb-0.5">
+          <div className="font-display italic text-[12px] md:text-[13px] text-accent-text mb-0.5">
             {row.operation}
           </div>
         ) : null}
-        <div className="font-body text-[15px] leading-tight text-ink font-semibold">
+        <div className="font-body text-[13px] md:text-[15px] leading-tight text-ink font-semibold">
           {row.label}
         </div>
       </div>
-      <div className="font-mono text-[11px] text-ink-soft text-right max-w-[230px] leading-snug">
-        {row.detail}
+      <div className="text-right max-w-[230px]">
+        <div className="font-mono text-[10px] md:text-[11px] text-ink-soft leading-snug">
+          {row.detail}
+        </div>
+        <SourceLinks links={row.sourceLinks} />
       </div>
     </div>
   );

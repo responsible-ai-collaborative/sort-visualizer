@@ -1,7 +1,7 @@
 // Step ids and per-act state snapshots. Each viz consumes the snapshot at the
 // active step. Display numbers are assigned by a single counter in page.tsx;
-// internal ids run "1.1" .. "4.3" for readability, with "fo.1" (framework
-// output) and "tr.1" (tier reliability) for the two non-act framework reveals.
+// internal ids run "1.1" .. "4.4" for readability. (The tier-reliability
+// slide is gone — tier detail opens from TierLink triggers in the steps.)
 
 import type { Quadrant } from "./case-data";
 
@@ -71,26 +71,28 @@ export const act2Initial: Act2State = {
 };
 
 // ── Act 3a: Estimating harm (steps 3.1–3.4) ────────────────────────────────
+// The point estimate anchors the act; the AIID card appears afterwards as an
+// uncertainty check on the lower band, per the paper's methodology.
 export type HarmStepId = "3.1" | "3.2" | "3.3" | "3.4";
 
 export type HarmState = {
-  aiid: boolean;
-  oecd: boolean;
   pointEstimate: boolean;
+  estimates: boolean;
+  aiid: boolean;
   conclusion: boolean;
 };
 
 export const harmSnapshots: Record<HarmStepId, HarmState> = {
-  "3.1": { aiid: true, oecd: false, pointEstimate: false, conclusion: false },
-  "3.2": { aiid: true, oecd: true, pointEstimate: false, conclusion: false },
-  "3.3": { aiid: true, oecd: true, pointEstimate: true, conclusion: false },
-  "3.4": { aiid: true, oecd: true, pointEstimate: true, conclusion: true },
+  "3.1": { pointEstimate: true, estimates: false, aiid: false, conclusion: false },
+  "3.2": { pointEstimate: true, estimates: true, aiid: false, conclusion: false },
+  "3.3": { pointEstimate: true, estimates: true, aiid: true, conclusion: false },
+  "3.4": { pointEstimate: true, estimates: true, aiid: true, conclusion: true },
 };
 
 export const harmInitial: HarmState = {
-  aiid: false,
-  oecd: false,
   pointEstimate: false,
+  estimates: false,
+  aiid: false,
   conclusion: false,
 };
 
@@ -115,9 +117,10 @@ export const exposureInitial: ExposureState = {
 };
 
 // ── Act 4: Classification ──────────────────────────────────────────────────
-// Three steps: dot placement, probabilistic weights, then verdict. The
-// empty-quadrant beat lives upstream in the framework-output reveal.
-export type Act4StepId = "4.1" | "4.2" | "4.3";
+// Four steps: dot placement, the weighted distribution, verdict, then the
+// live sensitivity explorer. The grid, axes, and labels are introduced here
+// alongside the landing dot (there is no separate empty-grid preview).
+export type Act4StepId = "4.1" | "4.2" | "4.3" | "4.4";
 
 export type Act4State = {
   grid: boolean;
@@ -125,6 +128,8 @@ export type Act4State = {
   dot: boolean;
   weights: boolean;
   verdict: boolean;
+  // Interactive sensitivity explorer: sliders drive the classifier live.
+  explore: boolean;
 };
 
 export const act4Snapshots: Record<Act4StepId, Act4State> = {
@@ -134,6 +139,7 @@ export const act4Snapshots: Record<Act4StepId, Act4State> = {
     dot: true,
     weights: false,
     verdict: false,
+    explore: false,
   },
   "4.2": {
     grid: true,
@@ -141,6 +147,7 @@ export const act4Snapshots: Record<Act4StepId, Act4State> = {
     dot: true,
     weights: true,
     verdict: false,
+    explore: false,
   },
   "4.3": {
     grid: true,
@@ -148,6 +155,15 @@ export const act4Snapshots: Record<Act4StepId, Act4State> = {
     dot: true,
     weights: true,
     verdict: true,
+    explore: false,
+  },
+  "4.4": {
+    grid: true,
+    activeQuadrant: "mitigating",
+    dot: true,
+    weights: true,
+    verdict: false,
+    explore: true,
   },
 };
 
@@ -157,6 +173,7 @@ export const act4Initial: Act4State = {
   dot: false,
   weights: false,
   verdict: false,
+  explore: false,
 };
 
 // ── Helpers ────────────────────────────────────────────────────────────────

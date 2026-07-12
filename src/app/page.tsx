@@ -7,18 +7,16 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Header } from "@/components/Header";
 import { Closing } from "@/components/Closing";
 import { NavArrows } from "@/components/NavArrows";
+import { ProgressRail } from "@/components/ProgressRail";
 import { ScrollySection, type CardSpec, type StepDef } from "@/components/ScrollySection";
 import { IncidentsChart } from "@/components/viz/IncidentsChart";
-import { FrameworkOutputViz } from "@/components/viz/FrameworkOutputViz";
 import { SortAssembly } from "@/components/viz/SortAssembly";
-import { TierTable } from "@/components/viz/TierTable";
 import { HarmPanel } from "@/components/viz/estimation/HarmPanel";
 import { ExposurePanel } from "@/components/viz/estimation/ExposurePanel";
 import { Act4Quadrant } from "@/components/viz/Act4Quadrant";
 import { ProgressStepper } from "@/components/ProgressStepper";
 import { STAGES, type StageId } from "@/lib/stages";
 import { act1Steps } from "@/content/act1-steps";
-import { frameworkOutputSteps, tierReliabilitySteps } from "@/content/framework-steps";
 import { act2Steps } from "@/content/act2-steps";
 import { harmSteps } from "@/content/harm-steps";
 import { exposureSteps } from "@/content/exposure-steps";
@@ -49,16 +47,6 @@ const SECTION_SPECS: SectionSpec[] = [
       "Monthly AI incidents and hazards recorded in the OECD AI Incidents and Hazards Monitor, December 2020 – December 2025. Hover a bar for exact counts.",
   },
   {
-    sectionId: "act-framework-output",
-    contentSteps: frameworkOutputSteps,
-    Viz: FrameworkOutputViz,
-    ariaLabel: "What the framework produces — the 2 × 2 trajectory output",
-    vizAriaLabel:
-      "An empty 2-by-2 classification grid with four labelled quadrants: Concentrating, Escalating, Receding, Mitigating.",
-    figureCaption:
-      "The framework's output: four trajectory categories built from two directional trends.",
-  },
-  {
     sectionId: "act-2",
     contentSteps: act2Steps,
     Viz: SortAssembly,
@@ -69,24 +57,15 @@ const SECTION_SPECS: SectionSpec[] = [
       "The SORT monitoring question for conversational AI and self-harm, assembled one part at a time.",
   },
   {
-    sectionId: "act-tier-reliability",
-    contentSteps: tierReliabilitySteps,
-    Viz: TierTable,
-    ariaLabel: "Classifying source reliability — the four estimation tiers",
-    vizAriaLabel:
-      "A four-row table of source-reliability tiers; each row expands on click to describe the tier.",
-    figureCaption: "Four tiers for harm and exposure estimation, graded by evidence strength.",
-  },
-  {
     sectionId: "act-3-harm",
     contentSteps: harmSteps,
     Viz: HarmPanel,
     ariaLabel: "Act 3a: Estimating harm",
     vizAriaLabel:
-      "Harm panel: two lower-bound source cards, then a point estimate from OpenAI's disclosed response ratios.",
-    card: { stageId: "harm" },
+      "Harm panel: a point estimate from OpenAI's disclosed response ratios, then an incident-database check on its lower uncertainty band.",
+    card: { stageId: "estimation" },
     figureCaption:
-      "Estimating harm: lower bounds from two incident databases, then a point estimate from disclosed response ratios.",
+      "Estimating harm: a point estimate from disclosed response ratios, checked against recorded incident counts.",
   },
   {
     sectionId: "act-3-exposure",
@@ -95,7 +74,7 @@ const SECTION_SPECS: SectionSpec[] = [
     ariaLabel: "Act 3b: Estimating exposure",
     vizAriaLabel:
       "Exposure panel: a funnel of usage proxies scaling to a conversation-count estimate.",
-    card: { stageId: "exposure" },
+    card: { stageId: "estimation" },
     figureCaption:
       "Estimating exposure: conversations matching the opportunity, assembled from a funnel of usage proxies.",
   },
@@ -105,7 +84,7 @@ const SECTION_SPECS: SectionSpec[] = [
     Viz: Act4Quadrant,
     ariaLabel: "Act 4: Classification for the chatbot case",
     vizAriaLabel:
-      "A two-by-two classification grid; the chatbot case lands in the mitigating quadrant, with probability weights on the placement.",
+      "A two-by-two classification grid; the chatbot case lands in the mitigating quadrant, with the classifier's distribution weights on the placement.",
     card: { stageId: "classification" },
     figureCaption:
       "Trajectory classification for the chatbot case, with the probabilistic classifier's weights.",
@@ -177,6 +156,7 @@ export default function Page() {
   return (
     <main ref={mainRef} className="relative z-10">
       <ProgressStepper activeStage={activeStage} />
+      <ProgressRail />
       <NavArrows />
       <Header />
 

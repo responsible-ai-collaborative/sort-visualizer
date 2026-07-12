@@ -74,7 +74,9 @@ export function ScrollySection({
           className={
             mobilePin +
             (card
-              ? "sticky flex items-center justify-center top-[52px] h-[calc(40vh-52px)] md:h-[calc(100vh-52px)]"
+              ? // The stepper is shorter below md (number chips), so the pin
+                // offset shrinks with it — keep in sync with ProgressStepper.
+                "sticky flex items-center justify-center top-[38px] h-[calc(40vh-38px)] md:top-[52px] md:h-[calc(100vh-52px)]"
               : "sticky flex items-center justify-center top-0 h-[40vh] md:h-screen")
           }
           aria-label={vizAriaLabel}

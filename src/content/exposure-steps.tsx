@@ -1,6 +1,7 @@
 import { StepText } from "@/components/steps/StepText";
 import { Em } from "@/components/Em";
 import { Assumption } from "@/components/Assumption";
+import { TierLink } from "@/components/TierGuide";
 import type { ContentStep } from "./types";
 
 // Act 3b — estimating exposure: the proxy funnel, then the estimate.
@@ -35,7 +36,13 @@ export const exposureSteps: ContentStep[] = [
           year: approximately <Em>4 million</Em> conversations matching the opportunity in 2024 and{" "}
           <Em>12 million</Em> in 2025. The trend is <Em>increasing, ×~3</Em>.
         </p>
-        <Assumption label="Confidence — Tier 2 · Medium">
+        <Assumption
+          label={
+            <>
+              Confidence — <TierLink tier={2}>Tier 2</TierLink> · Medium
+            </>
+          }
+        >
           Reasonable public proxies, explicit assumptions. The main limitation is aggregation bias:
           ChatGPT data proxies for all conversational AI platforms, and conversations are treated as
           equivalent regardless of user age — while OpenAI&apos;s share of a sharply growing market

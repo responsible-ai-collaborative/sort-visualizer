@@ -10,7 +10,7 @@ const colorForLabel: Record<Label, string> = {
 export function TierBadge({ tier, label }: { tier: Tier; label: Label }) {
   return (
     <span
-      className="inline-flex items-baseline gap-1.5 px-2.5 py-1 border"
+      className="inline-flex items-baseline gap-1.5 px-2 py-1 md:px-2.5 border whitespace-nowrap shrink-0"
       style={{
         borderColor: colorForLabel[label],
         color: colorForLabel[label],

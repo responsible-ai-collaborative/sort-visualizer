@@ -1,4 +1,5 @@
 import { StepText } from "@/components/steps/StepText";
+import { Disclosure } from "@/components/steps/Disclosure";
 import { Em } from "@/components/Em";
 import { Assumption } from "@/components/Assumption";
 import type { ContentStep } from "./types";
@@ -45,10 +46,12 @@ export const act2Steps: ContentStep[] = [
           downstream: exposure will be a conversation count, and harm a count of conversations that
           go wrong.
         </p>
-        <p className="font-body italic text-[14px] leading-snug text-ink-soft">
-          Example subjects: Workers in customer-service roles in California; registered AV-capable
-          vehicles; hospital patients in NHS England trusts.
-        </p>
+        <Disclosure label="Examples from other domains">
+          <p className="font-body italic text-[14px] leading-snug text-ink-soft">
+            Example subjects: Workers in customer-service roles in California; registered AV-capable
+            vehicles; hospital patients in NHS England trusts.
+          </p>
+        </Disclosure>
       </StepText>
     ),
   },
@@ -67,11 +70,13 @@ export const act2Steps: ContentStep[] = [
           narrower the opportunity, the tighter the proxy choices available to estimate exposure
           later.
         </p>
-        <p className="font-body italic text-[14px] leading-snug text-ink-soft">
-          Example opportunities: Being screened by an automated resume-filtering system during a job
-          application; operating in self-driving mode on public roads; receiving a diagnosis
-          assisted by a clinical decision-support tool.
-        </p>
+        <Disclosure label="Examples from other domains">
+          <p className="font-body italic text-[14px] leading-snug text-ink-soft">
+            Example opportunities: Being screened by an automated resume-filtering system during a
+            job application; operating in self-driving mode on public roads; receiving a diagnosis
+            assisted by a clinical decision-support tool.
+          </p>
+        </Disclosure>
       </StepText>
     ),
   },
@@ -89,11 +94,13 @@ export const act2Steps: ContentStep[] = [
           of partial matches and make the trend signal noisier. A high ratio of partial to full
           matches is the framework&apos;s built-in warning that a question may be overspecified.
         </p>
-        <p className="font-body italic text-[14px] leading-snug text-ink-soft">
-          Example risk events: Being rejected from consideration on the basis of a protected
-          characteristic; causing injury or loss of life; receiving a missed or delayed diagnosis
-          traceable to the tool&apos;s recommendation.
-        </p>
+        <Disclosure label="Examples from other domains">
+          <p className="font-body italic text-[14px] leading-snug text-ink-soft">
+            Example risk events: Being rejected from consideration on the basis of a protected
+            characteristic; causing injury or loss of life; receiving a missed or delayed diagnosis
+            traceable to the tool&apos;s recommendation.
+          </p>
+        </Disclosure>
       </StepText>
     ),
   },
@@ -106,9 +113,11 @@ export const act2Steps: ContentStep[] = [
           comparing <Em>T1 = 2024</Em> against <Em>T2 = 2025</Em> — the framework always compares
           two periods to produce a trend, not an absolute level.
         </p>
-        <p className="font-body italic text-[14px] leading-snug text-ink-soft">
-          Example timeframes: per quarter, fiscal year, or million vehicle-miles.
-        </p>
+        <Disclosure label="Examples from other domains">
+          <p className="font-body italic text-[14px] leading-snug text-ink-soft">
+            Example timeframes: per quarter, fiscal year, or million vehicle-miles.
+          </p>
+        </Disclosure>
       </StepText>
     ),
   },

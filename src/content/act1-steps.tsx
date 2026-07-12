@@ -64,8 +64,10 @@ export const act1Steps: ContentStep[] = [
           the resulting trajectory of the risk.
         </p>
         <p>
-          The four steps: define a precise monitoring question using the SORT framework, estimate
-          harm and exposure independently, take their ratio, and classify the result.
+          Three moves: define a precise monitoring question using the SORT framework; estimate harm
+          and exposure <Em>independently</Em> across two periods; then take their ratio and classify
+          the trajectory. Harm and exposure are two parallel estimates, not a sequence — neither
+          depends on the other.
         </p>
       </StepText>
     ),
