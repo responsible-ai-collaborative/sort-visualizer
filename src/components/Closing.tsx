@@ -37,7 +37,7 @@ export function Closing() {
           Run the classifier on your own numbers →
         </a>
         <a
-          href="/source_paper.pdf"
+          href="https://arxiv.org/abs/2604.19914"
           target="_blank"
           rel="noopener noreferrer"
           className="font-display italic text-[15px] text-accent-text hover:underline"

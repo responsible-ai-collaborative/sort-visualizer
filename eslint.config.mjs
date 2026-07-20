@@ -5,9 +5,7 @@ export default [
   ...next,
   prettier,
   {
-    // ds-bundle/ and .ds-sync/ are gitignored design-sync build output
-    // (includes vendored React) — never lint them.
-    ignores: [".next/**", "node_modules/**", "out/**", "ds-bundle/**", ".ds-sync/**"],
+    ignores: [".next/**", "node_modules/**", "out/**"],
   },
   {
     rules: {

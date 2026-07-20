@@ -33,12 +33,12 @@ pnpm-debug.log*
 .idea
 .vscode
 
-# design-sync (staged converter, build output, machine state)
-.ds-sync/
-ds-bundle/
-.design-sync/.cache/
-.design-sync/learnings/
-.design-sync/node_modules
+# claude code (local agent state and notes)
+.claude/
 
-# claude code (machine-local permissions; napkin.md stays tracked)
-.claude/settings.local.json
+# local scratch
+tmp/
+
+# source material — the paper is linked, never redistributed from this repo
+*.pdf
+public/

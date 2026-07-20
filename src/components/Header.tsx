@@ -64,7 +64,7 @@ export function Header() {
 
       <div className="mt-6 md:mt-9 md:short:mt-6 flex items-baseline gap-6">
         <a
-          href="/source_paper.pdf"
+          href="https://arxiv.org/abs/2604.19914"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-block font-body text-[14px] md:text-[15px] px-4 py-2 md:px-5 md:py-2.5 border border-accent text-accent bg-transparent hover:bg-accent hover:text-white transition-colors"
