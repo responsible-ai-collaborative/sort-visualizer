@@ -41,9 +41,8 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${newsreader.variable} ${figtree.variable} ${jetBrainsMono.variable}`}
-      // Mandatory snap: every step (and the header/closing landmarks) is a
-      // firm stop, one beat per gesture — the tuned scrollytelling feel.
-      style={{ scrollSnapType: "y mandatory" }}
+      // Scroll-snap (mandatory, relaxing to none on tight viewports) is set in
+      // globals.css on <html> so it can be media-query-driven.
     >
       <body className="relative">{children}</body>
     </html>

@@ -11,18 +11,23 @@ export const metadata: Metadata = {
 
 export default function ClassifierPage() {
   return (
-    <main className="mx-auto max-w-[1440px] px-6 sm:px-10 py-10 xl:h-screen xl:py-7 xl:flex xl:flex-col xl:overflow-hidden">
-      {/* Compact header strip — keeps the interactive body above the fold. */}
-      <header className="shrink-0 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between border-b border-rule pb-5 mb-8 xl:mb-6">
-        <div className="max-w-[720px]">
-          <div className="font-display italic text-[13px] text-ink-soft mb-1.5">
+    <main className="mx-auto max-w-[1440px] px-6 sm:px-10 py-10 short:py-6">
+      {/* Compact header strip. Natural document scroll — no viewport pin — so
+          scrolling behaves normally when content exceeds a short screen. On
+          short viewports the vertical chrome (margins, padding) tightens and
+          the text measure widens so the intro wraps into fewer lines; combined
+          with the height-scaled chart below, the body fits one screen without
+          scrolling wherever it can, and scrolls the page natively when it can't. */}
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between border-b border-rule pb-5 mb-8 short:pb-3 short:mb-4">
+        <div className="max-w-[720px] short:max-w-[940px]">
+          <div className="font-display italic text-[13px] text-ink-soft mb-1.5 short:mb-1">
             The classifier · a walk through the SORT framework
           </div>
-          <h1 className="font-display font-medium text-[27px] sm:text-[31px] leading-[1.1] tracking-[-0.012em] text-ink">
+          <h1 className="font-display font-medium text-[27px] sm:text-[31px] short:sm:text-[27px] leading-[1.1] tracking-[-0.012em] text-ink">
             Run the classification on{" "}
             <span className="italic font-normal text-accent-text">your own numbers.</span>
           </h1>
-          <p className="font-body text-[14px] leading-[1.55] text-ink-soft mt-2">
+          <p className="font-body text-[14px] leading-[1.55] text-ink-soft mt-2 short:mt-1.5 short:leading-[1.45]">
             The walkthrough classifies one case. Give this tool your own point estimates for harm
             and exposure across two periods, plus how uncertain each is, and it runs the same
             probabilistic classifier — the whole thing lives on this one screen.
@@ -46,9 +51,7 @@ export default function ClassifierPage() {
         </nav>
       </header>
 
-      <div className="xl:flex-1 xl:min-h-0">
-        <ClassifierTool />
-      </div>
+      <ClassifierTool />
     </main>
   );
 }

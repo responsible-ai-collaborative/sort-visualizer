@@ -63,7 +63,11 @@ export function ScrollySection({
           <div
             key={step.id}
             data-step={step.id}
-            className="min-h-[60vh] md:min-h-[95vh] flex flex-col justify-center py-6 md:py-12"
+            // Tight viewports (≤700px tall) can't hold a step's text centered
+            // without clipping, so top-align it there — combined with snap
+            // disabled (globals.css), the heading anchors up top and any
+            // overflow scrolls into view instead of being cut off.
+            className="min-h-[60vh] md:min-h-[95vh] flex flex-col justify-center tight:justify-start py-6 md:py-12"
           >
             {step.element}
           </div>
@@ -73,6 +77,11 @@ export function ScrollySection({
         <div
           className={
             mobilePin +
+            // Tight viewports: the pinned viz can exceed its (100vh-based) box
+            // and would otherwise center-and-clip, so let it scroll internally
+            // — same escape hatch as the mobile pin (overflow-y-auto + the
+            // figure's m-auto keep it from clipping the top).
+            "tight:overflow-y-auto " +
             (card
               ? // The stepper is shorter below md (number chips), so the pin
                 // offset shrinks with it — keep in sync with ProgressStepper.

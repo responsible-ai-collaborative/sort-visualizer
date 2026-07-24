@@ -248,10 +248,16 @@ export function ClassifierTool() {
     hover && hover !== "unclassifiable" ? hover : (view?.activeQuadrant ?? null);
 
   return (
-    <div className="grid gap-x-12 gap-y-10 xl:h-full xl:min-h-0 xl:grid-cols-[minmax(0,1fr)_360px]">
+    <div className="grid gap-x-8 gap-y-10 lg:grid-cols-[minmax(0,1fr)_340px] xl:gap-x-12 xl:grid-cols-[minmax(0,1fr)_360px]">
       {/* ── CHART + reading ─────────────────────────────────────────────── */}
-      <div data-tour="results" className="order-1 flex flex-col items-center justify-start">
-        <div className="w-full max-w-[520px] flex items-center justify-between gap-3 mb-2.5">
+      {/* One width cap for the whole chart column (toolbar · chart · reading).
+          Fixed max — the chart renders at its natural size and the page scrolls
+          natively when the viewport is too short to hold it. */}
+      <div
+        data-tour="results"
+        className="order-1 flex flex-col items-center justify-start w-full mx-auto max-w-[520px]"
+      >
+        <div className="w-full flex items-center justify-between gap-3 mb-2.5">
           <div className="flex items-center gap-4">
             <button
               type="button"
@@ -274,7 +280,7 @@ export function ClassifierTool() {
           </span>
         </div>
 
-        <div className="relative w-full max-w-[520px]">
+        <div className="relative w-full">
           {view ? (
             <QuadrantChart
               activeQuadrant={highlightQuad}
@@ -322,7 +328,7 @@ export function ClassifierTool() {
         {view ? (
           <div
             data-tour="reading"
-            className="w-full max-w-[520px] mt-3 border-t border-rule pt-3 min-h-[104px]"
+            className="w-full mt-3 border-t border-rule pt-3 min-h-[104px] short:min-h-0"
           >
             {hover ? (
               <>
@@ -370,7 +376,7 @@ export function ClassifierTool() {
       {/* ── Inputs ──────────────────────────────────────────────────────── */}
       {/* No overflow clipping here: a scroll container would also clip the
           hint tooltips on the sides. The inputs are short enough to fit. */}
-      <div className="order-2 xl:min-h-0">
+      <div className="order-2">
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 mb-1">
           <span className="font-display italic text-[15px] text-ink">Your estimates</span>
           <span className="flex items-baseline gap-3">
@@ -638,7 +644,7 @@ function Hint({ text }: { text: string }) {
       </span>
       <span
         aria-hidden
-        className="pointer-events-none absolute bottom-full right-0 z-20 mb-1.5 w-[230px] border border-rule bg-white px-2.5 py-1.5 font-body not-italic text-[12px] leading-snug text-ink-soft shadow-[0_2px_10px_rgba(1,25,52,0.10)] opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100"
+        className="pointer-events-none absolute bottom-full right-0 z-20 mb-1.5 w-[min(230px,72vw)] border border-rule bg-white px-2.5 py-1.5 font-body not-italic text-[12px] leading-snug text-ink-soft shadow-[0_2px_10px_rgba(1,25,52,0.10)] opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100"
       >
         {text}
       </span>

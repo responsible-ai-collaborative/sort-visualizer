@@ -47,13 +47,46 @@
    bottom-aligned after a scroll cycle, which reads as a stray gap. */
 @custom-variant short (@media (max-height: 899px));
 
+/* Tight-viewport variant — for viewports too short to hold a step's text at
+   all (landscape phones, split-screen, short laptops). Below this the
+   scrollytelling relaxes: snapping is disabled and step text top-aligns so
+   overflow scrolls freely instead of being centered-and-clipped by mandatory
+   snap. Keep in sync with the max-height query on <html> below. */
+@custom-variant tight (@media (max-height: 700px));
+
 html {
   background: var(--bg);
-  /* scroll-snap-type is set via inline style in layout.tsx. */
+  /* Mandatory snap: every step (and the header/closing landmarks) is a firm
+     stop, one beat per gesture. Set here (not inline) so it can relax on tight
+     viewports — see the max-height query below. */
+  scroll-snap-type: y mandatory;
   /* Programmatic jumps (nav arrows, progress rail, stage/anchor links)
      glide instead of teleporting; the reduced-motion block below forces
      this back to auto. */
   scroll-behavior: smooth;
+}
+
+/* Small screens read as a normal document. Mobile (single-column, below md)
+   and short viewports drop the mandatory snap so a scroll gesture moves the
+   text smoothly beneath the sticky viz instead of paging to the next step —
+   the viz still morphs per step via scrollama. Snap stays on only for the
+   tall two-column desktop, where the one-beat rhythm is the intended feel. */
+@media (max-width: 767px), (max-height: 700px) {
+  html {
+    scroll-snap-type: none;
+  }
+  [data-step] {
+    scroll-snap-align: none;
+  }
+}
+
+/* Short (but wide) viewports also tighten the step rhythm: once text top-aligns
+   (ScrollySection) and snapping is off, the 95vh desktop min leaves big dead
+   gaps. Unlayered, so it beats the md:min-h utility. */
+@media (max-height: 700px) {
+  [data-step] {
+    min-height: 60vh;
+  }
 }
 
 /* Steps and landmarks (Header, Closing) are firm snap stops — mandatory
