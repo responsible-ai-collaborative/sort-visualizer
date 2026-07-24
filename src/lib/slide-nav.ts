@@ -33,19 +33,6 @@ export function slideOffsets(slides: readonly Slide[]): number[] {
   });
 }
 
-// Index of the slide whose snap-rest offset is closest to the current scroll
-// position — i.e. the slide the reader is on (or nearest to, mid-flight).
-export function nearestSlideIndex(slides: readonly Slide[]): number {
-  if (slides.length === 0) return 0;
-  const y = window.scrollY;
-  const offsets = slideOffsets(slides);
-  let best = 0;
-  offsets.forEach((offset, i) => {
-    if (Math.abs(y - offset) < Math.abs(y - offsets[best])) best = i;
-  });
-  return best;
-}
-
 // Scroll a slide to its snap-rest position; mandatory snap on <html> settles
 // the landing. Smoothness comes from `scroll-behavior: smooth` on <html>
 // (globals.css), which the reduced-motion override switches back to auto.

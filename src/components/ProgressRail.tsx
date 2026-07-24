@@ -22,13 +22,26 @@ export function ProgressRail() {
   const [t, setT] = useState(0);
   const ticking = useRef(false);
   const slidesRef = useRef<Slide[]>([]);
+  // Offsets are cached and re-measured only on resize/font-load — never per
+  // scroll frame. getBoundingClientRect on every slide each frame was forcing
+  // ~22 synchronous layouts per frame and stuttered the scroll.
+  const offsetsRef = useRef<number[]>([]);
 
   useEffect(() => {
+    // Desktop-only widget (hidden below md); don't burn scroll frames measuring
+    // and re-rendering an invisible rail on phones.
+    const desktop = window.matchMedia("(min-width: 768px)");
+
+    const measure = () => {
+      slidesRef.current = collectSlides();
+      offsetsRef.current = slideOffsets(slidesRef.current);
+      setSlides(slidesRef.current);
+    };
+
     const update = () => {
-      const list = slidesRef.current;
-      if (list.length < 2) return;
+      const offsets = offsetsRef.current;
+      if (offsets.length < 2) return;
       const y = window.scrollY;
-      const offsets = slideOffsets(list);
       let next = offsets.length - 1;
       for (let i = 0; i < offsets.length - 1; i++) {
         if (y < offsets[i + 1]) {
@@ -41,7 +54,7 @@ export function ProgressRail() {
     };
 
     const schedule = () => {
-      if (ticking.current) return;
+      if (!desktop.matches || ticking.current) return;
       ticking.current = true;
       requestAnimationFrame(() => {
         ticking.current = false;
@@ -49,19 +62,20 @@ export function ProgressRail() {
       });
     };
 
-    // Collect after layout settles; fonts can shift offsets, but offsets are
-    // re-measured on every update so only the slide list itself is cached.
-    requestAnimationFrame(() => {
-      slidesRef.current = collectSlides();
-      setSlides(slidesRef.current);
+    // Re-measure (not just update) when layout can actually shift.
+    const remeasure = () => {
+      measure();
       update();
-    });
+    };
+
+    requestAnimationFrame(remeasure);
+    document.fonts?.ready.then(remeasure).catch(() => {});
 
     window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
+    window.addEventListener("resize", remeasure);
     return () => {
       window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
+      window.removeEventListener("resize", remeasure);
     };
   }, []);
 

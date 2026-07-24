@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import { collectSlides, nearestSlideIndex, scrollToSlide, type Slide } from "@/lib/slide-nav";
+import { collectSlides, slideOffsets, scrollToSlide, type Slide } from "@/lib/slide-nav";
 
 // Faint top/bottom arrows that step through every snap beat — header,
 // [data-step] slides, closing — one slide per click. ArrowUp/ArrowDown do
@@ -15,6 +15,9 @@ export function NavArrows() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [slideCount, setSlideCount] = useState(0);
   const slidesRef = useRef<Slide[]>([]);
+  // Cached like ProgressRail: measuring every slide's rect per scroll frame
+  // was needless layout work. Re-measured only on resize/font-load.
+  const offsetsRef = useRef<number[]>([]);
   const ticking = useRef(false);
 
   useEffect(() => {
@@ -23,13 +26,30 @@ export function NavArrows() {
   }, []);
 
   useEffect(() => {
+    // Desktop-only widget (arrows hidden below md); skip scroll work on phones.
+    const desktop = window.matchMedia("(min-width: 768px)");
+
+    const measure = () => {
+      slidesRef.current = collectSlides();
+      offsetsRef.current = slideOffsets(slidesRef.current);
+      setSlideCount(slidesRef.current.length);
+    };
+
+    // Nearest slide to the current scroll, from cached offsets. setActiveIndex
+    // bails out when the value is unchanged, so this is cheap mid-slide.
     const update = () => {
-      if (slidesRef.current.length === 0) return;
-      setActiveIndex(nearestSlideIndex(slidesRef.current));
+      const offsets = offsetsRef.current;
+      if (offsets.length === 0) return;
+      const y = window.scrollY;
+      let best = 0;
+      for (let i = 1; i < offsets.length; i++) {
+        if (Math.abs(y - offsets[i]) < Math.abs(y - offsets[best])) best = i;
+      }
+      setActiveIndex(best);
     };
 
     const schedule = () => {
-      if (ticking.current) return;
+      if (!desktop.matches || ticking.current) return;
       ticking.current = true;
       requestAnimationFrame(() => {
         ticking.current = false;
@@ -37,19 +57,19 @@ export function NavArrows() {
       });
     };
 
-    // Collect after layout settles, same as ProgressRail; offsets are
-    // re-measured on every update so only the slide list is cached.
-    requestAnimationFrame(() => {
-      slidesRef.current = collectSlides();
-      setSlideCount(slidesRef.current.length);
+    const remeasure = () => {
+      measure();
       update();
-    });
+    };
+
+    requestAnimationFrame(remeasure);
+    document.fonts?.ready.then(remeasure).catch(() => {});
 
     window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
+    window.addEventListener("resize", remeasure);
     return () => {
       window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
+      window.removeEventListener("resize", remeasure);
     };
   }, []);
 
