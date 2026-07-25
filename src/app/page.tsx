@@ -137,7 +137,11 @@ export default function Page() {
           return ScrollTrigger.create({
             trigger: `#${sectionId}`,
             start: "top 60%",
-            end: "bottom 40%",
+            // The last section clears the stepper on the way out, so hold it
+            // until the section actually leaves the top of the viewport —
+            // `bottom 40%` would drop it while the reader is still on the final
+            // (explorer) step with the chart pinned.
+            end: isLast ? "bottom top" : "bottom 40%",
             onEnter: () => setActiveStage(stage.id),
             onEnterBack: () => setActiveStage(stage.id),
             onLeaveBack: isFirst ? () => setActiveStage(null) : undefined,

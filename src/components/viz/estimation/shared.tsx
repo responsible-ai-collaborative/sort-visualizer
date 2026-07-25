@@ -16,32 +16,34 @@ gsap.registerPlugin(useGSAP);
 export function PanelHeader({
   letter,
   title,
-  role,
   carryover,
 }: {
   letter: string;
   title: string;
-  role: string;
   carryover?: ReactNode;
 }) {
   return (
-    <header className="mb-3 pb-2.5 md:mb-5 md:pb-4 border-b border-rule flex items-center justify-between gap-3">
+    // Below md the panel shows only the step's focused card in a taller pin
+    // (see ScrollySection), so the header is dropped entirely to give that card
+    // the room to fit — the stepper already names the stage there. From md up
+    // it's a sticky bar within the panel's internal scroll: it stays visible
+    // while the accumulated cards scroll under it (bg-bg masks them, the top
+    // padding gives breathing room below the stepper), and on tall viewports
+    // where the panel doesn't scroll it simply sits at the top.
+    <header className="max-md:hidden sticky top-0 z-20 bg-bg pt-3 md:pt-4 mb-3 pb-2.5 md:mb-5 md:pb-4 border-b border-rule flex items-center justify-between gap-3">
       <div className="flex items-center gap-2.5 md:gap-3">
+        {/* leading-none so the single glyph centers on the box, not on the
+            font's line-height (a serif cap otherwise sits high). */}
         <div
-          className="w-9 h-9 md:w-12 md:h-12 flex items-center justify-center font-display font-bold text-[20px] md:text-[26px] text-white"
+          className="w-9 h-9 md:w-12 md:h-12 flex items-center justify-center leading-none font-display font-bold text-[20px] md:text-[26px] text-white"
           style={{ background: "var(--accent)" }}
           aria-hidden
         >
           {letter}
         </div>
-        <div>
-          <div className="font-display italic text-[13px] md:text-[14px] text-ink-faint">
-            {role}
-          </div>
-          <h3 className="font-display text-[19px] md:text-[23px] leading-tight text-ink font-medium">
-            {title}
-          </h3>
-        </div>
+        <h3 className="font-display text-[19px] md:text-[23px] leading-tight text-ink font-medium">
+          {title}
+        </h3>
       </div>
       {carryover ? (
         <div className="max-md:hidden text-right font-display italic text-[13px] text-ink-faint max-w-[190px] leading-snug">

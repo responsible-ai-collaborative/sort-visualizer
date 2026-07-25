@@ -106,11 +106,18 @@ export function Act4Quadrant({ activeStep }: { activeStep: string | null }) {
           showVerdict={false}
           cloud={explorer.cloud}
           dotAnimated={false}
-          svgClassName="max-md:h-[calc(40vh-165px)] max-md:w-auto max-md:mx-auto"
+          // Below md the internal unclassifiable pill is hidden (pillClassName)
+          // and moved into the compact row below, so the chart only has to
+          // reserve room for that single row — height-capped to the 50vh pin
+          // (see ScrollySection) with margin so the row + its border never spill
+          // into scroll. w-auto keeps the aspect ratio and centers it. The
+          // sliders live in a fixed bottom sheet, off the pin's budget.
+          pillClassName="max-md:hidden"
+          svgClassName="max-md:h-[calc(50vh-82px)] max-md:w-auto max-md:mx-auto"
         />
         {/* Desktop: sliders live under the chart. Below md they don't fit
-            the 40vh pin, so a button opens them in a bottom sheet — the
-            chart stays visible in the pin above it and updates live. */}
+            the pin, so a button opens them in a bottom sheet — the chart stays
+            visible in the pin above it and updates live. */}
         <div className="max-md:hidden">
           <ClassifierControls
             params={params}
@@ -120,14 +127,26 @@ export function Act4Quadrant({ activeStep }: { activeStep: string | null }) {
             isDefault={isDefault}
           />
         </div>
-        <div className="md:hidden flex justify-center mt-1">
+        {/* Below md: the unclassifiable share and the adjust control sit side
+            by side in one narrow row (instead of the full-width pill stacked
+            above a centered button), so the quadrant keeps the vertical room
+            and nothing spills past the pin. */}
+        <div className="md:hidden flex items-center justify-center gap-2 mt-0.5">
+          {result.weights.unclassifiable > 0 ? (
+            <span className="inline-flex items-baseline gap-1.5 border border-dashed border-ink-faint/60 px-2.5 py-1.5 leading-none whitespace-nowrap">
+              <span className="font-display font-bold text-[13px] text-ink-soft">
+                {(result.weights.unclassifiable * 100).toFixed(1)}%
+              </span>
+              <span className="font-display italic text-[12px] text-ink-faint">unclassifiable</span>
+            </span>
+          ) : null}
           <button
             type="button"
             onClick={() => setSheetOpen(true)}
             aria-expanded={sheetOpen}
-            className="inline-flex items-center gap-2 font-body text-[13px] px-3.5 py-1.5 border border-accent text-accent bg-white hover:bg-accent hover:text-white transition-colors"
+            className="inline-flex items-center gap-2 font-body text-[13px] px-3.5 py-1.5 border border-accent text-accent bg-white hover:bg-accent hover:text-white transition-colors whitespace-nowrap"
           >
-            Adjust the assumptions
+            Adjust assumptions
           </button>
         </div>
         <ControlsSheet open={sheetOpen} onClose={() => setSheetOpen(false)}>
@@ -150,6 +169,12 @@ export function Act4Quadrant({ activeStep }: { activeStep: string | null }) {
       weights={state.weights ? chatbotCase.classification.weights : null}
       showVerdict={state.verdict}
       verdictDetail={chatbotCase.classification.verdict}
+      // Same 50vh-pin height cap as the explorer view so the grid fits the
+      // mobile pin instead of overflowing (the verdict caption is desktop-only,
+      // so the reserve just covers the optional unclassifiable pill). Keeping
+      // it identical across steps means the chart doesn't resize as the case
+      // builds up.
+      svgClassName="max-md:h-[calc(50vh-80px)] max-md:w-auto max-md:mx-auto"
     />
   );
 }

@@ -51,7 +51,6 @@ export function ExposurePanel({ activeStep }: { activeStep: string | null }) {
     <div ref={ref} className="w-full max-w-[640px]">
       <PanelHeader
         letter="E"
-        role="Variable E"
         title="Estimating exposure"
         carryover={
           <>

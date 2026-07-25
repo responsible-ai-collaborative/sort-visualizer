@@ -48,8 +48,11 @@ export function ScrollySection({
   // Below md the viz overflows its 42vh pin for the tallest panels; the
   // overflow-y-auto + m-auto pair lets it scroll internally without the
   // usual center-clipping (auto margins resolve to 0 once content overflows).
+  // pointer-events-auto re-enables taps on the viz itself; its container is
+  // pointer-events-none below md (see the grid) so the transparent overlay
+  // spanning the text column doesn't swallow taps on links/disclosures there.
   const mobilePin =
-    "max-md:z-10 max-md:overflow-y-auto max-md:bg-bg max-md:border-b max-md:border-rule ";
+    "max-md:z-10 max-md:pointer-events-auto max-md:overflow-y-auto max-md:bg-bg max-md:border-b max-md:border-rule ";
 
   // Below md both grid children share cell (1,1): the viz column then spans
   // the full steps height (grid stretch), which is what lets its sticky pin
@@ -58,7 +61,15 @@ export function ScrollySection({
   // pin; the viz paints on top (later DOM order + z-10).
   const grid = (
     <div className="grid grid-cols-1 md:grid-cols-[1fr_1.25fr] gap-6 md:gap-16">
-      <div className="relative max-md:col-start-1 max-md:row-start-1 max-md:pt-[40vh]">
+      {/* Steps start below the mobile pin, so this pad must match the pin
+          height below md. Card sections use a taller pin (50vh) so the single
+          focused card fits without the header; non-card viz keep 40vh. */}
+      <div
+        className={
+          "relative max-md:col-start-1 max-md:row-start-1 " +
+          (card ? "max-md:pt-[50vh]" : "max-md:pt-[40vh]")
+        }
+      >
         {steps.map((step) => (
           <div
             key={step.id}
@@ -73,20 +84,23 @@ export function ScrollySection({
           </div>
         ))}
       </div>
-      <div className="relative max-md:col-start-1 max-md:row-start-1">
+      <div className="relative max-md:col-start-1 max-md:row-start-1 max-md:pointer-events-none">
         <div
           className={
             mobilePin +
-            // Tight viewports: the pinned viz can exceed its (100vh-based) box
-            // and would otherwise center-and-clip, so let it scroll internally
-            // — same escape hatch as the mobile pin (overflow-y-auto + the
-            // figure's m-auto keep it from clipping the top).
-            "tight:overflow-y-auto " +
             (card
-              ? // The stepper is shorter below md (number chips), so the pin
+              ? // Card panels accumulate cards and can exceed the pin at any
+                // viewport that isn't tall enough — not just `tight`. So they
+                // always scroll internally: a top-aligned column whose figure
+                // `m-auto` still centers the content when it *does* fit, and
+                // collapses to a top-aligned scroll when it doesn't (auto
+                // margins resolve to 0 on overflow). The sticky PanelHeader
+                // then stays put across every size instead of being clipped.
+                // The stepper is shorter below md (number chips), so the pin
                 // offset shrinks with it — keep in sync with ProgressStepper.
-                "sticky flex items-center justify-center top-[38px] h-[calc(40vh-38px)] md:top-[52px] md:h-[calc(100vh-52px)]"
-              : "sticky flex items-center justify-center top-0 h-[40vh] md:h-screen")
+                "sticky flex flex-col items-center overflow-y-auto top-[38px] h-[calc(50vh-38px)] md:top-[52px] md:h-[calc(100vh-52px)]"
+              : // Non-card viz only overflow on genuinely tight viewports.
+                "tight:overflow-y-auto sticky flex items-center justify-center top-0 h-[40vh] md:h-screen")
           }
           aria-label={vizAriaLabel}
           role="img"

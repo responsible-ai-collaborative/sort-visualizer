@@ -54,7 +54,7 @@ export function HarmPanel({ activeStep }: { activeStep: string | null }) {
 
   return (
     <div ref={ref} className="w-full max-w-[640px]">
-      <PanelHeader letter="H" role="Variable H" title="Estimating harm" />
+      <PanelHeader letter="H" title="Estimating harm" />
 
       <div className="space-y-2 md:space-y-3">
         {state.pointEstimate && (

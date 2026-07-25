@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { resolveAct2 } from "@/lib/step-config";
 import { chatbotCase } from "@/lib/case-data";
@@ -165,32 +166,69 @@ function Box({
       </div>
       <div className="flex-1 border border-rule bg-[rgba(255,255,255,0.5)] md:min-h-[60px] py-1.5 md:py-2.5 px-3">
         <div className="font-display italic text-[13px] text-ink-faint">{letter.name}</div>
-        <AnimatePresence mode="wait">
-          {filled ? (
-            <motion.div
-              key="content"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: tDur, delay: 0.05 * index }}
-              className="font-body italic text-[15px] leading-snug text-accent-text mt-0.5"
-            >
-              {letter.content}
-            </motion.div>
-          ) : (
-            <motion.div
-              key="prompt"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: tDur }}
-              className="font-body italic text-[13px] text-ink-faint mt-0.5"
-            >
-              {letter.prompt}
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* The prompt and the (usually taller, multi-line) content differ in
+            height, so swapping them would snap the box — and the boxes below
+            it — to the new height. SmoothHeight animates the real pixel height
+            instead, which reflows the stack without the transform-based squish
+            that framer's `layout` would cause on a ~3× height change. */}
+        <SmoothHeight duration={tDur}>
+          <AnimatePresence mode="wait">
+            {filled ? (
+              <motion.div
+                key="content"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: tDur, delay: 0.05 * index }}
+                className="font-body italic text-[15px] leading-snug text-accent-text mt-0.5"
+              >
+                {letter.content}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="prompt"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: tDur }}
+                className="font-body italic text-[13px] text-ink-faint mt-0.5"
+              >
+                {letter.prompt}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </SmoothHeight>
       </div>
     </div>
+  );
+}
+
+// Animates its own height to fit `children` (measured via ResizeObserver) so
+// swapping differently-sized content slides the box to the new height instead
+// of snapping. Real height animation, so the surrounding flow reflows and the
+// text is never distorted. Starts at `auto`; the first measure resolves to a
+// pixel height with no visible tween.
+function SmoothHeight({ duration, children }: { duration: number; children: ReactNode }) {
+  const innerRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState<number | "auto">("auto");
+
+  useEffect(() => {
+    const el = innerRef.current;
+    if (!el) return;
+    const measure = () => setHeight(el.offsetHeight);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  return (
+    <motion.div
+      animate={{ height }}
+      transition={{ duration, ease: [...FADE.ease] }}
+      style={{ overflow: "hidden" }}
+    >
+      <div ref={innerRef}>{children}</div>
+    </motion.div>
   );
 }

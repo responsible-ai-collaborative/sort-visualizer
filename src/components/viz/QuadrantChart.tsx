@@ -73,6 +73,7 @@ export function QuadrantChart({
   cloud,
   dotAnimated = true,
   svgClassName,
+  pillClassName,
 }: {
   activeQuadrant: Quadrant | null;
   dot: DotProps | null;
@@ -90,8 +91,11 @@ export function QuadrantChart({
   // keeps the dot mounted so it tracks instead of replaying the ripple.
   dotAnimated?: boolean;
   // Extra classes on the svg — used to cap the chart's height below md so
-  // the verdict/band/controls that follow it still fit the 40vh pin.
+  // the pill/button that follows it still fits the mobile pin.
   svgClassName?: string;
+  // Extra classes on the unclassifiable pill wrapper — the explorer view
+  // passes `max-md:hidden` to relocate the share into its own compact row.
+  pillClassName?: string;
 }) {
   const reduced = useReducedMotion();
   const tDur = reduced ? 0 : FADE.duration;
@@ -365,7 +369,7 @@ export function QuadrantChart({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: tDur, delay: reduced ? 0 : 0.3 }}
-            className="mt-1 mb-1 md:mb-2 max-w-[500px] mx-auto px-2"
+            className={`mt-1 mb-1 md:mb-2 max-w-[500px] mx-auto px-2 ${pillClassName ?? ""}`}
           >
             <div className="border border-dashed border-ink-faint/60 px-3 py-1 md:py-2 flex items-baseline gap-3">
               <span className="font-display font-bold text-[15px] md:text-[18px] leading-none text-ink-soft">

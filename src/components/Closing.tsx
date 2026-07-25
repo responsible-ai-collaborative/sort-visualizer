@@ -4,7 +4,7 @@ export function Closing() {
   return (
     <section
       data-snap-landmark="end"
-      className="min-h-screen flex flex-col justify-center mx-auto max-w-[720px] px-6 sm:px-8 py-12 md:py-28"
+      className="min-h-screen flex flex-col justify-start md:justify-center mx-auto max-w-[720px] px-6 sm:px-8 py-12 md:py-28"
       aria-label="Closing"
     >
       <div className="font-display italic text-[14px] md:text-[17px] text-ink-faint mb-3 md:mb-6">
