@@ -105,7 +105,16 @@ export function ScrollySection({
           aria-label={vizAriaLabel}
           role="img"
         >
-          <figure className="flex flex-col items-center gap-3 w-full m-auto">
+          {/* Card panels accumulate a growing stack, so they top-align: a new
+              card appends at the bottom and nothing above it moves. Vertically
+              centering them (m-auto) would re-center the whole stack every time
+              a card mounts, snapping the existing cards upward. Non-card viz
+              show a single figure and stay centered. */}
+          <figure
+            className={
+              "flex flex-col items-center gap-3 w-full " + (card ? "" : "m-auto")
+            }
+          >
             <Viz activeStep={activeStep} />
             {figure ? (
               <figcaption className="max-md:hidden max-w-[52ch] text-center font-body text-[13px] leading-snug text-ink-faint px-4 transition-opacity duration-300">

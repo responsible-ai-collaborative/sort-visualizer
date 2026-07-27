@@ -88,17 +88,23 @@ export function SourceCard({
   role,
   sources,
   className,
+  reduced,
+  revealDelay = 0,
   children,
 }: {
   tag: string;
   role: string;
   sources?: readonly SourceLink[];
   className?: string;
+  reduced: boolean;
+  revealDelay?: number;
   children: ReactNode;
 }) {
+  const ref = useRevealOnMount<HTMLElement>(reduced, revealDelay);
   return (
     <article
-      className={`${className ?? ""} source-card border border-rule p-3 md:p-4`}
+      ref={ref}
+      className={`${className ?? ""} source-card opacity-0 border border-rule p-3 md:p-4`}
       style={{ background: "rgba(255, 255, 255, 0.7)" }}
     >
       <div className="flex items-baseline justify-between gap-2 mb-3">
@@ -116,13 +122,17 @@ export function SourceCard({
 export function ConclusionBar({
   className,
   conclusion,
+  reduced,
 }: {
   className?: string;
   conclusion: TrendConclusion;
+  reduced: boolean;
 }) {
   const trendLabel = conclusion.trend.charAt(0).toUpperCase() + conclusion.trend.slice(1);
+  const ref = useRevealOnMount<HTMLDivElement>(reduced, 0.25, 12);
   return (
     <div
+      ref={ref}
       className={`${className ?? ""} conclusion-bar opacity-0 mt-3 pt-3 md:mt-5 md:pt-4 border-t border-rule flex items-center justify-between gap-4`}
     >
       <div>
@@ -179,12 +189,12 @@ export function BarPair({
   reduced: boolean;
 }) {
   const W = 200;
-  const H = 130;
+  const H = 108;
   const barW = 50;
   const x1 = 30;
   const x2 = 110;
-  const padBottom = 24;
-  const padTop = 28;
+  const padBottom = 20;
+  const padTop = 26;
   const h1 = (v1 / max) * (H - padTop - padBottom);
   const h2 = (v2 / max) * (H - padTop - padBottom);
 
@@ -227,7 +237,7 @@ export function BarPair({
   );
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="w-[170px] md:w-[200px] flex-shrink-0">
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-[150px] md:w-[176px] flex-shrink-0">
       <line
         x1={10}
         x2={W - 10}
@@ -305,28 +315,35 @@ export function BarPair({
 
 // ── GSAP helpers ──────────────────────────────────────────────────────────
 
-export function animateCardIn(selector: string, reduced: boolean, delay = 0) {
-  if (reduced) {
-    gsap.set(selector, { opacity: 1, y: 0 });
-    return;
-  }
-  gsap.fromTo(
-    selector,
-    { opacity: 0, y: 18 },
-    { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", delay },
+// Each card reveals itself once, when it mounts. Cards are conditionally
+// rendered as their step turns on and then accumulate, so "mounts" == "the box
+// just appeared" — and because already-visible cards never remount, they're
+// never re-animated (which is what used to glitch the whole stack). Empty deps
+// mean the tween runs a single time; on scroll-back-up the card unmounts and
+// re-animates cleanly on the way back down.
+export function useRevealOnMount<T extends HTMLElement = HTMLDivElement>(
+  reduced: boolean,
+  delay = 0,
+  y = 18,
+) {
+  const ref = useRef<T>(null);
+  useGSAP(
+    () => {
+      const el = ref.current;
+      if (!el) return;
+      if (reduced) {
+        gsap.set(el, { opacity: 1, y: 0 });
+        return;
+      }
+      gsap.fromTo(
+        el,
+        { opacity: 0, y },
+        { opacity: 1, y: 0, duration: 0.9, ease: "power2.out", delay },
+      );
+    },
+    { dependencies: [] },
   );
-}
-
-export function animateConclusionIn(selector: string, reduced: boolean) {
-  if (reduced) {
-    gsap.set(selector, { opacity: 1, y: 0 });
-    return;
-  }
-  gsap.fromTo(
-    selector,
-    { opacity: 0, y: 12 },
-    { opacity: 1, y: 0, duration: 0.55, ease: "power3.out", delay: 0.25 },
-  );
+  return ref;
 }
 
 export function countUpEl(el: SVGTextElement | null, to: number, duration: number, delay: number) {

@@ -1,19 +1,9 @@
 "use client";
 
-import { useRef } from "react";
 import { useReducedMotion } from "framer-motion";
-import { useGSAP } from "@gsap/react";
 import { resolveHarm } from "@/lib/step-config";
 import { chatbotCase } from "@/lib/case-data";
-import {
-  PanelHeader,
-  SourceCard,
-  ConclusionBar,
-  EstimatePair,
-  BarPair,
-  animateCardIn,
-  animateConclusionIn,
-} from "./shared";
+import { PanelHeader, SourceCard, ConclusionBar, EstimatePair, BarPair } from "./shared";
 
 // Steps 3.1–3.4 build the HARM panel: the OpenAI point-estimate card (the
 // anchor), the 2.4M → 4M estimate figures, then the AIID card as an
@@ -35,25 +25,11 @@ const MOBILE_VISIBLE: Record<string, readonly string[]> = {
 export function HarmPanel({ activeStep }: { activeStep: string | null }) {
   const state = resolveHarm(activeStep);
   const reduced = !!useReducedMotion();
-  const ref = useRef<HTMLDivElement>(null);
   const visible = activeStep ? MOBILE_VISIBLE[activeStep] : undefined;
   const mobileHide = (key: string) => (visible && !visible.includes(key) ? " max-md:hidden" : "");
 
-  useGSAP(
-    () => {
-      if (state.pointEstimate) animateCardIn(".harm-point", reduced);
-      if (state.estimates) animateCardIn(".harm-estimates", reduced);
-      if (state.aiid) animateCardIn(".harm-aiid", reduced);
-      if (state.conclusion) animateConclusionIn(".harm-conclusion", reduced);
-    },
-    {
-      scope: ref,
-      dependencies: [state.pointEstimate, state.estimates, state.aiid, state.conclusion, reduced],
-    },
-  );
-
   return (
-    <div ref={ref} className="w-full max-w-[640px]">
+    <div className="w-full max-w-[640px]">
       <PanelHeader letter="H" title="Estimating harm" />
 
       <div className="space-y-2 md:space-y-3">
@@ -62,7 +38,8 @@ export function HarmPanel({ activeStep }: { activeStep: string | null }) {
             tag="OpenAI"
             role="Point estimate · Tier 2"
             sources={pointEstimate.sourceLinks}
-            className={"harm-point opacity-0" + mobileHide("point")}
+            reduced={reduced}
+            className={mobileHide("point")}
           >
             <RatioViz />
             <p className="font-body italic text-[12px] leading-snug text-ink-faint pt-2">
@@ -78,7 +55,8 @@ export function HarmPanel({ activeStep }: { activeStep: string | null }) {
           <SourceCard
             tag="Point estimate"
             role="Harmful conversations · 2024 → 2025"
-            className={"harm-estimates opacity-0" + mobileHide("estimates")}
+            reduced={reduced}
+            className={mobileHide("estimates")}
           >
             <EstimatePair estimates={pointEstimate.estimates} />
           </SourceCard>
@@ -89,7 +67,8 @@ export function HarmPanel({ activeStep }: { activeStep: string | null }) {
             tag="AIID"
             role="Uncertainty check · lower band"
             sources={aiid.sourceLinks}
-            className={"harm-aiid opacity-0" + mobileHide("aiid")}
+            reduced={reduced}
+            className={"harm-aiid" + mobileHide("aiid")}
           >
             <div className="flex max-md:flex-col items-center gap-3 md:gap-5">
               <BarPair
@@ -114,8 +93,9 @@ export function HarmPanel({ activeStep }: { activeStep: string | null }) {
 
       {state.conclusion && (
         <ConclusionBar
-          className={"harm-conclusion" + mobileHide("conclusion")}
+          className={mobileHide("conclusion")}
           conclusion={chatbotCase.harm.conclusion}
+          reduced={reduced}
         />
       )}
     </div>
