@@ -11,6 +11,11 @@ export type StepDef = {
 
 export type CardSpec = {
   stageId: StageId;
+  // Panels that mount cards one at a time (a growing stack) top-align so a new
+  // card appends at the bottom without re-centering — vertically centering them
+  // snaps the existing cards upward each time one appears. Fixed-layout card
+  // panels leave this off and stay centered.
+  stackTop?: boolean;
 };
 
 // Paper-style figure caption rendered beneath the sticky viz.
@@ -105,14 +110,13 @@ export function ScrollySection({
           aria-label={vizAriaLabel}
           role="img"
         >
-          {/* Card panels accumulate a growing stack, so they top-align: a new
-              card appends at the bottom and nothing above it moves. Vertically
-              centering them (m-auto) would re-center the whole stack every time
-              a card mounts, snapping the existing cards upward. Non-card viz
-              show a single figure and stay centered. */}
+          {/* Panels that grow a stack top-align (see CardSpec.stackTop) so a new
+              card appends at the bottom and nothing above it moves. Everything
+              else — non-card viz and fixed-layout card panels — stays centered
+              with m-auto. */}
           <figure
             className={
-              "flex flex-col items-center gap-3 w-full " + (card ? "" : "m-auto")
+              "flex flex-col items-center gap-3 w-full " + (card?.stackTop ? "" : "m-auto")
             }
           >
             <Viz activeStep={activeStep} />

@@ -63,7 +63,7 @@ const SECTION_SPECS: SectionSpec[] = [
     ariaLabel: "Act 3a: Estimating harm",
     vizAriaLabel:
       "Harm panel: a point estimate from OpenAI's disclosed response ratios, then an incident-database check on its lower uncertainty band.",
-    card: { stageId: "estimation" },
+    card: { stageId: "estimation", stackTop: true },
     figureCaption:
       "Estimating harm: a point estimate from disclosed response ratios, checked against recorded incident counts.",
   },
@@ -74,7 +74,7 @@ const SECTION_SPECS: SectionSpec[] = [
     ariaLabel: "Act 3b: Estimating exposure",
     vizAriaLabel:
       "Exposure panel: a funnel of usage proxies scaling to a conversation-count estimate.",
-    card: { stageId: "estimation" },
+    card: { stageId: "estimation", stackTop: true },
     figureCaption:
       "Estimating exposure: conversations matching the opportunity, assembled from a funnel of usage proxies.",
   },
