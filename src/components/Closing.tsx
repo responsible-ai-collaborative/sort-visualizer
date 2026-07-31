@@ -1,4 +1,5 @@
 import { Em } from "@/components/Em";
+import { CreditsButton } from "@/components/CreditsButton";
 
 export function Closing() {
   return (
@@ -44,14 +45,7 @@ export function Closing() {
         >
           Read the paper ↗
         </a>
-      </div>
-
-      <div className="mt-7 pt-4 md:mt-12 md:pt-5 border-t border-rule font-body text-[13px] md:text-[14px] text-ink-faint">
-        After{" "}
-        <span className="font-display italic">
-          A Pragmatic Classification Framework for AI Incident Monitoring
-        </span>{" "}
-        (2026).
+        <CreditsButton className="font-display italic text-[15px] text-accent-text hover:underline" />
       </div>
     </section>
   );

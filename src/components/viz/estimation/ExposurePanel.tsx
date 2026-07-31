@@ -30,7 +30,9 @@ export function ExposurePanel({ activeStep }: { activeStep: string | null }) {
   const atRate = activeStep === "3.6";
 
   return (
-    <div className="w-full max-w-[640px]">
+    // Desktop: fill the pin as a flex column so the header stays fixed and only
+    // the card box scrolls (see ScrollySection stackTop). Mobile is unchanged.
+    <div className="w-full max-w-[640px] md:flex-1 md:flex md:flex-col md:min-h-0">
       <PanelHeader
         letter="E"
         title="Estimating exposure"
@@ -43,11 +45,12 @@ export function ExposurePanel({ activeStep }: { activeStep: string | null }) {
         }
       />
 
-      {/* Below md the step text already defines exposure — the line costs
-          more pin height than it earns. */}
-      <p className="max-md:hidden font-display italic text-[14px] leading-snug text-ink-faint mb-3">
-        {chatbotCase.exposure.definition}
-      </p>
+      <div className="md:flex-1 md:min-h-0 md:overflow-y-auto">
+        {/* Below md the step text already defines exposure — the line costs
+            more pin height than it earns. */}
+        <p className="max-md:hidden font-display italic text-[14px] leading-snug text-ink-faint mb-3">
+          {chatbotCase.exposure.definition}
+        </p>
 
       <div className="space-y-1.5 md:space-y-2">
         {state.funnel &&
@@ -77,11 +80,12 @@ export function ExposurePanel({ activeStep }: { activeStep: string | null }) {
             <EstimatePair estimates={chatbotCase.exposure.estimates} />
           </SourceCard>
         )}
-      </div>
+        </div>
 
-      {state.conclusion && (
-        <ConclusionBar conclusion={chatbotCase.exposure.conclusion} reduced={reduced} />
-      )}
+        {state.conclusion && (
+          <ConclusionBar conclusion={chatbotCase.exposure.conclusion} reduced={reduced} />
+        )}
+      </div>
     </div>
   );
 }

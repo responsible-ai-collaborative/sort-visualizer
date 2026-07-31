@@ -29,11 +29,15 @@ export function HarmPanel({ activeStep }: { activeStep: string | null }) {
   const mobileHide = (key: string) => (visible && !visible.includes(key) ? " max-md:hidden" : "");
 
   return (
-    <div className="w-full max-w-[640px]">
+    // Desktop: fill the pin as a flex column so the header stays fixed and only
+    // the card box scrolls (see ScrollySection stackTop). Mobile is unchanged —
+    // block flow inside the scrolling pin.
+    <div className="w-full max-w-[640px] md:flex-1 md:flex md:flex-col md:min-h-0">
       <PanelHeader letter="H" title="Estimating harm" />
 
-      <div className="space-y-2 md:space-y-3">
-        {state.pointEstimate && (
+      <div className="md:flex-1 md:min-h-0 md:overflow-y-auto">
+        <div className="space-y-2 md:space-y-3">
+          {state.pointEstimate && (
           <SourceCard
             tag="OpenAI"
             role="Point estimate · Tier 2"
@@ -88,16 +92,17 @@ export function HarmPanel({ activeStep }: { activeStep: string | null }) {
               </p>
             </div>
           </SourceCard>
+          )}
+        </div>
+
+        {state.conclusion && (
+          <ConclusionBar
+            className={mobileHide("conclusion")}
+            conclusion={chatbotCase.harm.conclusion}
+            reduced={reduced}
+          />
         )}
       </div>
-
-      {state.conclusion && (
-        <ConclusionBar
-          className={mobileHide("conclusion")}
-          conclusion={chatbotCase.harm.conclusion}
-          reduced={reduced}
-        />
-      )}
     </div>
   );
 }

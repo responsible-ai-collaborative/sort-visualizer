@@ -21,7 +21,7 @@ export const act1Steps: ContentStep[] = [
           </a>
           . By late 2025 the totals exceed five hundred a month.
         </p>
-        <p>The shape of the line is unambiguous — but what it means is not.</p>
+        <p>The shape of the line is unambiguous, but what it means is not.</p>
       </StepText>
     ),
   },
@@ -42,7 +42,7 @@ export const act1Steps: ContentStep[] = [
           <li>Each use of AI is now more likely to cause harm than it used to be.</li>
         </ul>
         <p>
-          These three readings require different responses to mitigate AI risks. Most likely all
+          These three readings require different responses to mitigate AI risks. Most likely, all
           three are happening at once — the question is in what proportion, and the count alone
           cannot say.
         </p>
@@ -59,15 +59,14 @@ export const act1Steps: ContentStep[] = [
           denominators, different reporting infrastructures, and different deployment curves.
         </p>
         <p>
-          The paper proposes a framework that works at a narrower level: pick one specific harm,
-          estimate its <Em>harm</Em> and <Em>exposure</Em> separately, take the ratio, and classify
-          the resulting trajectory of the risk.
+          Our paper proposes a general framework to get to the bottom of this, in three steps: (1)
+          Ask a well-defined question; (2) Estimate the key trends; (3) classify the risk given your
+          uncertainty.
         </p>
         <p>
-          Three moves: define a precise monitoring question using the SORT framework; estimate harm
-          and exposure <Em>independently</Em> across two periods; then take their ratio and classify
-          the trajectory. Harm and exposure are two parallel estimates, not a sequence — neither
-          depends on the other.
+          Concretely this means: define a precise monitoring question using the SORT framework;
+          estimate harm and exposure <Em>independently</Em> across two periods; then take their ratio
+          and classify the trajectory.
         </p>
       </StepText>
     ),

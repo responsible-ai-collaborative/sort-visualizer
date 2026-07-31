@@ -263,7 +263,13 @@ export function QuadrantChart({
             dodges to the quadrant's outer edge at mid-height instead. */}
         <AnimatePresence>
           {weights
-            ? QUADS.filter((q) => (weights[q.key] ?? 0) >= 0.0005).map((q, i) => {
+            ? QUADS.map((q, i) => {
+                const w = weights[q.key] ?? 0;
+                // All four quadrants carry a figure. Sub-0.05% cells still show
+                // one (so the distribution reads as complete), just small and
+                // muted so a near-zero quadrant doesn't look like a headline
+                // stat next to the real mass.
+                const tiny = w < 0.0005;
                 const cx = q.x + halfW / 2;
                 const isRight = q.x === midX;
                 const dotNearChip =
@@ -275,15 +281,21 @@ export function QuadrantChart({
                     y={dotNearChip ? q.y + halfH / 2 + 9 : q.y + 66}
                     textAnchor={dotNearChip ? (isRight ? "end" : "start") : "middle"}
                     fontFamily="var(--next-font-heading)"
-                    fontWeight="700"
-                    className="text-[34px] md:text-[24px]"
-                    fill={q.key === "mitigating" ? "var(--mitigating-deep)" : q.fill}
+                    fontWeight={tiny ? "600" : "700"}
+                    className={tiny ? "text-[19px] md:text-[13px]" : "text-[34px] md:text-[24px]"}
+                    fill={
+                      tiny
+                        ? "var(--ink-faint)"
+                        : q.key === "mitigating"
+                          ? "var(--mitigating-deep)"
+                          : q.fill
+                    }
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: tDur, delay: reduced ? 0 : i * 0.15 }}
                   >
-                    {formatWeight(weights[q.key])}
+                    {formatWeight(w)}
                   </motion.text>
                 );
               })

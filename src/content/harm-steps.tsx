@@ -15,7 +15,7 @@ export const harmSteps: ContentStep[] = [
       <StepText number={num} heading="Harm — start from the point estimate.">
         <p>
           The estimate that carries the classification is a <Em>point estimate</Em>, built from the
-          strongest tiered data available. Authoritative single sources rarely exist for AI harms,
+          most suitable data available. Authoritative single sources rarely exist for AI harms,
           so this question sits at <TierLink tier={2}>Tier 2</TierLink> and anchors on OpenAI&apos;s{" "}
           <a
             href="https://openai.com/index/strengthening-chatgpt-responses-in-sensitive-conversations/"
@@ -89,6 +89,11 @@ export const harmSteps: ContentStep[] = [
           counts are directionally consistent with the point estimate, but lift the lower band of
           its uncertainty interval only marginally.
         </Assumption>
+        <p>
+          <TierLink tier={2} variant="button">
+            Learn more about estimation source tiers →
+          </TierLink>
+        </p>
       </StepText>
     ),
   },

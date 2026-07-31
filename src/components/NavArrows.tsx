@@ -137,10 +137,14 @@ function NavButton({
       className={[
         // md+ only — on mobile the arrows just crowd the small screen, and
         // thumb-scrolling with snap already pages one slide at a time.
-        "max-md:hidden fixed left-1/2 -translate-x-1/2 z-30",
+        // Sit just right of the ProgressRail (rail track ~left-4) and inset
+        // from the screen edge so the button isn't half off-screen: the up
+        // arrow caps the rail's top and the down arrow its bottom, reading as
+        // one navigation cluster with it.
+        "max-md:hidden fixed left-8 -translate-x-1/2 z-30",
         "h-11 w-11 flex items-center justify-center",
         "rounded-full transition-[opacity,top] duration-300",
-        isUp ? "top-4" : "bottom-6",
+        isUp ? "top-[8vh]" : "bottom-[8vh]",
         hidden ? "opacity-0 pointer-events-none" : "opacity-35 hover:opacity-90",
       ].join(" ")}
       style={{ color: "var(--ink-soft)" }}

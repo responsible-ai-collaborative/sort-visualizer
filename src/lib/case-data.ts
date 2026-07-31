@@ -76,7 +76,10 @@ export const chatbotCase = {
   mq: {
     subject: "conversations between US users and conversational AI systems",
     opportunity: "in which users seek support regarding suicidal ideation or self-harm",
-    riskEvent: "AI systems encourage, or fail to discourage, suicidal ideation or self-harm",
+    riskEvent: "the AI encourages, or fails to discourage, suicidal ideation or self-harm",
+    // Same risk event as the [R] box, inflected for the assembled question
+    // ("…in how many does the AI encourage, or fail to discourage…").
+    riskEventClause: "encourage, or fail to discourage, suicidal ideation or self-harm",
     timeframe: "per calendar year",
   },
 

@@ -27,10 +27,12 @@ export const classificationSteps: ContentStep[] = [
     render: (num) => (
       <StepText number={num} heading="How confident is that placement?">
         <p>
-          The estimates behind the dot carry real uncertainty — a factor of ~2 on each harm
-          estimate, ~1.5 on each exposure estimate. The paper treats each quantity as log-normal,
-          samples all four by Monte Carlo, and classifies every draw. The result is not a cell but a{" "}
-          <Em>distribution</Em>:
+          The estimates behind the dot carry real uncertainty, depending on applicability of the
+          proxy data to the monitoring question, and the reliability of the data itself. Ultimately
+          this remains a judgement call of the analyst, which we here estimate with an uncertainty
+          factor of ~2 on the harm estimate, and ~1.5 on the exposure estimate. The paper treats both
+          as log-normal distributions and uses Monte Carlo sampling to obtain a <Em>distribution</Em>{" "}
+          over classifications:
         </p>
         <ul className="list-none space-y-1.5 mt-2 text-[16px]">
           <li>
@@ -44,8 +46,9 @@ export const classificationSteps: ContentStep[] = [
           </li>
         </ul>
         <p>
-          The fifth outcome, <Em>Unclassifiable</Em>, absorbs the draws where a trend is too weak to
-          call. Uncertainty shows up in the shape of the distribution, not as false confidence.
+          A draw falls into <Em>Unclassifiable</Em> when its trend is too weak to be robust — small
+          perturbations would flip it into a different class. Where to set this threshold, i.e. how
+          strong a trend must be before it counts, is again a judgement call by the analyst.
         </p>
       </StepText>
     ),
@@ -73,15 +76,17 @@ export const classificationSteps: ContentStep[] = [
     render: (num) => (
       <StepText number={num} heading="Don't take our word for it — move the assumptions.">
         <p>
-          Nothing about those weights is hand-tuned: they fall out of the Monte Carlo given the
-          estimates, two uncertainty factors, and an indifference band. The sliders start at the
+          Nothing about those weights is hand-tuned: they fall out of the Monte Carlo simulation
+          given the estimates, two uncertainty factors, and an indifference band. The sliders start
+          at the
           paper&apos;s values — each faint point is one draw of the classifier.
         </p>
         <p>
           Widen the harm uncertainty and watch the distribution drain into <Em>Unclassifiable</Em>.
           Shrink the indifference band and the verdict sharpens. Push harm growth past exposure
           growth and the dot crosses into <Em>Escalating</Em>. The conclusion is only as strong as
-          the assumptions — and now you can check which ones carry it.
+          data that feed into it, and the confidence of the analyst, and now you can check which ones
+          carry it.
         </p>
         <p className="mt-3">
           <a

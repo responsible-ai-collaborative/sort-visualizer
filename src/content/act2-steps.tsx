@@ -22,8 +22,7 @@ export const act2Steps: ContentStep[] = [
           >
             PICO
           </a>{" "}
-          in evidence-based medicine. It forces analytical choices to be explicit rather than buried
-          in framing.
+          in evidence-based medicine. It forces analytical choices to be made explicit.
         </p>
         <p>
           Each box on the right holds one piece of the question. They will fill in one at a time as
@@ -90,9 +89,11 @@ export const act2Steps: ContentStep[] = [
           <Em>AI encourages, or fails to discourage, suicidal ideation or self-harm</Em>.
         </p>
         <p>
-          A vaguer phrasing — &ldquo;AI causes mental health harms&rdquo; — would inflate the number
-          of partial matches and make the trend signal noisier. A high ratio of partial to full
-          matches is the framework&apos;s built-in warning that a question may be overspecified.
+          A vaguer phrasing, like &ldquo;AI causes mental health harms&rdquo;, would increase the
+          scope of possible cases to consider, with two consequences: it will be harder to find
+          adequate proxy measures, and the incident database will contain more entries that are
+          partial matches. A high ratio of partial to full matches is the framework&apos;s built-in
+          warning that a question may be misspecified.
         </p>
         <Disclosure label="Examples from other domains">
           <p className="font-body italic text-[14px] leading-snug text-ink-soft">

@@ -96,14 +96,18 @@ export function ScrollySection({
             (card
               ? // Card panels accumulate cards and can exceed the pin at any
                 // viewport that isn't tall enough — not just `tight`. So they
-                // always scroll internally: a top-aligned column whose figure
-                // `m-auto` still centers the content when it *does* fit, and
-                // collapses to a top-aligned scroll when it doesn't (auto
-                // margins resolve to 0 on overflow). The sticky PanelHeader
-                // then stays put across every size instead of being clipped.
-                // The stepper is shorter below md (number chips), so the pin
-                // offset shrinks with it — keep in sync with ProgressStepper.
-                "sticky flex flex-col items-center overflow-y-auto top-[38px] h-[calc(50vh-38px)] md:top-[52px] md:h-[calc(100vh-52px)]"
+                // scroll internally: a top-aligned column whose figure `m-auto`
+                // still centers the content when it *does* fit, and collapses to
+                // a top-aligned scroll when it doesn't. The stepper is shorter
+                // below md (number chips), so the pin offset shrinks with it —
+                // keep in sync with ProgressStepper.
+                //
+                // stackTop panels instead own their scroll on desktop: the
+                // figure fills the pin so the panel can pin its header and
+                // scroll only its card box (md:overflow-hidden here stops a
+                // redundant outer scrollbar). Mobile still scrolls the pin.
+                "sticky flex flex-col items-center overflow-y-auto top-[38px] h-[calc(50vh-38px)] md:top-[52px] md:h-[calc(100vh-52px)] " +
+                (card.stackTop ? "md:overflow-hidden" : "")
               : // Non-card viz only overflow on genuinely tight viewports.
                 "tight:overflow-y-auto sticky flex items-center justify-center top-0 h-[40vh] md:h-screen")
           }
@@ -116,7 +120,10 @@ export function ScrollySection({
               with m-auto. */}
           <figure
             className={
-              "flex flex-col items-center gap-3 w-full " + (card?.stackTop ? "" : "m-auto")
+              "flex flex-col items-center gap-3 w-full " +
+              // stackTop fills the pin height so the panel can flex its header
+              // fixed and scroll its card box; others center with m-auto.
+              (card?.stackTop ? "md:h-full md:min-h-0" : "m-auto")
             }
           >
             <Viz activeStep={activeStep} />

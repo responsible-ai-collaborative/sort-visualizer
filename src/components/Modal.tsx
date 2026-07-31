@@ -57,9 +57,24 @@ export function Modal({
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="shrink-0 inline-flex h-7 w-7 items-center justify-center rounded-full border border-rule text-ink-faint text-[13px] hover:border-accent-text hover:text-accent-text transition-colors outline-none focus-visible:border-accent-text"
+            className="shrink-0 inline-flex h-7 w-7 items-center justify-center rounded-full border border-rule text-ink-faint hover:border-accent-text hover:text-accent-text transition-colors outline-none focus-visible:border-accent-text"
           >
-            ✕
+            {/* SVG cross rather than a ✕ glyph: the glyph's font metrics leave
+                it sitting slightly off-center in the circle; an SVG centers
+                exactly via the flex box. */}
+            <svg
+              width="11"
+              height="11"
+              viewBox="0 0 11 11"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+              aria-hidden
+            >
+              <path d="M1.5 1.5 L9.5 9.5" />
+              <path d="M9.5 1.5 L1.5 9.5" />
+            </svg>
           </button>
         </div>
         {children}

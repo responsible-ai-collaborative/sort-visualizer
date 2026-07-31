@@ -20,9 +20,6 @@ export default function ClassifierPage() {
           scrolling wherever it can, and scrolls the page natively when it can't. */}
       <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between border-b border-rule pb-5 mb-8 short:pb-3 short:mb-4">
         <div className="max-w-[720px] short:max-w-[940px]">
-          <div className="font-display italic text-[13px] text-ink-soft mb-1.5 short:mb-1">
-            The classifier · a walk through the SORT framework
-          </div>
           <h1 className="font-display font-medium text-[27px] sm:text-[31px] short:sm:text-[27px] leading-[1.1] tracking-[-0.012em] text-ink">
             Run the classification on{" "}
             <span className="italic font-normal text-accent-text">your own numbers.</span>

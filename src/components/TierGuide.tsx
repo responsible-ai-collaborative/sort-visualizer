@@ -73,19 +73,29 @@ const ROWS: TierRow[] = [
   },
 ];
 
-// Inline trigger that reads like the walkthrough's other links and opens the
-// tier reference. Pass `tier` to highlight the tier the surrounding estimate
-// sits at.
-export function TierLink({ tier, children }: { tier?: TierNum; children: ReactNode }) {
+// Trigger that opens the tier reference. Pass `tier` to highlight the tier the
+// surrounding estimate sits at. `variant` picks the look: "link" (default)
+// reads like the walkthrough's other inline links; "button" renders a
+// standalone bordered box matching the secondary buttons elsewhere.
+export function TierLink({
+  tier,
+  variant = "link",
+  children,
+}: {
+  tier?: TierNum;
+  variant?: "link" | "button";
+  children: ReactNode;
+}) {
   const [open, setOpen] = useState(false);
+
+  const triggerClass =
+    variant === "button"
+      ? "inline-flex items-center font-body text-[14px] md:text-[15px] px-4 py-2 md:py-2.5 border border-rule text-ink bg-[rgba(255,255,255,0.5)] hover:border-accent/60 hover:bg-white focus-visible:border-accent transition-colors outline-none"
+      : "inline align-baseline cursor-pointer underline decoration-accent-text/40 hover:decoration-accent-text text-accent-text outline-none focus-visible:decoration-accent-text";
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="inline align-baseline cursor-pointer underline decoration-accent-text/40 hover:decoration-accent-text text-accent-text outline-none focus-visible:decoration-accent-text"
-      >
+      <button type="button" onClick={() => setOpen(true)} className={triggerClass}>
         {children}
       </button>
       <Modal

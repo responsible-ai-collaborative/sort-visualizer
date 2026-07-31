@@ -8,6 +8,7 @@ import { Header } from "@/components/Header";
 import { Closing } from "@/components/Closing";
 import { NavArrows } from "@/components/NavArrows";
 import { ProgressRail } from "@/components/ProgressRail";
+import { SmoothJumps } from "@/components/SmoothJumps";
 import { ScrollySection, type CardSpec, type StepDef } from "@/components/ScrollySection";
 import { IncidentsChart } from "@/components/viz/IncidentsChart";
 import { SortAssembly } from "@/components/viz/SortAssembly";
@@ -159,6 +160,7 @@ export default function Page() {
 
   return (
     <main ref={mainRef} className="relative z-10">
+      <SmoothJumps />
       <ProgressStepper activeStage={activeStage} />
       <ProgressRail />
       <NavArrows />

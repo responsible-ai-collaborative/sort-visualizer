@@ -130,7 +130,8 @@ export function SortAssembly({ activeStep }: { activeStep: string | null }) {
             </div>
             <p className="font-display text-[17px] md:text-[26px] leading-[1.32] text-ink">
               Among <Em>{chatbotCase.mq.subject}</Em> <Em>{chatbotCase.mq.opportunity}</Em>, in how
-              many do <Em>{chatbotCase.mq.riskEvent}</Em> <Em>{chatbotCase.mq.timeframe}</Em>?
+              many does the AI <Em>{chatbotCase.mq.riskEventClause}</Em>{" "}
+              <Em>{chatbotCase.mq.timeframe}</Em>?
             </p>
           </motion.div>
         ) : null}

@@ -30,7 +30,7 @@ export function PanelHeader({
     // while the accumulated cards scroll under it (bg-bg masks them, the top
     // padding gives breathing room below the stepper), and on tall viewports
     // where the panel doesn't scroll it simply sits at the top.
-    <header className="max-md:hidden sticky top-0 z-20 bg-bg pt-3 md:pt-4 mb-3 pb-2.5 md:mb-5 md:pb-4 border-b border-rule flex items-center justify-between gap-3">
+    <header className="max-md:hidden shrink-0 sticky top-0 z-20 bg-bg pt-3 md:pt-4 mb-3 pb-2.5 md:mb-5 md:pb-4 border-b border-rule flex items-center justify-between gap-3">
       <div className="flex items-center gap-2.5 md:gap-3">
         {/* leading-none so the single glyph centers on the box, not on the
             font's line-height (a serif cap otherwise sits high). */}

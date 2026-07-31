@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
-import { StepNumber } from "@/components/StepNumber";
 
+// `number` no longer prints — the visible "Step N" marker was dropped — but it
+// still labels the region for screen readers and for the progress rail's
+// fallback slide label.
 export function StepText({
   number,
   heading,
@@ -12,7 +14,6 @@ export function StepText({
 }) {
   return (
     <article className="max-w-[46ch]" role="region" aria-label={`Step ${number}`}>
-      <StepNumber n={number} />
       {heading ? (
         <h2 className="font-display font-medium text-[24px] md:text-[38px] leading-[1.12] tracking-[-0.008em] mb-3 md:mb-5 text-ink">
           {heading}
