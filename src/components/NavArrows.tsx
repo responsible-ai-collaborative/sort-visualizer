@@ -137,11 +137,11 @@ function NavButton({
       className={[
         // md+ only — on mobile the arrows just crowd the small screen, and
         // thumb-scrolling with snap already pages one slide at a time.
-        // Sit just right of the ProgressRail (rail track ~left-4) and inset
-        // from the screen edge so the button isn't half off-screen: the up
-        // arrow caps the rail's top and the down arrow its bottom, reading as
-        // one navigation cluster with it.
-        "max-md:hidden fixed left-8 -translate-x-1/2 z-30",
+        // Center on the ProgressRail track (nav at left-4, 3px wide → center
+        // ~17.5px) so the arrows sit directly in line with the rail: the up
+        // arrow caps its top and the down arrow its bottom, reading as one
+        // navigation cluster.
+        "max-md:hidden fixed left-[17.5px] -translate-x-1/2 z-30",
         "h-11 w-11 flex items-center justify-center",
         "rounded-full transition-[opacity,top] duration-300",
         isUp ? "top-[8vh]" : "bottom-[8vh]",
