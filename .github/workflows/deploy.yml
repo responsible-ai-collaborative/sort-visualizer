@@ -30,7 +30,8 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # pnpm 11.17+ (pinned via packageManager) needs Node >= 22.13.
+          node-version: 22
           cache: pnpm
 
       - name: Install dependencies
