@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { StepText } from "@/components/steps/StepText";
 import { Em } from "@/components/Em";
 import type { ContentStep } from "./types";
@@ -89,12 +90,12 @@ export const classificationSteps: ContentStep[] = [
           carry it.
         </p>
         <p className="mt-3">
-          <a
+          <Link
             href="/classifier"
             className="inline-block font-body text-[14px] px-4 py-2 border border-accent text-accent bg-transparent hover:bg-accent hover:text-white transition-colors"
           >
             Run it on your own numbers ↗
-          </a>
+          </Link>
         </p>
       </StepText>
     ),

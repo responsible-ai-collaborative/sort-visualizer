@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Em } from "@/components/Em";
 import { CreditsButton } from "@/components/CreditsButton";
 
@@ -31,12 +32,12 @@ export function Closing() {
         conclusion.
       </p>
       <div className="mt-6 md:mt-10 flex flex-wrap items-baseline gap-x-6 gap-y-3">
-        <a
+        <Link
           href="/classifier"
           className="inline-block font-body text-[14px] md:text-[15px] px-4 py-2 md:px-5 md:py-2.5 border border-accent text-accent bg-transparent hover:bg-accent hover:text-white transition-colors"
         >
           Run the classifier on your own numbers →
-        </a>
+        </Link>
         <a
           href="https://arxiv.org/abs/2604.19914"
           target="_blank"
