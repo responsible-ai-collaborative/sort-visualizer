@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 // On GitHub Pages this deploys to a *project* page served under
 // https://<user>.github.io/<repo>/, so the app needs a basePath.
 // Locally (pnpm dev / pnpm build) GITHUB_ACTIONS is unset, so basePath is "".
-const repo = "sort_visualizer";
+const repo = "sort-visualizer";
 const isGithubPages = process.env.GITHUB_ACTIONS === "true";
 const basePath = isGithubPages ? `/${repo}` : "";
 
