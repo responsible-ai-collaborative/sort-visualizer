@@ -25,7 +25,7 @@ function Hint({ text }: { text: string }) {
         tabIndex={0}
         role="img"
         aria-label={text}
-        className="inline-flex h-[13px] w-[13px] items-center justify-center rounded-full border border-ink-faint/60 font-body text-[9px] leading-none text-ink-faint cursor-help select-none outline-none focus-visible:border-accent-text focus-visible:text-accent-text"
+        className="inline-flex h-[13px] w-[13px] items-center justify-center not-italic rounded-full border border-ink-faint/60 font-body text-[9px] leading-none text-ink-faint cursor-help select-none outline-none focus-visible:border-accent-text focus-visible:text-accent-text"
       >
         ?
       </span>

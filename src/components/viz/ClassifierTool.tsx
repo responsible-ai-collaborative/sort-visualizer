@@ -16,6 +16,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { driver } from "driver.js";
 import { QuadrantChart, type DotProps, type CloudPoint } from "@/components/viz/QuadrantChart";
+import { LevelsChart, type LevelsScale, type LevelsSeries } from "@/components/viz/LevelsChart";
 import { Modal } from "@/components/Modal";
 import { classify } from "@/lib/classifier";
 import { chatbotCase, type Quadrant, type TrajectoryCategory } from "@/lib/case-data";
@@ -130,6 +131,19 @@ const QUAD_ZONES: Record<Quadrant, { left: string; top: string }> = {
   mitigating: { left: ZONE.midX, top: ZONE.midY },
 };
 
+// Two readings of the same four estimates: the trend grid (where the case
+// lands) and the levels slopes (what the raw counts did between periods).
+type ChartView = "quadrant" | "levels";
+const VIEWS: { key: ChartView; label: string }[] = [
+  { key: "quadrant", label: "Trend grid" },
+  { key: "levels", label: "Levels" },
+];
+
+// Beyond this ratio between the largest and smallest plotted value a linear
+// axis flattens the smaller series onto the baseline, so the levels chart
+// defaults to log until the user overrides it.
+const LOG_SCALE_RATIO = 150;
+
 const clamp01 = (v: number) => Math.min(0.98, Math.max(0.02, v));
 const isPos = (v: number) => Number.isFinite(v) && v > 0;
 const pct = (v: number) => `${(v * 100).toFixed(1)}%`;
@@ -152,10 +166,15 @@ export function ClassifierTool() {
   const [run, setRun] = useState(0);
   const [hover, setHover] = useState<TrajectoryCategory | null>(null);
   const [readOpen, setReadOpen] = useState(false);
+  const [chartView, setChartView] = useState<ChartView>("quadrant");
+  // null = follow the automatic choice for the current numbers.
+  const [scaleOverride, setScaleOverride] = useState<LevelsScale | null>(null);
   const isExample = sameParams(params, EXAMPLE);
 
   const startTour = useCallback(() => {
     if (!document.querySelector('[data-tour="results"]')) return;
+    // The tour points at the quadrants, so make sure they are on screen.
+    setChartView("quadrant");
     runTour();
   }, []);
 
@@ -240,6 +259,46 @@ export function ClassifierTool() {
     };
   }, [params, run, valid]);
 
+  // Levels view: the same estimates as raw counts, with the classifier's
+  // 95% log-normal interval [X / u, X · u] as the uncertainty band.
+  const levels = useMemo(() => {
+    if (!valid) return null;
+    const uH = Math.max(1, params.uH);
+    const uE = Math.max(1, params.uE);
+    const series: LevelsSeries[] = [
+      {
+        key: "harm",
+        short: "H",
+        label: "Harm (H)",
+        color: "var(--accent)",
+        v1: params.h1,
+        v2: params.h2,
+        lo1: params.h1 / uH,
+        hi1: params.h1 * uH,
+        lo2: params.h2 / uH,
+        hi2: params.h2 * uH,
+      },
+      {
+        key: "exposure",
+        short: "E",
+        label: "Exposure (E)",
+        color: "var(--mitigating-deep)",
+        v1: params.e1,
+        v2: params.e2,
+        lo1: params.e1 / uE,
+        hi1: params.e1 * uE,
+        lo2: params.e2 / uE,
+        hi2: params.e2 * uE,
+      },
+    ];
+    const bounds = series.flatMap((s) => [s.lo1, s.lo2, s.hi1, s.hi2]);
+    const autoScale: LevelsScale =
+      Math.max(...bounds) / Math.min(...bounds) > LOG_SCALE_RATIO ? "log" : "linear";
+    return { series, autoScale };
+  }, [params, valid]);
+
+  const scale: LevelsScale = scaleOverride ?? levels?.autoScale ?? "linear";
+
   const set = (patch: Partial<ToolParams>) => setParams((p) => ({ ...p, ...patch }));
 
   // Which quadrant the chart highlights: the hovered one takes priority (but
@@ -257,12 +316,40 @@ export function ClassifierTool() {
         data-tour="results"
         className="order-1 flex flex-col items-center justify-start w-full mx-auto max-w-[520px]"
       >
-        <div className="w-full flex items-center justify-between gap-3 mb-2.5">
-          <div className="flex items-center gap-4">
+        {/* Toolbar. Below `sm` the three controls cannot share a line without
+            the info button wrapping to four words tall, so the view toggle
+            takes a full-width row of its own above them. */}
+        <div className="w-full flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2.5">
+          <div
+            role="group"
+            aria-label="Chart view"
+            className="order-1 sm:order-2 w-full sm:w-auto grid grid-cols-2 sm:flex border border-ink-faint/45 shrink-0"
+          >
+            {VIEWS.map((v) => (
+              <button
+                key={v.key}
+                type="button"
+                aria-pressed={chartView === v.key}
+                onClick={() => {
+                  setChartView(v.key);
+                  setHover(null);
+                }}
+                className={
+                  "font-body text-[13px] px-3 py-1.5 transition-colors " +
+                  (chartView === v.key
+                    ? "bg-accent text-white"
+                    : "text-ink-soft hover:text-accent-text")
+                }
+              >
+                {v.label}
+              </button>
+            ))}
+          </div>
+          <div className="order-2 sm:order-1 flex items-center gap-4">
             <button
               type="button"
               onClick={() => setReadOpen(true)}
-              className="inline-flex items-center gap-2 font-body text-[13.5px] px-3 py-2 border border-ink-faint/45 text-ink-soft hover:border-accent-text hover:text-accent-text transition-colors"
+              className="inline-flex items-center gap-2 whitespace-nowrap font-body text-[13.5px] px-3 py-2 border border-ink-faint/45 text-ink-soft hover:border-accent-text hover:text-accent-text transition-colors"
             >
               <InfoGlyph />
               How to read this chart
@@ -275,13 +362,29 @@ export function ClassifierTool() {
               Take the tour
             </button>
           </div>
-          <span className="font-display italic text-[12.5px] text-ink-soft text-right">
-            Hover a quadrant to learn more
-          </span>
         </div>
 
         <div className="relative w-full">
-          {view ? (
+          {!view ? null : chartView === "levels" && levels ? (
+            <LevelsChart
+              series={levels.series}
+              scale={scale}
+              onValueChange={(key, period, value) =>
+                set(
+                  key === "harm"
+                    ? period === 1
+                      ? { h1: value }
+                      : { h2: value }
+                    : period === 1
+                      ? { e1: value }
+                      : { e2: value },
+                )
+              }
+              onUncertaintyChange={(key, factor) =>
+                set(key === "harm" ? { uH: factor } : { uE: factor })
+              }
+            />
+          ) : (
             <QuadrantChart
               activeQuadrant={highlightQuad}
               dot={view.dot}
@@ -290,16 +393,17 @@ export function ClassifierTool() {
               cloud={view.cloud}
               dotAnimated={false}
             />
-          ) : (
+          )}
+          {!view ? (
             <div className="w-full aspect-[500/420] border border-dashed border-ink-faint/50 flex items-center justify-center">
               <span className="font-display italic text-[15px] text-ink-soft px-6 text-center">
                 Enter positive estimates to see the classification.
               </span>
             </div>
-          )}
+          ) : null}
 
           {/* Hover zones aligned to the SVG plot area (top of the chart box). */}
-          {view ? (
+          {view && chartView === "quadrant" ? (
             <div className="pointer-events-none absolute left-0 top-0 w-full aspect-[500/420]">
               {QUADRANT_KEYS.map((q) => (
                 <button
@@ -324,6 +428,32 @@ export function ClassifierTool() {
           ) : null}
         </div>
 
+        {/* Caption: a per-view hint. A minimum height (not a fixed one — the
+            text wraps on narrow screens) keeps the panel below from shifting
+            when the charts swap. */}
+        <div className="w-full mt-1 flex flex-wrap items-baseline justify-end gap-x-3 min-h-[17px]">
+          {chartView === "quadrant" ? (
+            <span className="font-display italic text-[12.5px] text-ink-soft">
+              {/* No hover on touch — the quadrants respond to a tap too. */}
+              <span className="md:hidden">Tap a quadrant to learn more</span>
+              <span className="max-md:hidden">Hover a quadrant to learn more</span>
+            </span>
+          ) : (
+            <>
+              <span className="font-display italic text-[12.5px] text-ink-soft">
+                Drag the dots and band edges to edit
+              </span>
+              <button
+                type="button"
+                onClick={() => setScaleOverride(scale === "log" ? "linear" : "log")}
+                className="font-mono text-[11px] text-accent-text hover:underline whitespace-nowrap"
+              >
+                {scale === "log" ? "log scale" : "linear scale"}
+              </button>
+            </>
+          )}
+        </div>
+
         {/* Info panel: hovered outcome, else the live reading. */}
         {view ? (
           <div
@@ -332,9 +462,9 @@ export function ClassifierTool() {
           >
             {hover ? (
               <>
-                <div className="flex items-baseline justify-between gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-x-3">
                   <span className="font-mono text-[11px] text-ink-soft">{metaFor(hover)}</span>
-                  <span className="font-mono text-[12px] text-ink-soft">
+                  <span className="font-mono text-[12px] text-ink-soft whitespace-nowrap">
                     {pct(view.weights[hover])} of draws
                   </span>
                 </div>
@@ -350,11 +480,12 @@ export function ClassifierTool() {
               </>
             ) : (
               <>
-                <div className="flex items-baseline justify-between gap-3">
-                  <span className="font-display italic text-[13px] text-ink-soft">
+                {/* Stacks below `sm`: side by side, both halves wrap badly. */}
+                <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-x-3">
+                  <span className="font-display italic text-[13px] text-ink-soft whitespace-nowrap">
                     Most likely outcome
                   </span>
-                  <span className="font-mono text-[12px] text-ink-soft">
+                  <span className="font-mono text-[11.5px] sm:text-[12px] text-ink-soft whitespace-nowrap">
                     exposure {fmtMult(view.eMult)} · harm/exposure {fmtMult(view.hHatMult)}
                   </span>
                 </div>
@@ -490,25 +621,60 @@ export function ClassifierTool() {
         <div className="font-body text-[14px] leading-[1.6] text-ink-soft space-y-3">
           <p>
             Harm and exposure are estimated <em className="italic">independently</em>, then read
-            together — decoupling the two is the point of the framework.
+            together — decoupling the two is the point of the framework. The two views show the same
+            four estimates: <strong className="font-semibold text-ink">Levels</strong> is what the
+            counts did, <strong className="font-semibold text-ink">Trend grid</strong> is what that
+            implies.
           </p>
-          <p>
-            The <strong className="font-semibold text-ink">horizontal axis</strong> is the exposure
-            trend (E): how the opportunity for harm changed between your two periods — decreasing to
-            the left, increasing to the right.
-          </p>
-          <p>
-            The <strong className="font-semibold text-ink">vertical axis</strong> is the
-            harm-per-exposure trend (Ĥ): whether each use is getting safer or more dangerous —
-            decreasing at the bottom, increasing at the top. The two directions pick the quadrant.
-          </p>
-          <p>
-            Because every estimate carries uncertainty, the answer is a{" "}
-            <em className="italic">distribution</em>, not a single cell. Each faint point is one
-            Monte Carlo draw of the four quantities; the percentages weigh how firmly the evidence
-            points one way, rather than claiming a literal probability. Draws too flat or too
-            uncertain to place land as <em className="italic">Unclassifiable</em>.
-          </p>
+          {chartView === "levels" ? (
+            <>
+              <p>
+                Each line runs from your first period (T₁) to your second (T₂): one for harm (H) and
+                one for exposure (E), on a shared count axis. The slopes are the whole story — harm
+                rising more slowly than exposure means each use is getting safer, even though the
+                raw harm count went up.
+              </p>
+              <p>
+                The <strong className="font-semibold text-ink">shaded band</strong> around each line
+                is the 95% range implied by your uncertainty factor: everything between the estimate
+                divided by u and multiplied by u. Where the two bands overlap heavily, the direction
+                of the trend is not yet settled by your numbers.
+              </p>
+              <p>
+                The chart is editable: <strong className="font-semibold text-ink">drag a dot</strong>{" "}
+                to change that period&rsquo;s estimate, or{" "}
+                <strong className="font-semibold text-ink">drag a band edge</strong> to widen or
+                tighten that series&rsquo; uncertainty factor. The number fields update as you go —
+                and so does the trend grid behind them.
+              </p>
+              <p>
+                Counts are drawn on a linear axis unless harm and exposure are orders of magnitude
+                apart, in which case the axis switches to log so neither series is flattened onto
+                the baseline. Use the scale link below the chart to force either one.
+              </p>
+            </>
+          ) : (
+            <>
+              <p>
+                The <strong className="font-semibold text-ink">horizontal axis</strong> is the
+                exposure trend (E): how the opportunity for harm changed between your two periods —
+                decreasing to the left, increasing to the right.
+              </p>
+              <p>
+                The <strong className="font-semibold text-ink">vertical axis</strong> is the
+                harm-per-exposure trend (Ĥ): whether each use is getting safer or more dangerous —
+                decreasing at the bottom, increasing at the top. The two directions pick the
+                quadrant.
+              </p>
+              <p>
+                Because every estimate carries uncertainty, the answer is a{" "}
+                <em className="italic">distribution</em>, not a single cell. Each faint point is one
+                Monte Carlo draw of the four quantities; the percentages weigh how firmly the
+                evidence points one way, rather than claiming a literal probability. Draws too flat
+                or too uncertain to place land as <em className="italic">Unclassifiable</em>.
+              </p>
+            </>
+          )}
         </div>
       </Modal>
     </div>
@@ -638,7 +804,7 @@ function Hint({ text }: { text: string }) {
         tabIndex={0}
         role="img"
         aria-label={text}
-        className="inline-flex h-[13px] w-[13px] items-center justify-center rounded-full border border-ink-faint font-body text-[9px] leading-none text-ink-soft cursor-help select-none outline-none focus-visible:border-accent-text focus-visible:text-accent-text"
+        className="inline-flex h-[13px] w-[13px] items-center justify-center not-italic rounded-full border border-ink-faint font-body text-[9px] leading-none text-ink-soft cursor-help select-none outline-none focus-visible:border-accent-text focus-visible:text-accent-text"
       >
         ?
       </span>

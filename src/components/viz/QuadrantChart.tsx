@@ -341,7 +341,7 @@ export function QuadrantChart({
             fontFamily="var(--font-jetbrains-mono)"
             className="fill-ink-soft text-[16px] md:text-[10px]"
           >
-            harm trend ↑
+            harm-per-exposure trend ↑
           </text>
         </g>
 
