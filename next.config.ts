@@ -1,11 +1,9 @@
 import type { NextConfig } from "next";
 
-// On GitHub Pages this deploys to a *project* page served under
-// https://<user>.github.io/<repo>/, so the app needs a basePath.
-// Locally (pnpm dev / pnpm build) GITHUB_ACTIONS is unset, so basePath is "".
-const repo = "sort-visualizer";
-const isGithubPages = process.env.GITHUB_ACTIONS === "true";
-const basePath = isGithubPages ? `/${repo}` : "";
+// Deployed via a custom domain (sortingai.incidentdatabase.ai) configured in
+// the repo's GitHub Pages settings, so the site is served from the domain
+// root — no basePath needed, unlike a default <user>.github.io/<repo>/ page.
+const basePath = "";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
