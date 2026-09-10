@@ -4,7 +4,7 @@ A scrollytelling explainer of the SORT framework. A companion page at `/classifi
 
 ## Relevant Links
 
-- **Paper link:** <https://arxiv.org/abs/2604.19914>
+- **Paper link:** <https://arxiv.org/abs/2604.21412>
 - **Claude artifact:** The project comes with a [Claude artifact](https://claude.ai/public/artifacts/692e23ff-e9f9-4413-a9e5-faf8957c759b) that walks users through the steps necessary to create their own monitoring questions. 
 - **Website copy:** [stored in this Google Doc for editing](https://docs.google.com/document/d/1F1sFCYuKPVtopJE8xPQ6qk5ETVMLROlGvMKBDgzsPnk/edit?tab=t.0). Also contains the text for the `/classifer` page and prompt used in the Claude artifact. 
 - **Current deployment site:** It's currently deployed on one of [my domains](https://sort.spencer.to/), commits to main are automatically deployed. 

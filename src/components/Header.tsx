@@ -85,7 +85,7 @@ export function Header() {
           identical boxes. */}
       <div className="mt-6 md:mt-9 md:short:mt-6">
         <a
-          href="https://arxiv.org/abs/2604.19914"
+          href="https://arxiv.org/abs/2604.21412"
           target="_blank"
           rel="noopener noreferrer"
           className={

@@ -39,7 +39,7 @@ export function Closing() {
           Run the classifier on your own numbers →
         </Link>
         <a
-          href="https://arxiv.org/abs/2604.19914"
+          href="https://arxiv.org/abs/2604.21412"
           target="_blank"
           rel="noopener noreferrer"
           className="font-display italic text-[15px] text-accent-text hover:underline"

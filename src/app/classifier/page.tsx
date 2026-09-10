@@ -38,7 +38,7 @@ export default function ClassifierPage() {
             ← Back to the walkthrough
           </Link>
           <a
-            href="https://arxiv.org/abs/2604.19914"
+            href="https://arxiv.org/abs/2604.21412"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block font-body text-[13px] px-4 py-2 border border-accent text-accent bg-transparent hover:bg-accent hover:text-white transition-colors whitespace-nowrap"
