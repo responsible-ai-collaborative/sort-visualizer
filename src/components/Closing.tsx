@@ -39,6 +39,12 @@ export function Closing() {
           Run the classifier on your own numbers →
         </Link>
         <a
+          href="/Assessor%20Prompt.zip"
+          className="inline-block font-body text-[14px] md:text-[15px] px-4 py-2 md:px-5 md:py-2.5 border border-rule text-ink bg-transparent hover:border-accent/60 hover:bg-[rgba(255,255,255,0.6)] transition-colors"
+        >
+          Run the full assessment on your own data ↓
+        </a>
+        <a
           href="https://arxiv.org/abs/2604.21412"
           target="_blank"
           rel="noopener noreferrer"

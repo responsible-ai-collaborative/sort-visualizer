@@ -12,12 +12,14 @@ export function Modal({
   onClose,
   title,
   accent,
+  maxWidth = "440px",
   children,
 }: {
   open: boolean;
   onClose: () => void;
   title: string;
   accent?: string;
+  maxWidth?: string;
   children: React.ReactNode;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -47,7 +49,10 @@ export function Modal({
       aria-label={title}
     >
       <div className="absolute inset-0 bg-[rgba(1,25,52,0.32)]" onClick={onClose} aria-hidden />
-      <div className="relative z-10 w-full max-w-[440px] max-h-[85vh] overflow-y-auto bg-white border border-rule shadow-[0_12px_44px_rgba(1,25,52,0.20)] p-6">
+      <div
+        className="relative z-10 w-full max-h-[85vh] overflow-y-auto bg-white border border-rule shadow-[0_12px_44px_rgba(1,25,52,0.20)] p-6"
+        style={{ maxWidth }}
+      >
         <div className="flex items-start justify-between gap-4 mb-3">
           <h2 className="font-display italic text-[21px] leading-tight" style={{ color: accent }}>
             {title}

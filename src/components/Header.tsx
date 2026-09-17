@@ -10,14 +10,24 @@ const STAGE_BLURBS: Record<StageId, string> = {
 };
 
 // Companion resources shown beside "Read the paper". `external` links open in a
-// new tab; omit `href` to render a placeholder box until the destination exists.
-const RESOURCES: { label: string; href?: string; external?: boolean }[] = [
+// new tab; `download` items fetch a file rather than navigating; omit `href` to
+// render a placeholder box until the destination exists.
+const RESOURCES: {
+  label: string;
+  href?: string;
+  external?: boolean;
+  download?: boolean;
+}[] = [
   {
-    label: "Monitoring question",
+    label: "Monitoring question builder",
     href: "https://claude.ai/public/artifacts/9ec3813a-399c-48ea-96ed-19443d121b83",
     external: true,
   },
-  { label: "Estimation guide" },
+  {
+    label: "Estimation guide",
+    href: "/SORT%20Estimation%20Guide.pdf",
+    download: true,
+  },
   { label: "Classification tool", href: "/classifier" },
 ];
 
@@ -103,12 +113,13 @@ export function Header() {
               key={r.label}
               href={r.href}
               {...(r.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              {...(r.download ? { download: "" } : {})}
               className={
                 "border border-rule text-ink bg-transparent hover:border-accent/60 hover:bg-[rgba(255,255,255,0.6)] focus-visible:border-accent " +
                 BOX_CLASS
               }
             >
-              {r.label} {r.external ? "↗" : "→"}
+              {r.label} {r.download ? "↓" : r.external ? "↗" : "→"}
             </a>
           ))}
         </div>

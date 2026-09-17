@@ -23,7 +23,15 @@ export function SmoothJumps() {
       const el = document.getElementById(id);
       if (!el) return;
       e.preventDefault();
-      withSnapDisabled(() => el.scrollIntoView({ block: "start" }));
+      // Click-time landing offset doubles as the arrival check for
+      // withSnapDisabled (see slide-nav) — a mid-glide main-thread stall must
+      // not re-engage snap while the glide is merely paused.
+      const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      const landing = Math.min(maxScroll, Math.max(0, el.getBoundingClientRect().top + window.scrollY));
+      withSnapDisabled(
+        () => el.scrollIntoView({ block: "start" }),
+        () => Math.abs(window.scrollY - landing) < 4,
+      );
       history.pushState(null, "", `#${id}`);
     };
     document.addEventListener("click", onClick);

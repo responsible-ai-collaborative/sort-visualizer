@@ -54,8 +54,8 @@ export const harmSteps: ContentStep[] = [
     render: (num) => (
       <StepText number={num} heading="Then handle the uncertainty.">
         <p>
-          The point estimate carries an uncertainty band, set by the{" "}
-          <TierLink>reliability of its sources</TierLink>. Incident databases enter only here: when
+          The point estimate carries an uncertainty band, set by its{" "}
+          <TierLink>methodological tier</TierLink>. Incident databases enter only here: when
           their recorded counts come reasonably close to the estimate, they raise the{" "}
           <Em>lower band</Em> — the true harm cannot fall below what has already been recorded.
         </p>
@@ -91,7 +91,7 @@ export const harmSteps: ContentStep[] = [
         </Assumption>
         <p>
           <TierLink tier={2} variant="button">
-            Learn more about estimation source tiers →
+            Learn more about methodological tiers →
           </TierLink>
         </p>
       </StepText>
