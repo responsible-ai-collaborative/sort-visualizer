@@ -41,4 +41,4 @@ tmp/
 
 # source material — the paper is linked, never redistributed from this repo
 *.pdf
-public/
+# public/
