@@ -40,5 +40,5 @@ pnpm-debug.log*
 tmp/
 
 # source material — the paper is linked, never redistributed from this repo
-*.pdf
+# *.pdf
 # public/
